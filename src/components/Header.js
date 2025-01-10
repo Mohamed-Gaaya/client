@@ -63,17 +63,17 @@ function Header() {
                 <div className="hidden md:flex items-center space-x-4">
                     <a
                         href="/search"
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        className="px-4 py-2 bg-customBlue text-white rounded-lg hover:bg-customPink transition">
                         Search
                     </a>
                     <a
                         href="/cart"
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        className="px-4 py-2 bg-customBlue text-white rounded-lg hover:bg-customPink transition">
                         Cart
                     </a>
                     <a
                         href="/login"
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        className="px-4 py-2 bg-customBlue text-white rounded-lg hover:bg-customPink transition">
                         Login
                     </a>
                 </div>

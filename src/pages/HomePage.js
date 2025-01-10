@@ -165,7 +165,7 @@ function HomePage() {
                 placeholder="Enter your email"
                 className="px-4 py-2 rounded bg-gray-700 text-gray-200 border-none focus:ring-2 focus:ring-blue-400"
               />
-              <button className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded text-white">
+              <button className="px-4 py-2 bg-customBlue hover:bg-customPink rounded text-white">
                 Subscribe
               </button>
             </form>
