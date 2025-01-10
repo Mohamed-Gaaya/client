@@ -31,7 +31,7 @@ function HomePage() {
   return (
     <div>
       {/* Top Promotion Banner */}
-      <div className="bg-blue-500 text-white text-center py-2">
+      <div className="bg-customBlue text-white text-center py-2">
         <p>🚚 Free Shipping on Orders Over $50! Limited Time Only! 🚀</p>
       </div>
 
@@ -56,7 +56,7 @@ function HomePage() {
                 </p>
                 <a
                   href="/shop"
-                  className="px-6 py-3 bg-blue-500 hover:bg-blue-600 rounded text-white text-lg"
+                  className="px-6 py-3 bg-customBlue hover:bg-customPink rounded text-white text-lg"
                 >
                   Shop Now
                 </a>
