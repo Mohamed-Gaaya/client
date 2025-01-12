@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/images/logo.jpg"; // Adjust the path to your logo file
+// Adjust the path to your logo file
 
 function Header() {
   const categories = [
@@ -86,17 +86,7 @@ function Header() {
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50 w-full">
-      {/* Top Section */}
-      <div className="container mx-auto flex justify-between items-center p-4">
-        {/* Logo */}
-        <a href="/">
-          <img
-            src={logo}
-            alt="YODA Logo"
-            className="h-20 w-22 rounded-full object-cover border-2 border-black"
-          />
-        </a>
-
+      
         {/* Search Bar */}
     <div className="flex items-center justify-center mx-6">
     <div className="relative w-full max-w-md">
@@ -113,35 +103,16 @@ function Header() {
 </button>
 
     </div>
-    </div>
-
-
-        {/* Icons: Profile, Favorites, Cart */}
-        <div className="flex items-center space-x-6">
+     {/* Icons: Profile, Favorites, Cart */}
+     <div className="flex items-center space-x-6">
         {/* Profile Icon */}
         <a href="/profile" className="text-gray-700 hover:text-blue-600 flex items-center">
             <span className="material-symbols-outlined text-3xl">account_circle</span>
         </a>
-        {/* Favorites Icon */}
-        <a
-            href="/favorites"
-            className="text-gray-700 hover:text-blue-600 flex items-center"
-        >
-            <span className="material-symbols-outlined text-3xl">favorite</span>
-        </a>
-
-        {/* Cart Icon */}
-        <a
-            href="/cart"
-            className="text-gray-700 hover:text-blue-600 flex items-center"
-        >
-            <span className="material-symbols-outlined text-3xl">shopping_cart</span>
-        </a>
+        
         </div>
 
-      </div>
-
-    
+    </div>
 
       {/* Bottom Section */}
       <div className="bg-white-100 py-2">
