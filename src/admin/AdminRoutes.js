@@ -7,6 +7,7 @@ import Orders from "./components/Orders";
 import AddProduct from "./components/Products/AddProduct";
 import Categories from "./components/Categories/Categories";
 import AddCategory from "./components/Categories/AddCategory";
+import ModifyCategory from "./components/Categories/ModifyCategory";
 
 function AdminRoutes() {
   return (
@@ -17,6 +18,7 @@ function AdminRoutes() {
       <Route path="/admin/products/add" element={<AddProduct />} />
       <Route path="/admin/categories" element={<Categories />} />
       <Route path="/admin/categories/add" element={<AddCategory />} />
+      <Route path="/admin/categories/modify" element={<ModifyCategory />} />
       <Route path="/admin/orders" element={<Orders />} />
     </Routes>
   );

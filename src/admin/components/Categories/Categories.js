@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "../Sidebar"; // Adjust path if necessary
-import Header from "../Navbar"; // Adjust path if necessary
-import { Link } from "react-router-dom"; // Import Link for navigation
-import axios from "axios"; // Import axios for HTTP requests
+import Sidebar from "../Sidebar";
+import Header from "../Navbar";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { FaEdit, FaTrash } from "react-icons/fa"; // Import icons
 
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  // Fetch categories from the backend when the component mounts
   useEffect(() => {
-    // Function to fetch categories
     const fetchCategories = async () => {
       try {
-        // Make a GET request to fetch categories
         const response = await axios.get("http://localhost:5000/api/categories");
-
-        // Update state with fetched categories
-        setCategories(response.data.categories); // Assuming your backend returns categories in `response.data.categories`
+        setCategories(response.data.categories);
       } catch (err) {
         console.error("Error fetching categories:", err);
       } finally {
@@ -26,20 +23,15 @@ const Categories = () => {
     };
 
     fetchCategories();
-  }, []); // Empty dependency array to run only once on mount
+  }, []);
 
-  const handleEdit = (id) => {
-    console.log(`Edit Category with id: ${id}`);
-    // Implement editing logic (navigate to an edit page or open a modal)
+  const handleEdit = (category) => {
+    navigate("/admin/categories/modify", { state: { category } });
   };
 
   const handleDelete = async (id) => {
-    console.log(`Delete Category with id: ${id}`);
     try {
-      // Make a DELETE request to delete the category
       await axios.delete(`http://localhost:5000/api/categories/${id}`);
-
-      // Remove the category from the state after successful deletion
       setCategories(categories.filter((category) => category._id !== id));
     } catch (err) {
       console.error("Error deleting category:", err);
@@ -48,27 +40,19 @@ const Categories = () => {
 
   return (
     <div className="flex">
-      {/* Sidebar */}
       <Sidebar />
-
-      {/* Main Content Area */}
       <div className="flex-1 p-6">
         <Header />
-
-        {/* Card Container */}
         <div className="bg-white shadow-lg rounded-lg p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-3xl font-bold">Category Management</h2>
-            {/* Add Category Button with redirection */}
             <Link
-              to="/admin/categories/add" // Link to the add category page
+              to="/admin/categories/add"
               className="bg-customBlue text-white py-2 px-4 rounded hover:bg-customPink transition"
             >
               Add Category
             </Link>
           </div>
-
-          {/* Loading state */}
           {loading ? (
             <div className="text-center text-xl">Loading categories...</div>
           ) : (
@@ -86,18 +70,20 @@ const Categories = () => {
                     <tr key={category._id} className="border-b">
                       <td className="px-4 py-2">{category._id}</td>
                       <td className="px-4 py-2">{category.name}</td>
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-2 flex space-x-4">
                         <button
-                          className="bg-blue-600 text-white p-2 rounded mr-2"
-                          onClick={() => handleEdit(category._id)}
+                          className="text-customBlue hover:text-blue-500 transition"
+                          onClick={() => handleEdit(category)}
+                          title="Edit Category"
                         >
-                          Edit
+                          <FaEdit size={20} />
                         </button>
                         <button
-                          className="bg-red-600 text-white p-2 rounded"
+                          className="text-red-600 hover:text-red-800 transition"
                           onClick={() => handleDelete(category._id)}
+                          title="Delete Category"
                         >
-                          Delete
+                          <FaTrash size={20} />
                         </button>
                       </td>
                     </tr>
@@ -112,4 +98,4 @@ const Categories = () => {
   );
 };
 
-export default Categories; // Ensure the export matches the component name
+export default Categories;
