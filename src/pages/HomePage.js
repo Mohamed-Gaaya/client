@@ -109,6 +109,77 @@ function HomePage() {
           ))}
         </div>
       </section>
+      {/* Featured Products */}
+<section className="py-12 bg-gray-50">
+  <h2 className="text-3xl font-bold text-center mb-8">Best Sellers</h2>
+  <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4">
+    {[1, 2, 3, 4].map((product) => (
+      <div key={product} className="border rounded-lg shadow-lg overflow-hidden">
+        <img
+          src={`/assets/products/product${product}.jpg`}
+          alt={`Product ${product}`}
+          className="w-full h-48 object-cover"
+        />
+        <div className="p-4">
+          <h3 className="font-bold text-lg">Product {product}</h3>
+          <p className="text-gray-600 mt-2">$29.99</p>
+          <a
+            href={`/product/${product}`}
+            className="block text-center bg-customBlue text-white mt-4 py-2 rounded hover:bg-customPink"
+          >
+            View Details
+          </a>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+{/* Testimonials */}
+<section className="py-12 bg-white">
+  <h2 className="text-3xl font-bold text-center mb-8">What Our Customers Say</h2>
+  <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {[1, 2, 3].map((testimonial) => (
+      <div key={testimonial} className="bg-gray-100 p-6 rounded-lg shadow-lg">
+        <p className="italic text-gray-600">
+          "This is the best store ever! The products are amazing, and the service is top-notch."
+        </p>
+        <div className="mt-4 flex items-center">
+          <img
+            src={`/assets/testimonials/customer${testimonial}.jpg`}
+            alt={`Customer ${testimonial}`}
+            className="h-12 w-12 rounded-full mr-4"
+          />
+          <div>
+            <h4 className="font-bold">Customer {testimonial}</h4>
+            <p className="text-sm text-gray-500">Verified Buyer</p>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+      {/* Features Section */}
+<section className="py-12 bg-white">
+  <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+    <div>
+      <img src="/assets/icons/free-shipping.svg" alt="Free Shipping" className="h-16 mx-auto mb-4" />
+      <h3 className="text-xl font-bold">Free Shipping</h3>
+      <p className="text-gray-600">On orders over $50.</p>
+    </div>
+    <div>
+      <img src="/assets/icons/quality.svg" alt="Top Quality" className="h-16 mx-auto mb-4" />
+      <h3 className="text-xl font-bold">Top Quality</h3>
+      <p className="text-gray-600">Best products guaranteed.</p>
+    </div>
+    <div>
+      <img src="/assets/icons/support.svg" alt="24/7 Support" className="h-16 mx-auto mb-4" />
+      <h3 className="text-xl font-bold">24/7 Support</h3>
+      <p className="text-gray-600">Always here to help.</p>
+    </div>
+  </div>
+</section>
+
 
       {/* Footer */}
       <footer className="bg-gray-800 text-gray-300">
