@@ -7,6 +7,7 @@ const Sidebar = () => {
     { label: "Dashboard", path: "/admin" },
     { label: "Users", path: "/admin/users" },
     { label: "Categories", path: "/admin/categories" },
+    { label: "Brands", path: "/admin/brands" },
     { label: "Products", path: "/admin/products" },
     { label: "Orders", path: "/admin/orders" },
   ];
