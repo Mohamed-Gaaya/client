@@ -82,21 +82,20 @@ const AddProduct = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle Form Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!validateForm()) return;
-
+  
     const formData = new FormData();
     formData.append("name", productName);
     formData.append("price", productPrice);
     formData.append("category", productCategory);
     formData.append("brand", productBrand);
-
-    // Append actual image files, not URLs
-    productImages.forEach((image) => formData.append("images", image));
-
+  
+    // Append images
+    productImages.forEach((image) => formData.append("image", image));
+  
     formData.append("hasPromo", hasPromo);
     if (hasPromo) {
       formData.append("originalPrice", originalPrice);
@@ -104,37 +103,33 @@ const AddProduct = () => {
     }
     formData.append("servings", servings);
     formData.append("description", description);
-
+  
+    // Debugging the payload
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+  
     try {
       const response = await axios.post("http://localhost:5000/api/products/add", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
-
+  
       if (response.status === 200 || response.status === 201) {
         navigate("/admin/products");
       } else {
+        console.error("Unexpected response:", response);
         alert(response.data.message || "Failed to add product.");
       }
     } catch (err) {
-      console.error("Error adding product:", err);
+      console.error("Error adding product:", err.response || err);
       alert(err.response?.data?.message || "Error adding product. Please try again.");
     }
   };
+  
 
-  // Handle Brand Change
-  const handleBrandChange = (e) => {
-    const selectedBrand = e.target.value;
-    setProductBrand(selectedBrand);
 
-    const selectedBrandData = brands.find((brand) => brand.name === selectedBrand);
-    if (selectedBrandData && selectedBrandData.logoUrl) {
-      setBrandLogo(selectedBrandData.logoUrl);
-    } else {
-      setBrandLogo("");
-    }
-  };
 
   return (
     <div className="flex">
@@ -204,7 +199,7 @@ const AddProduct = () => {
                 <img
                   src={`http://localhost:5000/${brandLogo}`}
                   alt="Brand Logo"
-                  className="w-8 h-8 object-contain"
+                  className="w-14 h-14 object-contain"
                 />
               )}
               <span>{productBrand}</span>
@@ -232,7 +227,7 @@ const AddProduct = () => {
                   <img
                     src={`http://localhost:5000/${brand.logo}`}
                     alt="Brand Logo"
-                    className="w-8 h-8 object-contain"
+                    className="w-14 h-14 object-contain"
                         />
                       )}
                       <span>{brand.name}</span>
@@ -253,6 +248,7 @@ const AddProduct = () => {
               <label className="block text-gray-700 font-medium mb-2">Product Images</label>
               <input
                 type="file"
+                name="image" 
                 multiple
                 onChange={handleImageUpload}
                 className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -263,7 +259,7 @@ const AddProduct = () => {
                     key={index}
                     src={URL.createObjectURL(image)} // Preview the image
                     alt={`Preview ${index + 1}`}
-                    className="w-24 h-24 object-cover border rounded"
+                    className=" object-cover border rounded"
                   />
                 ))}
               </div>

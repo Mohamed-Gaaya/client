@@ -77,7 +77,7 @@ const Brands = () => {
                           <img
                             src={`http://localhost:5000/${brand.logo}`}
                             alt={brand.name}
-                            className="w-16 h-16 object-contain"
+                            className="w-30 h-16 object-contain"
                           />
                         ) : (
                           <span>No Logo</span>

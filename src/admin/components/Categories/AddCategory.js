@@ -1,30 +1,41 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../Sidebar"; 
-import Header from "../Navbar"; 
-import axios from "axios"; // Import axios for HTTP requests
+import Sidebar from "../Sidebar";
+import Header from "../Navbar";
+import axios from "axios";
 
 const AddCategory = () => {
   const [categoryName, setCategoryName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null); // New state for success feedback
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null); // Clear previous errors
+    setSuccess(null); // Clear previous success message
+
+    if (!categoryName.trim()) {
+      setError("Category name cannot be empty.");
+      return;
+    }
+
     setLoading(true);
 
     try {
       // Send the POST request to the backend
       const response = await axios.post("http://localhost:5000/api/categories/add", {
-        name: categoryName,
+        name: categoryName.trim(),
       });
 
-      // If successful, navigate to the Categories page
-      console.log(response.data.message);
-      navigate("/admin/categories");
+      // Show success message
+      setSuccess(response.data.message);
+
+      // Navigate to Categories page after a short delay
+      setTimeout(() => navigate("/admin/categories"), 2000);
     } catch (err) {
-      setError(err.response ? err.response.data.message : "An error occurred");
+      setError(err.response?.data?.message || "An error occurred. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -37,7 +48,8 @@ const AddCategory = () => {
         <Header />
         <div className="bg-white p-8 rounded shadow-md max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold mb-6 text-center">Add New Category</h2>
-          {error && <p className="text-red-500">{error}</p>}
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+          {success && <p className="text-green-500 text-center mb-4">{success}</p>}
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-700 font-medium mb-2">Category Name</label>
@@ -52,7 +64,9 @@ const AddCategory = () => {
 
             <button
               type="submit"
-              className="w-full bg-customBlue text-white py-2 px-4 rounded hover:bg-customPink transition"
+              className={`w-full text-white py-2 px-4 rounded transition ${
+                loading ? "bg-gray-400 cursor-not-allowed" : "bg-customBlue hover:bg-customPink"
+              }`}
               disabled={loading}
             >
               {loading ? "Adding..." : "Add Category"}
