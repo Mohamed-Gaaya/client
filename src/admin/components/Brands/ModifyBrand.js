@@ -38,7 +38,7 @@ const ModifyBrand = () => {
     const formData = new FormData();
     formData.append("name", brandName);
     if (logo) {
-      formData.append("logo", logo); // Append logo file if updated
+      formData.append("image", logo); // Append logo file if updated
     }
 
     try {
@@ -80,7 +80,7 @@ const ModifyBrand = () => {
           <div className="mb-4">
             <label className="block text-gray-700 font-medium mb-2">Brand Logo</label>
             <input
-              type="file"
+              type="file" 
               onChange={handleLogoChange}
               className="w-full px-4 py-2 border rounded focus:outline-none"
               accept="image/*"
@@ -88,6 +88,7 @@ const ModifyBrand = () => {
             {logo ? ( // If new image is selected
               <img
                 src={previewLogo}
+                name="image"
                 alt="New Logo Preview"
                 className="mt-4 max-h-40 rounded shadow"
               />
