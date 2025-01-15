@@ -197,7 +197,7 @@ const AddProduct = () => {
             <div className="flex items-center gap-2">
               {brandLogo && (
                 <img
-                  src={`http://localhost:5000/${brandLogo}`}
+                  src={`http://localhost:5000/uploads/${brandLogo}`}
                   alt="Brand Logo"
                   className="w-14 h-14 object-contain"
                 />
@@ -225,7 +225,7 @@ const AddProduct = () => {
               >
                 {brand.logo && (
                   <img
-                    src={`http://localhost:5000/${brand.logo}`}
+                    src={`http://localhost:5000/uploads/${brand.logo}`}
                     alt="Brand Logo"
                     className="w-14 h-14 object-contain"
                         />

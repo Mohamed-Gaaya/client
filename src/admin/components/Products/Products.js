@@ -1,49 +1,45 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "../Sidebar"; // Adjust the path if necessary
-import Header from "../Navbar"; // Adjust the path if necessary
+import Sidebar from "../Sidebar";
+import Header from "../Navbar";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import axios from "axios";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Fetch products from the backend
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/products");
-        if (!response.ok) throw new Error("Failed to fetch products");
+        // Fetch products
+        const productsResponse = await axios.get("http://localhost:5000/api/products");
+        setProducts(productsResponse.data.products || []);
 
-        const data = await response.json();
-        console.log("Fetched products:", data);
-        setProducts(data.products || []);
+        // Fetch brands
+        const brandsResponse = await axios.get("http://localhost:5000/api/brands");
+        setBrands(brandsResponse.data.brands || []);
       } catch (error) {
-        console.error("Error fetching products:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducts();
+    fetchData();
   }, []);
 
-  // Delete a product
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) throw new Error("Failed to delete product");
-
+      await axios.delete(`http://localhost:5000/api/products/${id}`);
       setProducts((prevProducts) => prevProducts.filter((product) => product._id !== id));
     } catch (error) {
       console.error("Error deleting product:", error);
     }
   };
 
-  // Edit a product
   const handleEdit = (product) => {
     navigate("/admin/products/modify", { state: { product } });
   };
@@ -86,64 +82,71 @@ const Products = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((product) => (
-                    <tr key={product._id} className="border-b">
-                      <td className="px-4 py-2">{product._id || "N/A"}</td>
-                      <td className="px-4 py-2">{product.name || "No Name"}</td>
-                      <td className="px-4 py-2">
-                        {product.price ? `$${product.price.toFixed(2)}` : "No Price"}
-                      </td>
-                      <td className="px-4 py-2">{product.category || "No Category"}</td>
-                      <td className="px-4 py-2">{product.brand || "No Brand"}</td>
-                      <td className="px-4 py-2">
-                        {product.hasPromo ? (
-                          <div>
-                            <span>Promo Price: ${product.promoPrice?.toFixed(2)}</span>
-                            <br />
-                            <span className="line-through">
-                              Original: ${product.originalPrice?.toFixed(2)}
-                            </span>
-                          </div>
-                        ) : (
-                          "No Promo"
-                        )}
-                      </td>
-                      <td className="px-4 py-2">{product.servings || "N/A"}</td>
-                      <td className="px-4 py-2">
-                      <div className="flex space-x-2">
-                        {Array.isArray(product.images) && product.images.length > 0 ? (
-                          <img
-                          src={
-                              `http://localhost:5000${product.images[0]}`
-                          }
-                          
-                            alt={`${product.name || "Product"} - 1`}
-                            className="h-16 w-16 object-cover"
-                          />
-                        ) : (
-                          <span>No Images</span>
-                        )}
-                      </div>
-                    </td>
-
-                      <td className="px-4 py-2 flex space-x-4">
-                        <button
-                          className="text-customBlue hover:text-blue-500 transition"
-                          onClick={() => handleEdit(product)}
-                          title="Edit Product"
-                        >
-                          <FaEdit size={20} />
-                        </button>
-                        <button
-                          className="text-red-600 hover:text-red-800 transition"
-                          onClick={() => handleDelete(product._id)}
-                          title="Delete Product"
-                        >
-                          <FaTrash size={20} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {products.map((product) => {
+                    const brand = brands.find((b) => b.name === product.brand);
+                    return (
+                      <tr key={product._id} className="border-b">
+                        <td className="px-4 py-2">{product._id || "N/A"}</td>
+                        <td className="px-4 py-2">{product.name || "No Name"}</td>
+                        <td className="px-4 py-2">
+                          {product.price ? `$${product.price.toFixed(2)}` : "No Price"}
+                        </td>
+                        <td className="px-4 py-2">{product.category || "No Category"}</td>
+                        <td className="px-4 py-2">
+                          {brand?.logo ? (
+                            <img
+                              src={`http://localhost:5000/uploads/${brand.logo}`}
+                              alt={brand.name}
+                              className="h-16 w-16 object-contain"
+                            />
+                          ) : (
+                            product.brand || "No Brand"
+                          )}
+                        </td>
+                        <td className="px-4 py-2">
+                          {product.hasPromo ? (
+                            <div>
+                              <span>Promo Price: ${product.promoPrice?.toFixed(2)}</span>
+                              <br />
+                              <span className="line-through">
+                                Original: ${product.originalPrice?.toFixed(2)}
+                              </span>
+                            </div>
+                          ) : (
+                            "No Promo"
+                          )}
+                        </td>
+                        <td className="px-4 py-2">{product.servings || "N/A"}</td>
+                        <td className="px-4 py-2">
+                          {Array.isArray(product.images) && product.images.length > 0 ? (
+                            <img
+                              src={`http://localhost:5000${product.images[0]}`}
+                              alt={`${product.name || "Product"} - 1`}
+                              className="h-16 w-16 object-cover"
+                            />
+                          ) : (
+                            <span>No Images</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-2 flex space-x-4">
+                          <button
+                            className="text-customBlue hover:text-blue-500 transition"
+                            onClick={() => handleEdit(product)}
+                            title="Edit Product"
+                          >
+                            <FaEdit size={20} />
+                          </button>
+                          <button
+                            className="text-red-600 hover:text-red-800 transition"
+                            onClick={() => handleDelete(product._id)}
+                            title="Delete Product"
+                          >
+                            <FaTrash size={20} />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

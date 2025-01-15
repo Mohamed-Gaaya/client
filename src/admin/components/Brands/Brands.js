@@ -75,7 +75,7 @@ const Brands = () => {
                         {/* Check if the brand has a logo and display it */}
                         {brand.logo ? (
                           <img
-                            src={`http://localhost:5000/${brand.logo}`}
+                            src={`http://localhost:5000/uploads/${brand.logo}`}
                             alt={brand.name}
                             className="w-30 h-16 object-contain"
                           />
