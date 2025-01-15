@@ -62,7 +62,8 @@ const Brands = () => {
                   <tr className="bg-gray-200">
                     <th className="px-4 py-2 text-left border">ID</th>
                     <th className="px-4 py-2 text-left border">Name</th>
-                    <th className="px-4 py-2 text-left border">Logo</th> {/* Add Logo Column */}
+                    <th className="px-4 py-2 text-left border">Logo</th>
+                    <th className="px-4 py-2 text-left border">Uploaded At</th> {/* Add Uploaded At Column */}
                     <th className="px-4 py-2 text-left border">Actions</th>
                   </tr>
                 </thead>
@@ -72,7 +73,6 @@ const Brands = () => {
                       <td className="px-4 py-2">{brand._id}</td>
                       <td className="px-4 py-2">{brand.name}</td>
                       <td className="px-4 py-2">
-                        {/* Check if the brand has a logo and display it */}
                         {brand.logo ? (
                           <img
                             src={`http://localhost:5000/uploads/${brand.logo}`}
@@ -82,6 +82,12 @@ const Brands = () => {
                         ) : (
                           <span>No Logo</span>
                         )}
+                      </td>
+                      <td className="px-4 py-2">
+                        {/* Format Uploaded At Date */}
+                        {brand.uploadedAt
+                          ? new Date(brand.uploadedAt).toLocaleString()
+                          : "N/A"}
                       </td>
                       <td className="px-4 py-2 flex space-x-4">
                         <button

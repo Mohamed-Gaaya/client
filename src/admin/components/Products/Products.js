@@ -41,7 +41,7 @@ const Products = () => {
   };
 
   const handleEdit = (product) => {
-    navigate("/admin/products/modify", { state: { product } });
+    navigate(`/admin/products/modify`, { state: { product } });
   };
 
   return (
@@ -77,6 +77,7 @@ const Products = () => {
                     <th className="px-4 py-2 text-left border">Brand</th>
                     <th className="px-4 py-2 text-left border">Promo</th>
                     <th className="px-4 py-2 text-left border">Servings</th>
+                    <th className="px-4 py-2 text-left border">Uploaded Date</th>
                     <th className="px-4 py-2 text-left border">Images</th>
                     <th className="px-4 py-2 text-left border">Actions</th>
                   </tr>
@@ -117,6 +118,9 @@ const Products = () => {
                           )}
                         </td>
                         <td className="px-4 py-2">{product.servings || "N/A"}</td>
+                        <td className="px-4 py-2">
+                          {new Date(product.createdAt).toLocaleDateString()}
+                        </td>
                         <td className="px-4 py-2">
                           {Array.isArray(product.images) && product.images.length > 0 ? (
                             <img

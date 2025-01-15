@@ -62,6 +62,7 @@ const Categories = () => {
                   <tr className="bg-gray-200">
                     <th className="px-4 py-2 text-left border">ID</th>
                     <th className="px-4 py-2 text-left border">Name</th>
+                    <th className="px-4 py-2 text-left border">Uploaded Date</th>
                     <th className="px-4 py-2 text-left border">Actions</th>
                   </tr>
                 </thead>
@@ -70,6 +71,9 @@ const Categories = () => {
                     <tr key={category._id} className="border-b">
                       <td className="px-4 py-2">{category._id}</td>
                       <td className="px-4 py-2">{category.name}</td>
+                      <td className="px-4 py-2">
+                        {new Date(category.createdAt).toLocaleString()} {/* Format date */}
+                      </td>
                       <td className="px-4 py-2 flex space-x-4">
                         <button
                           className="text-customBlue hover:text-blue-500 transition"
