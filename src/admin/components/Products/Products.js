@@ -41,7 +41,7 @@ const Products = () => {
   };
 
   const handleEdit = (product) => {
-    navigate(`/admin/products/modify`, { state: { product } });
+    navigate(`/admin/products/modify/${product._id}`);
   };
 
   return (

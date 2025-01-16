@@ -20,7 +20,7 @@ function AdminRoutes() {
       <Route path="/admin/users" element={<Users />} />
       <Route path="/admin/products" element={<Products />} />
       <Route path="/admin/products/add" element={<AddProduct />} />
-      <Route path="/admin/products/modify" element={<ModifyProduct />} />
+      <Route path="/admin/products/modify/:id" element={<ModifyProduct />} />
       <Route path="/admin/categories" element={<Categories />} />
       <Route path="/admin/categories/add" element={<AddCategory />} />
       <Route path="/admin/categories/modify" element={<ModifyCategory />} />

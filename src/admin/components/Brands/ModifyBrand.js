@@ -13,6 +13,8 @@ const ModifyBrand = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const brand = state?.brand;
+  
+   
 
   useEffect(() => {
     if (brand) {

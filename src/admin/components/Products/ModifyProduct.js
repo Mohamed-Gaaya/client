@@ -1,21 +1,42 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar";
 import Header from "../Navbar";
 import axios from "axios";
 
 const ModifyProduct = () => {
-  const { id } = useParams(); // Get product ID from URL
-  const [productName, setProductName] = useState("");
-  const [productPrice, setProductPrice] = useState("");
-  const [productCategory, setProductCategory] = useState("");
-  const [productBrand, setProductBrand] = useState("");
-  const [productImages, setProductImages] = useState([]);
-  const [hasPromo, setHasPromo] = useState(false);
-  const [originalPrice, setOriginalPrice] = useState("");
-  const [promoPrice, setPromoPrice] = useState("");
-  const [servings, setServings] = useState("");
-  const [description, setDescription] = useState("");
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const BrandDisplay = ({ name, logo }) => (
+    <div className="flex items-center gap-2">
+      {logo && (
+        <img
+          src={logo}
+          alt={`${name} logo`}
+          className="w-14 h-14 object-contain"
+        />
+      )}
+      <span>{name}</span>
+    </div>
+  );
+  
+  
+  
+  const [productData, setProductData] = useState({
+    name: "",
+    price: "",
+    category: "",
+    brand: "",
+    images: [],
+    hasPromo: false,
+    originalPrice: "",
+    promoPrice: "",
+    servings: "",
+    description: "", 
+  });
+  
+  const [newImages, setNewImages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
   const [brandLogo, setBrandLogo] = useState("");
@@ -23,123 +44,120 @@ const ModifyProduct = () => {
   const [loading, setLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const navigate = useNavigate();
-  const { state } = useLocation();
-  const product = state?.product;
-
-  // Fetch Categories
+  // Fetch Product Data
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/categories");
-        setCategories(response.data.categories);
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-      }
-    };
-    fetchCategories();
-  }, []);
-
-  // Fetch Brands
-  useEffect(() => {
-    const fetchBrands = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/brands");
-        setBrands(response.data.brands);
-      } catch (err) {
-        console.error("Error fetching brands:", err);
-      }
-    };
-    fetchBrands();
-  }, []);
-
-  // Fetch Product Details
-  useEffect(() => {
-    const fetchProductDetails = async () => {
-      try {
-        const response = await axios.get(`http://localhost:5000/api/products`);
-        const product = response.data.product;
-
-        if (!product) {
-          throw new Error("Product not found");
-        }
-
-        setProductName(product.name);
-        setProductPrice(product.price);
-        setProductCategory(product.category);
-        setProductBrand(product.brand);
-        setProductImages(product.images || []);
-        setHasPromo(product.hasPromo);
-        setOriginalPrice(product.originalPrice || "");
-        setPromoPrice(product.promoPrice || "");
-        setServings(product.servings);
-        setDescription(product.description);
-        if (product.brandLogo) setBrandLogo(product.brandLogo);
-
-      } catch (err) {
-        console.error("Error fetching product details:", err);
-        alert("Failed to load product details.");
+    const fetchProduct = async () => {
+      if (!id) {
+        console.error("No product ID provided");
         navigate("/admin/products");
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+        const product = response.data.product;
+        
+        setProductData({
+          name: product.name || "",
+          price: product.price || "",
+          category: product.category || "",
+          brand: product.brand || "",
+          brandLogo: product.brand?.logo || "",
+          images: product.images || [],
+          hasPromo: product.hasPromo || false,
+          originalPrice: product.originalPrice || "",
+          promoPrice: product.promoPrice || "",
+          servings: product.servings || "",
+          description: product.description || "",
+        });
+        
+        if (product.brandLogo) {
+          setBrandLogo(product.brandLogo);
+        }
+        
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        alert("Error fetching product details");
+        navigate("/admin/products");
+      }
+    };
+
+    fetchProduct();
+  }, [id, navigate]);
+
+  // Fetch Categories and Brands
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [categoriesRes, brandsRes] = await Promise.all([
+          axios.get("http://localhost:5000/api/categories"),
+          axios.get("http://localhost:5000/api/brands")
+        ]);
+        setCategories(categoriesRes.data.categories);
+        setBrands(brandsRes.data.brands);
+      } catch (err) {
+        console.error("Error fetching data:", err);
       } finally {
         setLoading(false);
       }
     };
+    fetchData();
+  }, []);
 
-    if (id) {
-      fetchProductDetails();
-    }
-  }, [id, navigate]);
-
-  // Handle Image Upload
-  const handleImageUpload = (e) => {
-    const files = Array.from(e.target.files);
-    setProductImages(files); // Store the actual files, not URLs
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setProductData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
   };
 
-  // Form Validation
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files);
+    setNewImages(files);
+  };
+
   const validateForm = () => {
     const newErrors = {};
-
-    if (!productName.trim()) newErrors.productName = "Product name is required.";
-    if (!productPrice || productPrice <= 0) newErrors.productPrice = "Enter a valid price.";
-    if (!productCategory) newErrors.productCategory = "Please select a category.";
-    if (!productBrand.trim()) newErrors.productBrand = "Brand name is required.";
-    if (hasPromo) {
-      if (!originalPrice || originalPrice <= 0) newErrors.originalPrice = "Enter a valid original price.";
-      if (!promoPrice || promoPrice <= 0) newErrors.promoPrice = "Enter a valid promo price.";
-      if (parseFloat(promoPrice) >= parseFloat(originalPrice)) {
+    if (!productData.name.trim()) newErrors.name = "Product name is required.";
+    if (!productData.price || productData.price <= 0) newErrors.price = "Enter a valid price.";
+    if (!productData.category) newErrors.category = "Please select a category.";
+    if (!productData.brand.trim()) newErrors.brand = "Brand name is required.";
+    if (productData.hasPromo) {
+      if (!productData.originalPrice || productData.originalPrice <= 0) {
+        newErrors.originalPrice = "Enter a valid original price.";
+      }
+      if (!productData.promoPrice || productData.promoPrice <= 0) {
+        newErrors.promoPrice = "Enter a valid promo price.";
+      }
+      if (parseFloat(productData.promoPrice) >= parseFloat(productData.originalPrice)) {
         newErrors.promoPrice = "Promo price must be less than the original price.";
       }
     }
-    if (!servings || servings <= 0) newErrors.servings = "Enter valid servings.";
-    if (!description.trim()) newErrors.description = "Description is required.";
+    if (!productData.servings || productData.servings <= 0) {
+      newErrors.servings = "Enter valid servings.";
+    }
+    if (!productData.description.trim()) newErrors.description = "Description is required.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle Form Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
 
     const formData = new FormData();
-    formData.append("name", productName);
-    formData.append("price", productPrice);
-    formData.append("category", productCategory);
-    formData.append("brand", productBrand);
+    Object.keys(productData).forEach(key => {
+      if (key !== 'images') {
+        formData.append(key, productData[key]);
+      }
+    });
 
-    // Append actual image files, not URLs
-    productImages.forEach((image) => formData.append("images", image));
-
-    formData.append("hasPromo", hasPromo);
-    if (hasPromo) {
-      formData.append("originalPrice", originalPrice);
-      formData.append("promoPrice", promoPrice);
-    }
-    formData.append("servings", servings);
-    formData.append("description", description);
+    newImages.forEach(image => {
+      formData.append("image", image);
+    });
 
     try {
       const response = await axios.put(`http://localhost:5000/api/products/${id}`, formData, {
@@ -148,16 +166,18 @@ const ModifyProduct = () => {
         },
       });
 
-      if (response.status === 200 || response.status === 201) {
+      if (response.status === 200) {
         navigate("/admin/products");
-      } else {
-        alert(response.data.message || "Failed to update product.");
       }
     } catch (err) {
       console.error("Error updating product:", err);
-      alert(err.response?.data?.message || "Error updating product. Please try again.");
+      alert(err.response?.data?.message || "Error updating product");
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex">
@@ -165,19 +185,21 @@ const ModifyProduct = () => {
       <div className="flex-1 p-6 bg-gray-100">
         <Header />
         <div className="bg-white p-8 rounded shadow-md max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold mb-6 text-center">Modify Product</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center">Edit Product</h2>
           <form onSubmit={handleSubmit}>
             {/* Product Name */}
             <div className="mb-4">
               <label className="block text-gray-700 font-medium mb-2">Product Name</label>
               <input
                 type="text"
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.productName ? "border-red-600" : "focus:ring-blue-600"}`}
-                required
+                name="name"
+                value={productData.name}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
+                  errors.name ? "border-red-600" : "focus:ring-blue-600"
+                }`}
               />
-              {errors.productName && <p className="text-red-600 text-sm">{errors.productName}</p>}
+              {errors.name && <p className="text-red-600 text-sm">{errors.name}</p>}
             </div>
 
             {/* Product Price */}
@@ -185,22 +207,26 @@ const ModifyProduct = () => {
               <label className="block text-gray-700 font-medium mb-2">Product Price</label>
               <input
                 type="number"
-                value={productPrice}
-                onChange={(e) => setProductPrice(e.target.value)}
-                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.productPrice ? "border-red-600" : "focus:ring-blue-600"}`}
-                required
+                name="price"
+                value={productData.price}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
+                  errors.price ? "border-red-600" : "focus:ring-blue-600"
+                }`}
               />
-              {errors.productPrice && <p className="text-red-600 text-sm">{errors.productPrice}</p>}
+              {errors.price && <p className="text-red-600 text-sm">{errors.price}</p>}
             </div>
 
-            {/* Product Category */}
+            {/* Category */}
             <div className="mb-4">
               <label className="block text-gray-700 font-medium mb-2">Category</label>
               <select
-                value={productCategory}
-                onChange={(e) => setProductCategory(e.target.value)}
-                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.productCategory ? "border-red-600" : "focus:ring-blue-600"}`}
-                required
+                name="category"
+                value={productData.category}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
+                  errors.category ? "border-red-600" : "focus:ring-blue-600"
+                }`}
               >
                 <option value="">Select a Category</option>
                 {categories.map((category) => (
@@ -209,101 +235,139 @@ const ModifyProduct = () => {
                   </option>
                 ))}
               </select>
-              {errors.productCategory && <p className="text-red-600 text-sm">{errors.productCategory}</p>}
+              {errors.category && <p className="text-red-600 text-sm">{errors.category}</p>}
             </div>
 
             {/* Brand */}
             <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">Brand</label>
-              <div className="relative">
-                <div
-                  className="border rounded px-4 py-2 bg-white cursor-pointer flex items-center justify-between"
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                >
-                  {productBrand ? (
-                    <div className="flex items-center gap-2">
-                      {brandLogo && (
-                        <img
-                          src={`http://localhost:5000/uploads/${brandLogo}`}
-                          alt="Brand Logo"
-                          className="w-14 h-14 object-contain"
-                        />
-                      )}
-                      <span>{productBrand}</span>
-                    </div>
-                  ) : (
-                    <span className="text-gray-400">Select a Brand</span>
-                  )}
-                  <span className="ml-2">▼</span> {/* Downward Arrow */}
-                </div>
-
-                {dropdownOpen && (
-                  <ul className="absolute z-10 mt-2 bg-white border rounded shadow-lg max-h-60 overflow-auto w-full">
-                    {brands.map((brand) => (
-                      <li
-                        key={brand._id}
-                        className="px-4 py-2 hover:bg-gray-100 flex items-center gap-2 cursor-pointer"
-                        onClick={() => {
-                          setProductBrand(brand.name);
-                          setBrandLogo(brand.logo || "");
-                          setDropdownOpen(false);
-                        }}
-                      >
-                        {brand.logo && (
-                          <img
-                            src={`http://localhost:5000/${brand.logo}`}
-                            alt="Brand Logo"
-                            className="w-8 h-8 object-contain"
-                          />
-                        )}
-                        <span>{brand.name}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              {errors.productBrand && <p className="text-red-600 text-sm">{errors.productBrand}</p>}
+            <label className="block text-gray-700 font-medium mb-2">Brand</label>
+            <div className="relative">
+            {/* Selected Brand Display */}
+            <div
+              className="border rounded px-4 py-2 bg-white cursor-pointer flex items-center justify-between"
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+            >
+              {productData.brand ? (
+                <BrandDisplay
+                  name={productData.brand}
+                  logo={`http://localhost:5000/uploads/${brands.find(brand => brand.name === productData.brand)?.logo}`}
+                />
+              ) : (
+                <span className="text-gray-400">Select a Brand</span>
+              )}
+              <span className="ml-2">▼</span>
             </div>
+              {dropdownOpen && (
+                <ul className="absolute z-10 mt-2 bg-white border rounded shadow-lg max-h-60 overflow-auto w-full">
+                  {brands.map((brand) => (
+                    <li
+                      key={brand._id}
+                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                      onClick={() => {
+                        setProductData((prev) => ({
+                          ...prev,
+                          brand: brand.name,
+                          brandLogo: brand.logo,
+                        }));
+                        setDropdownOpen(false);
+                      }}
+                    >
+                      <BrandDisplay
+                        name={brand.name}
+                        logo={`http://localhost:5000/uploads/${brand.logo}`}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            {errors.brand && <p className="text-red-600 text-sm">{errors.brand}</p>}
+          </div>
 
-            {/* Image Upload */}
+
+            {/* Images */}
             <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">Product Images</label>
+              <label className="block text-gray-700 font-medium mb-2">Current Images</label>
+              <div className="flex flex-wrap gap-4 mb-4">
+                {productData.images.map((image, index) => (
+                  <img
+                    key={index}
+                    src={`http://localhost:5000${image}`}
+                    alt={`Product ${index + 1}`}
+                    className="w-24 h-24 object-cover rounded"
+                  />
+                ))}
+              </div>
+              
+              <label className="block text-gray-700 font-medium mb-2">Upload New Images</label>
               <input
                 type="file"
-                accept="image/*"
                 multiple
                 onChange={handleImageUpload}
-                className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2"
+                className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
               />
+              {newImages.length > 0 && (
+                <div className="flex flex-wrap gap-4 mt-2">
+                  {newImages.map((image, index) => (
+                    <img
+                      key={index}
+                      src={URL.createObjectURL(image)}
+                      alt={`New ${index + 1}`}
+                      className="w-24 h-24 object-cover rounded"
+                    />
+                  ))}
+                </div>
+              )}
             </div>
 
-            {/* Promo Prices */}
-            {hasPromo && (
-              <div>
-                {/* Original Price */}
+            {/* Promo Section */}
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">
+                <input
+                  type="checkbox"
+                  name="hasPromo"
+                  checked={productData.hasPromo}
+                  onChange={handleInputChange}
+                  className="mr-2"
+                />
+                Has Promo
+              </label>
+            </div>
+
+            {productData.hasPromo && (
+              <>
                 <div className="mb-4">
                   <label className="block text-gray-700 font-medium mb-2">Original Price</label>
                   <input
                     type="number"
-                    value={originalPrice}
-                    onChange={(e) => setOriginalPrice(e.target.value)}
-                    className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.originalPrice ? "border-red-600" : "focus:ring-blue-600"}`}
+                    name="originalPrice"
+                    value={productData.originalPrice}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
+                      errors.originalPrice ? "border-red-600" : "focus:ring-blue-600"
+                    }`}
                   />
-                  {errors.originalPrice && <p className="text-red-600 text-sm">{errors.originalPrice}</p>}
+                  {errors.originalPrice && (
+                    <p className="text-red-600 text-sm">{errors.originalPrice}</p>
+                  )}
                 </div>
 
-                {/* {/* Promo Price */}
                 <div className="mb-4">
                   <label className="block text-gray-700 font-medium mb-2">Promo Price</label>
                   <input
                     type="number"
-                    value={promoPrice}
-                    onChange={(e) => setPromoPrice(e.target.value)}
-                    className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.promoPrice ? "border-red-600" : "focus:ring-blue-600"}`}
+                    name="promoPrice"
+                    value={productData.promoPrice}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
+                      errors.promoPrice ? "border-red-600" : "focus:ring-blue-600"
+                    }`}
                   />
-                  {errors.promoPrice && <p className="text-red-600 text-sm">{errors.promoPrice}</p>}
+                  {errors.promoPrice && (
+                    <p className="text-red-600 text-sm">{errors.promoPrice}</p>
+                  )}
                 </div>
-              </div>
+              </>
             )}
 
             {/* Servings */}
@@ -311,10 +375,12 @@ const ModifyProduct = () => {
               <label className="block text-gray-700 font-medium mb-2">Servings</label>
               <input
                 type="number"
-                value={servings}
-                onChange={(e) => setServings(e.target.value)}
-                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.servings ? "border-red-600" : "focus:ring-blue-600"}`}
-                required
+                name="servings"
+                value={productData.servings}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
+                  errors.servings ? "border-red-600" : "focus:ring-blue-600"
+                }`}
               />
               {errors.servings && <p className="text-red-600 text-sm">{errors.servings}</p>}
             </div>
@@ -323,23 +389,27 @@ const ModifyProduct = () => {
             <div className="mb-4">
               <label className="block text-gray-700 font-medium mb-2">Description</label>
               <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.description ? "border-red-600" : "focus:ring-blue-600"}`}
+                name="description"
+                value={productData.description}
+                onChange={handleInputChange}
                 rows="4"
-                required
-              ></textarea>
-              {errors.description && <p className="text-red-600 text-sm">{errors.description}</p>}
+                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
+                  errors.description ? "border-red-600" : "focus:ring-blue-600"
+                }`}
+              />
+              {errors.description && (
+                <p className="text-red-600 text-sm">{errors.description}</p>
+              )}
             </div>
 
-            {/* Submit */}
+            {/* Submit Button */}
             <div className="flex justify-center">
               <button
                 type="submit"
-                className="px-8 py-3 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="bg-customBlue text-white px-6 py-3 rounded hover:bg-customPink focus:outline-none focus:ring-2 focus:ring-blue-600"
                 disabled={loading}
               >
-                {loading ? "Loading..." : "Update Product"}
+                {loading ? "Updating..." : "Update Product"}
               </button>
             </div>
           </form>
