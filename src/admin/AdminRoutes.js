@@ -12,6 +12,9 @@ import ModifyCategory from "./components/Categories/ModifyCategory";
 import Brands from "./components/Brands/Brands";
 import AddBrand from "./components/Brands/AddBrand";
 import ModifyBrand from "./components/Brands/ModifyBrand";
+import ClothingandAccessories from "./components/Clothing & Accessories/ClothingandAccessories";
+import Clothes from "./components/Clothing & Accessories/Clothes";
+import Accessories from "./components/Clothing & Accessories/Accessories";
 
 function AdminRoutes() {
   return (
@@ -27,6 +30,9 @@ function AdminRoutes() {
       <Route path="/admin/brands" element={<Brands />} />
       <Route path="/admin/brands/add" element={<AddBrand />} />
       <Route path="/admin/brands/modify" element={<ModifyBrand />} />
+      <Route path="/admin/clothingandaccessories" element={<ClothingandAccessories />} />
+      <Route path="/admin/clothes" element={<Clothes />} />
+      <Route path="/admin/accessories" element={<Accessories />} />
       <Route path="/admin/orders" element={<Orders />} />
     </Routes>
   );

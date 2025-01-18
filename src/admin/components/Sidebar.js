@@ -8,6 +8,7 @@ const Sidebar = () => {
     { label: "Users", path: "/admin/users" },
     { label: "Categories", path: "/admin/categories" },
     { label: "Brands", path: "/admin/brands" },
+    { label: "Clothing & Accessories", path: "/admin/clothingandaccessories" },
     { label: "Products", path: "/admin/products" },
     { label: "Orders", path: "/admin/orders" },
   ];
@@ -16,7 +17,7 @@ const Sidebar = () => {
 
   // Function to determine if the current item is active
   const isActive = (path) =>
-    location.pathname === path ? "bg-customBlue text-white" : "hover:bg-customBlue";
+    location.pathname === path ? "bg-customBlue text-white font-bold" : "hover:bg-customBlue";
 
   return (
     <div className="w-64 bg-customDark text-white flex flex-col items-center justify-start h-screen sticky top-0 p-4">

@@ -52,7 +52,7 @@ const ModifyProduct = () => {
         navigate("/admin/products");
         return;
       }
-
+  
       try {
         const response = await axios.get(`http://localhost:5000/api/products/${id}`);
         const product = response.data.product;
@@ -61,8 +61,7 @@ const ModifyProduct = () => {
           name: product.name || "",
           price: product.price || "",
           category: product.category || "",
-          brand: product.brand || "",
-          brandLogo: product.brand?.logo || "",
+          brand: product.brand?.name || product.brand || "", // Change this line
           images: product.images || [],
           hasPromo: product.hasPromo || false,
           originalPrice: product.originalPrice || "",
@@ -71,10 +70,6 @@ const ModifyProduct = () => {
           description: product.description || "",
         });
         
-        if (product.brandLogo) {
-          setBrandLogo(product.brandLogo);
-        }
-        
         setLoading(false);
       } catch (err) {
         console.error("Error fetching product:", err);
@@ -82,7 +77,7 @@ const ModifyProduct = () => {
         navigate("/admin/products");
       }
     };
-
+  
     fetchProduct();
   }, [id, navigate]);
 
@@ -144,40 +139,45 @@ const ModifyProduct = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
 
-    const formData = new FormData();
-    Object.keys(productData).forEach(key => {
-      if (key !== 'images') {
-        formData.append(key, productData[key]);
-      }
-    });
-
-    newImages.forEach(image => {
-      formData.append("image", image);
-    });
-
-    try {
-      const response = await axios.put(`http://localhost:5000/api/products/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      if (response.status === 200) {
-        navigate("/admin/products");
-      }
-    } catch (err) {
-      console.error("Error updating product:", err);
-      alert(err.response?.data?.message || "Error updating product");
+  const formData = new FormData();
+  
+  // Find the complete brand object from the brands array
+  const selectedBrand = brands.find(brand => brand.name === productData.brand);
+  
+  // Append all product data except images
+  Object.keys(productData).forEach(key => {
+    if (key === 'brand') {
+      // Send the brand ID instead of just the name
+      formData.append('brand', selectedBrand?._id || productData.brand);
+    } else if (key !== 'images') {
+      formData.append(key, productData[key]);
     }
-  };
+  });
 
-  if (loading) {
-    return <div>Loading...</div>;
+  // Append new images if any
+  newImages.forEach(image => {
+    formData.append("image", image);
+  });
+
+  try {
+    const response = await axios.put(`http://localhost:5000/api/products/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    if (response.status === 200) {
+      navigate("/admin/products");
+    }
+  } catch (err) {
+    console.error("Error updating product:", err);
+    alert(err.response?.data?.message || "Error updating product");
   }
+};
 
   return (
     <div className="flex">
