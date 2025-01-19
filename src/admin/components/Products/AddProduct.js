@@ -63,11 +63,13 @@ const AddProduct = () => {
   // Form Validation
   const validateForm = () => {
     const newErrors = {};
-
+  
     if (!productName.trim()) newErrors.productName = "Product name is required.";
     if (!productPrice || productPrice <= 0) newErrors.productPrice = "Enter a valid price.";
     if (!productCategory) newErrors.productCategory = "Please select a category.";
     if (!productBrand.trim()) newErrors.productBrand = "Brand name is required.";
+    
+    // Only validate promo fields if hasPromo is true
     if (hasPromo) {
       if (!originalPrice || originalPrice <= 0) newErrors.originalPrice = "Enter a valid original price.";
       if (!promoPrice || promoPrice <= 0) newErrors.promoPrice = "Enter a valid promo price.";
@@ -75,66 +77,71 @@ const AddProduct = () => {
         newErrors.promoPrice = "Promo price must be less than the original price.";
       }
     }
+    
     if (!servings || servings <= 0) newErrors.servings = "Enter valid servings.";
     if (!description.trim()) newErrors.description = "Description is required.";
-
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
-  // Handle Form Submit
+  
+  // Update the handleSubmit function
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!validateForm()) return;
-
+  
     const formData = new FormData();
     formData.append("name", productName);
     formData.append("price", productPrice);
     formData.append("category", productCategory);
     formData.append("brand", productBrand);
-
-    // Append actual image files, not URLs
-    productImages.forEach((image) => formData.append("images", image));
-
-    formData.append("hasPromo", hasPromo);
+  
+    // Append images
+    productImages.forEach((image) => formData.append("image", image));
+  
+    // Send hasPromo as a string "true" or "false"
+    formData.append("hasPromo", String(hasPromo));  // Convert boolean to string
+    
     if (hasPromo) {
       formData.append("originalPrice", originalPrice);
       formData.append("promoPrice", promoPrice);
+    } else {
+      // Add these with null/empty values when there's no promo
+      formData.append("originalPrice", "");
+      formData.append("promoPrice", "");
     }
+  
     formData.append("servings", servings);
     formData.append("description", description);
-
+  
+    // Debugging
+    console.log("Form Data Contents:");
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+  
     try {
       const response = await axios.post("http://localhost:5000/api/products/add", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
-
+  
       if (response.status === 200 || response.status === 201) {
         navigate("/admin/products");
       } else {
+        console.error("Unexpected response:", response);
         alert(response.data.message || "Failed to add product.");
       }
     } catch (err) {
-      console.error("Error adding product:", err);
+      console.error("Error adding product:", err.response || err);
       alert(err.response?.data?.message || "Error adding product. Please try again.");
     }
   };
+  
 
-  // Handle Brand Change
-  const handleBrandChange = (e) => {
-    const selectedBrand = e.target.value;
-    setProductBrand(selectedBrand);
 
-    const selectedBrandData = brands.find((brand) => brand.name === selectedBrand);
-    if (selectedBrandData && selectedBrandData.logoUrl) {
-      setBrandLogo(selectedBrandData.logoUrl);
-    } else {
-      setBrandLogo("");
-    }
-  };
 
   return (
     <div className="flex">
@@ -202,9 +209,9 @@ const AddProduct = () => {
             <div className="flex items-center gap-2">
               {brandLogo && (
                 <img
-                  src={`http://localhost:5000/${brandLogo}`}
+                  src={`http://localhost:5000/uploads/${brandLogo}`}
                   alt="Brand Logo"
-                  className="w-8 h-8 object-contain"
+                  className="w-14 h-14 object-contain"
                 />
               )}
               <span>{productBrand}</span>
@@ -230,9 +237,9 @@ const AddProduct = () => {
               >
                 {brand.logo && (
                   <img
-                    src={`http://localhost:5000/${brand.logo}`}
+                    src={`http://localhost:5000/uploads/${brand.logo}`}
                     alt="Brand Logo"
-                    className="w-8 h-8 object-contain"
+                    className="w-14 h-14 object-contain"
                         />
                       )}
                       <span>{brand.name}</span>
@@ -253,6 +260,7 @@ const AddProduct = () => {
               <label className="block text-gray-700 font-medium mb-2">Product Images</label>
               <input
                 type="file"
+                name="image" 
                 multiple
                 onChange={handleImageUpload}
                 className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
@@ -263,7 +271,7 @@ const AddProduct = () => {
                     key={index}
                     src={URL.createObjectURL(image)} // Preview the image
                     alt={`Preview ${index + 1}`}
-                    className="w-24 h-24 object-cover border rounded"
+                    className=" object-cover border rounded"
                   />
                 ))}
               </div>

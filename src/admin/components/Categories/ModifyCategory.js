@@ -1,72 +1,90 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; 
-import Sidebar from "../Sidebar"; 
-import Header from "../Navbar"; 
+import React, { useState } from "react";
 import axios from "axios";
+import { FaTimes } from "react-icons/fa";
 
-const ModifyCategory = () => {
-  const [categoryName, setCategoryName] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
-  const { state } = useLocation(); // Access passed state
-  const category = state?.category; // Get the category from state
+const ModifyCategory = ({ category, onClose, onDelete }) => {
+  const [categoryName, setCategoryName] = useState(category.name);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
-  useEffect(() => {
-    if (category) {
-      setCategoryName(category.name); // Pre-fill with existing name
-    }
-  }, [category]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
+  const handleSaveChanges = async () => {
     try {
-      // Send PUT request to update the category
-      const response = await axios.put(`http://localhost:5000/api/categories/${category._id}`, {
+      // API call to update the category
+      await axios.put(`http://localhost:5000/api/categories/${category._id}`, {
         name: categoryName,
       });
-
-      console.log(response.data.message);
-      navigate("/admin/categories");
+      onClose();
     } catch (err) {
-      setError(err.response ? err.response.data.message : "An error occurred");
-    } finally {
-      setLoading(false);
+      console.error("Error updating category:", err);
+      alert("Failed to update category. Please try again.");
     }
   };
 
-  return (
-    <div className="flex">
-      <Sidebar />
-      <div className="flex-1 p-6 bg-gray-100">
-        <Header />
-        <div className="bg-white p-8 rounded shadow-md max-w-3xl mx-auto">
-          <h2 className="text-2xl font-bold mb-6 text-center">Modify Category</h2>
-          {error && <p className="text-red-500">{error}</p>}
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">Category Name</label>
-              <input
-                type="text"
-                value={categoryName}
-                onChange={(e) => setCategoryName(e.target.value)}
-                className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
-                required
-              />
-            </div>
+  const handleConfirmDelete = () => {
+    setConfirmDelete(true);
+  };
 
-            <button
-              type="submit"
-              className="w-full bg-customBlue text-white py-2 px-4 rounded hover:bg-customPink transition"
-              disabled={loading}
-            >
-              {loading ? "Updating..." : "Update Category"}
-            </button>
-          </form>
-        </div>
+  const handleDelete = () => {
+    onDelete(category._id);
+    onClose();
+  };
+
+  return (
+    <div className="p-6 relative">
+
+      <h2 className="text-2xl font-bold mb-6">Modify Category</h2>
+
+      {/* Editable Category Name */}
+      <div className="mb-6">
+        <label className="block text-sm font-bold mb-2" htmlFor="categoryName">
+          Category Name
+        </label>
+        <input
+          id="categoryName"
+          type="text"
+          value={categoryName}
+          onChange={(e) => setCategoryName(e.target.value)}
+          className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+        />
       </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-between items-center mt-4">
+        <button
+          className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+          onClick={handleConfirmDelete}
+        >
+          Delete
+        </button>
+        <button
+          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+          onClick={handleSaveChanges}
+        >
+          Save Changes
+        </button>
+      </div>
+
+      {/* Confirm Delete Modal */}
+      {confirmDelete && (
+        <div className="mt-6">
+          <p className="text-lg mb-4">
+            Are you sure you want to delete <strong>{category.name}</strong>?
+          </p>
+          <div className="flex justify-end">
+            <button
+              className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 mr-2"
+              onClick={() => setConfirmDelete(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600"
+              onClick={handleDelete}
+            >
+              Confirm Delete
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
