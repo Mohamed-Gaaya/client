@@ -63,11 +63,13 @@ const AddProduct = () => {
   // Form Validation
   const validateForm = () => {
     const newErrors = {};
-
+  
     if (!productName.trim()) newErrors.productName = "Product name is required.";
     if (!productPrice || productPrice <= 0) newErrors.productPrice = "Enter a valid price.";
     if (!productCategory) newErrors.productCategory = "Please select a category.";
     if (!productBrand.trim()) newErrors.productBrand = "Brand name is required.";
+    
+    // Only validate promo fields if hasPromo is true
     if (hasPromo) {
       if (!originalPrice || originalPrice <= 0) newErrors.originalPrice = "Enter a valid original price.";
       if (!promoPrice || promoPrice <= 0) newErrors.promoPrice = "Enter a valid promo price.";
@@ -75,13 +77,15 @@ const AddProduct = () => {
         newErrors.promoPrice = "Promo price must be less than the original price.";
       }
     }
+    
     if (!servings || servings <= 0) newErrors.servings = "Enter valid servings.";
     if (!description.trim()) newErrors.description = "Description is required.";
-
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
+  
+  // Update the handleSubmit function
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -96,17 +100,25 @@ const AddProduct = () => {
     // Append images
     productImages.forEach((image) => formData.append("image", image));
   
-    formData.append("hasPromo", hasPromo);
+    // Send hasPromo as a string "true" or "false"
+    formData.append("hasPromo", String(hasPromo));  // Convert boolean to string
+    
     if (hasPromo) {
       formData.append("originalPrice", originalPrice);
       formData.append("promoPrice", promoPrice);
+    } else {
+      // Add these with null/empty values when there's no promo
+      formData.append("originalPrice", "");
+      formData.append("promoPrice", "");
     }
+  
     formData.append("servings", servings);
     formData.append("description", description);
   
-    // Debugging the payload
+    // Debugging
+    console.log("Form Data Contents:");
     for (let [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
+      console.log(`${key}: ${value}`);
     }
   
     try {
