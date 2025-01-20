@@ -3,6 +3,11 @@ import bg1 from "../assets/images/bg1.jpg";
 import bg2 from "../assets/images/bg5.jpg";
 import bg3 from "../assets/images/bg3.jpg";
 import bg4 from "../assets/images/bg2.jpg";
+import { FooterPage } from "../components/FooterPage";
+import {
+  StyledCardBestSellerWrapper,
+  StyledCardWrapper,
+} from "../components/style";
 
 const images = [bg1, bg2, bg3, bg4];
 
@@ -97,155 +102,185 @@ function HomePage() {
 
       {/* Brand Section */}
       <section className="py-12 bg-gray-50">
-        <h2 className="text-3xl font-bold text-center mb-8">Trusted by Top Brands</h2>
+        <h2 className="text-3xl font-bold text-center mb-8">
+          Trusted by Top Brands
+        </h2>
         <div className="flex justify-center gap-8 flex-wrap px-4">
-          {["brand1.png", "brand2.png", "brand3.png", "brand4.png"].map((brand, index) => (
-            <img
-              key={index}
-              src={`/assets/images/${brand}`}
-              alt={`Brand ${index + 1}`}
-              className="h-16 md:h-20 object-contain"
-            />
-          ))}
+          {["brand1.png", "brand2.png", "brand3.png", "brand4.png"].map(
+            (brand, index) => (
+              <img
+                key={index}
+                src={`/assets/images/${brand}`}
+                alt={`Brand ${index + 1}`}
+                className="h-16 md:h-20 object-contain"
+              />
+            )
+          )}
         </div>
       </section>
       {/* Featured Products */}
-<section className="py-12 bg-gray-50">
-  <h2 className="text-3xl font-bold text-center mb-8">Best Sellers</h2>
-  <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4">
-    {[1, 2, 3, 4].map((product) => (
-      <div key={product} className="border rounded-lg shadow-lg overflow-hidden">
-        <img
-          src={`/assets/products/product${product}.jpg`}
-          alt={`Product ${product}`}
-          className="w-full h-48 object-cover"
-        />
-        <div className="p-4">
-          <h3 className="font-bold text-lg">Product {product}</h3>
-          <p className="text-gray-600 mt-2">$29.99</p>
-          <a
-            href={`/product/${product}`}
-            className="block text-center bg-customBlue text-white mt-4 py-2 rounded hover:bg-customPink"
-          >
-            View Details
-          </a>
+      <section className="py-12 bg-gray-50">
+        <h2 className="text-3xl font-bold text-center mb-8">Best Sellers</h2>
+        <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4">
+          {[1, 2, 3, 4].map((product) => (
+            <StyledCardWrapper>
+              <div className="card" key={product}>
+                <div className="img">
+                  <div className="save">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 683 683"
+                      height={683}
+                      width={683}
+                      className="svg"
+                    >
+                      <g clipPath="url(#clip0_993_25)">
+                        <mask
+                          height={683}
+                          width={683}
+                          y={0}
+                          x={0}
+                          maskUnits="userSpaceOnUse"
+                          style={{ maskType: "luminance" }}
+                          id="mask0_993_25"
+                        >
+                          <path
+                            fill="white"
+                            d="M0 -0.00012207H682.667V682.667H0V-0.00012207Z"
+                          />
+                        </mask>
+                        <g mask="url(#mask0_993_25)">
+                          <path
+                            strokeLinejoin="round"
+                            strokeLinecap="round"
+                            strokeMiterlimit={10}
+                            strokeWidth={40}
+                            stroke="#CED8DE"
+                            d="M148.535 19.9999C137.179 19.9999 126.256 24.5092 118.223 32.5532C110.188 40.5866 105.689 51.4799 105.689 62.8439V633.382C105.689 649.556 118.757 662.667 134.931 662.667H135.039C143.715 662.667 151.961 659.218 158.067 653.09C186.451 624.728 270.212 540.966 304.809 506.434C314.449 496.741 327.623 491.289 341.335 491.289C355.045 491.289 368.22 496.741 377.859 506.434C412.563 541.074 496.752 625.242 524.816 653.348C530.813 659.314 538.845 662.667 547.308 662.667C563.697 662.667 576.979 649.395 576.979 633.019V62.8439C576.979 51.4799 572.48 40.5866 564.447 32.5532C556.412 24.5092 545.489 19.9999 534.133 19.9999H148.535Z"
+                          />
+                        </g>
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_993_25">
+                          <rect fill="white" height="682.667" width="682.667" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                  </div>
+                </div>
+                <div className="text">
+                  <p className="h3">Product {product}</p>
+                  <p className="p">$29.99</p>
+                  <button class="relative inline-flex items-center justify-center px-8 py-2.5 overflow-hidden tracking-tighter text-white bg-customBlue rounded-md group">
+                    <span class="absolute w-0 h-0 transition-all duration-200 ease-out bg-customPink rounded-full group-hover:w-56 group-hover:h-56"></span>
+                    <span class="relative text-base font-semibold">
+                      View Details
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </StyledCardWrapper>
+          ))}
         </div>
-      </div>
-    ))}
-  </div>
-</section>
-{/* Testimonials */}
-<section className="py-12 bg-white">
-  <h2 className="text-3xl font-bold text-center mb-8">What Our Customers Say</h2>
-  <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-    {[1, 2, 3].map((testimonial) => (
-      <div key={testimonial} className="bg-gray-100 p-6 rounded-lg shadow-lg">
-        <p className="italic text-gray-600">
-          "This is the best store ever! The products are amazing, and the service is top-notch."
-        </p>
-        <div className="mt-4 flex items-center">
-          <img
-            src={`/assets/testimonials/customer${testimonial}.jpg`}
-            alt={`Customer ${testimonial}`}
-            className="h-12 w-12 rounded-full mr-4"
-          />
-          <div>
-            <h4 className="font-bold">Customer {testimonial}</h4>
-            <p className="text-sm text-gray-500">Verified Buyer</p>
-          </div>
+      </section>
+      {/* Testimonials */}
+      <section className="py-12 bg-white">
+        <h2 className="text-3xl font-bold text-center mb-8">
+          What Our Customers Say
+        </h2>
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[1, 2, 3].map((testimonial) => (
+            <div
+              key={testimonial}
+              className="max-w-xs overflow-hidden bg-white border border-gray-200 rounded-xl shadow-md transform transition-all duration-500 hover:shadow-lg hover:scale-105 relative group"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-white opacity-0 transition-opacity duration-500 group-hover:opacity-30 blur-md"></div>
+              <div className="p-6 relative z-10">
+                <p className="text-xl font-semibold text-gray-800">
+                  Customer {testimonial}
+                </p>
+                <p className="mt-2 text-gray-600">
+                  "This is the best store ever! The products are amazing, and
+                  the service is top-notch."
+                </p>
+                <div className="flex items-center mt-4 text-gray-600">
+                  <svg
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 fill-current text-yellow-500"
+                  >
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path>
+                  </svg>
+                  <span className="ml-2">4.8 (24 reviews)</span>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
-    ))}
-  </div>
-</section>
+      </section>
 
       {/* Features Section */}
-<section className="py-12 bg-white">
-  <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-    <div>
-      <img src="/assets/icons/free-shipping.svg" alt="Free Shipping" className="h-16 mx-auto mb-4" />
-      <h3 className="text-xl font-bold">Free Shipping</h3>
-      <p className="text-gray-600">On orders over $50.</p>
-    </div>
-    <div>
-      <img src="/assets/icons/quality.svg" alt="Top Quality" className="h-16 mx-auto mb-4" />
-      <h3 className="text-xl font-bold">Top Quality</h3>
-      <p className="text-gray-600">Best products guaranteed.</p>
-    </div>
-    <div>
-      <img src="/assets/icons/support.svg" alt="24/7 Support" className="h-16 mx-auto mb-4" />
-      <h3 className="text-xl font-bold">24/7 Support</h3>
-      <p className="text-gray-600">Always here to help.</p>
-    </div>
-  </div>
-</section>
+      <section className="py-12 bg-white">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <StyledCardBestSellerWrapper>
+            <div className="card">
+              <div className="card-details">
+                <div className="w-52 h-40  rounded-2xl">
+                  <img
+                    className="w-52 h-40  rounded-2xl"
+                    src={bg1}
+                    alt="Free Shipping"
+                  />
+                </div>
+                <div className=""></div>
+                <p className="text-title">Free Shipping</p>
+                <p className="text-body">On orders over $50.</p>
+              </div>
+              <button className="card-button">Shop Now</button>
+            </div>
+          </StyledCardBestSellerWrapper>
+          <StyledCardBestSellerWrapper>
+            <div className="card">
+              <div className="card-details">
+                <div className="w-52 h-40  rounded-2xl">
+                  <img
+                    className="w-52 h-40  rounded-2xl"
+                    src={bg2}
+                    alt="Top Quality"
+                  />
+                </div>
+                <div className=""></div>
+                <p className="text-title">Top Quality</p>
+                <p className="text-body">Best products guaranteed.</p>
+              </div>
+              <button className="card-button">Shop Now</button>
+            </div>
+          </StyledCardBestSellerWrapper>
 
+          <StyledCardBestSellerWrapper>
+            <div className="card">
+              <div className="card-details">
+                <div className="w-52 h-40  rounded-2xl">
+                  <img
+                    className="w-52 h-40  rounded-2xl"
+                    src={bg3}
+                    alt="24/7 Support"
+                  />
+                </div>
+                <div className=""></div>
+                <p className="text-title">24/7 Support</p>
+                <p className="text-body">Always here to help.</p>
+              </div>
+              <button className="card-button">Shop Now</button>
+            </div>
+          </StyledCardBestSellerWrapper>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-gray-300">
-        <div className="container mx-auto py-8 px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
-          {/* Column 1 */}
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-4">About Us</h3>
-            <p className="text-sm">
-              We are committed to providing the best products and customer experience. Join us on our journey!
-            </p>
-          </div>
-          {/* Column 2 */}
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
-            <ul className="text-sm space-y-2">
-              <li>
-                <a href="/shop" className="hover:text-blue-400">Shop</a>
-              </li>
-              <li>
-                <a href="/about" className="hover:text-blue-400">About Us</a>
-              </li>
-              <li>
-                <a href="/contact" className="hover:text-blue-400">Contact</a>
-              </li>
-              <li>
-                <a href="/faq" className="hover:text-blue-400">FAQ</a>
-              </li>
-            </ul>
-          </div>
-          {/* Column 3 */}
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Follow Us</h3>
-            <ul className="text-sm space-y-2">
-              <li>
-                <a href="https://facebook.com" className="hover:text-blue-400">Facebook</a>
-              </li>
-              <li>
-                <a href="https://instagram.com" className="hover:text-blue-400">Instagram</a>
-              </li>
-              <li>
-                <a href="https://twitter.com" className="hover:text-blue-400">Twitter</a>
-              </li>
-              <li>
-                <a href="https://linkedin.com" className="hover:text-blue-400">LinkedIn</a>
-              </li>
-            </ul>
-          </div>
-          {/* Column 4 */}
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Subscribe</h3>
-            <form className="flex flex-col space-y-4">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="px-4 py-2 rounded bg-gray-700 text-gray-200 border-none focus:ring-2 focus:ring-blue-400"
-              />
-              <button className="px-4 py-2 bg-customBlue hover:bg-customPink rounded text-white">
-                Subscribe
-              </button>
-            </form>
-          </div>
-        </div>
-        <div className="bg-gray-900 text-center py-4 text-sm text-gray-400">
-          &copy; {new Date().getFullYear()} YODA Sports Nutrition All rights reserved
-        </div>
-      </footer>
+      <FooterPage />
     </div>
   );
 }
