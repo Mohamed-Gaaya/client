@@ -27,6 +27,7 @@ const ModifyProduct = () => {
     name: "",
     price: "",
     category: "",
+    stock: "",
     brand: "",
     images: [],
     hasPromo: false,
@@ -61,6 +62,7 @@ const ModifyProduct = () => {
           name: product.name || "",
           price: product.price || "",
           category: product.category || "",
+          stock: product.stock || "",
           brand: product.brand?.name || product.brand || "", // Change this line
           images: product.images || [],
           hasPromo: product.hasPromo || false,
@@ -118,6 +120,9 @@ const ModifyProduct = () => {
     if (!productData.name.trim()) newErrors.name = "Product name is required.";
     if (!productData.price || productData.price <= 0) newErrors.price = "Enter a valid price.";
     if (!productData.category) newErrors.category = "Please select a category.";
+    if (!stock || isNaN(stock) || stock < 0) {
+      newErrors.stock = "Valid stock quantity is required.";
+    }
     if (!productData.brand.trim()) newErrors.brand = "Brand name is required.";
     if (productData.hasPromo) {
       if (!productData.originalPrice || productData.originalPrice <= 0) {
@@ -216,6 +221,106 @@ const ModifyProduct = () => {
               />
               {errors.price && <p className="text-red-600 text-sm">{errors.price}</p>}
             </div>
+            {/* Promo Section */}
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">
+                <input
+                  type="checkbox"
+                  name="hasPromo"
+                  checked={productData.hasPromo}
+                  onChange={handleInputChange}
+                  className="mr-2"
+                />
+                Has Promo
+              </label>
+            </div>
+
+            {productData.hasPromo && (
+              <>
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-medium mb-2">Original Price</label>
+                  <input
+                    type="number"
+                    name="originalPrice"
+                    value={productData.originalPrice}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
+                      errors.originalPrice ? "border-red-600" : "focus:ring-blue-600"
+                    }`}
+                  />
+                  {errors.originalPrice && (
+                    <p className="text-red-600 text-sm">{errors.originalPrice}</p>
+                  )}
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-medium mb-2">Promo Price</label>
+                  <input
+                    type="number"
+                    name="promoPrice"
+                    value={productData.promoPrice}
+                    onChange={handleInputChange}
+                    className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
+                      errors.promoPrice ? "border-red-600" : "focus:ring-blue-600"
+                    }`}
+                  />
+                  {errors.promoPrice && (
+                    <p className="text-red-600 text-sm">{errors.promoPrice}</p>
+                  )}
+                </div>
+              </>
+            )}
+            {/* Stock Quantity */}
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">Stock Quantity</label>
+              <input
+                type="number"
+                value={productData.stock}
+                onChange={handleInputChange}
+                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.stock ? "border-red-600" : "focus:ring-blue-600"}`}
+                required
+              />
+              {errors.stock && <p className="text-red-600 text-sm">{errors.stock}</p>}
+            </div>
+            {/* Sizes */}
+                        <div className="mb-4">
+                          <label className="block text-gray-700 font-medium mb-2">Sizes</label>
+                          <div className="flex flex-wrap gap-2">
+                            {sizeList.map((size, index) => (
+                              <div key={index} className="flex items-center mb-2 space-x-2">
+                                <input
+                                  type="text"
+                                  value={productData.size}
+                                  onChange={(e) => handleSizeChange(e, index)}
+                                  className={`w-40 px-4 py-2 border rounded ${errors.size ? "border-red-600" : ""}`}
+                                  placeholder={`Size ${index + 1}`}
+                                  required
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => removeSize(index)}
+                                  className="text-red-600 hover:text-red-800 focus:outline-none"
+                                >
+                                  <FaTrashAlt size={20} /> {/* Trash icon */}
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+            
+                          {/* Add size button */}
+                          {sizeList.length < 5 && (
+                            <button
+                              type="button"
+                              onClick={addSize}
+                              className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none flex items-center gap-2"
+                            >
+                              <FaPlusCircle size={18} /> {/* Add icon */}
+                              Add Size
+                            </button>
+                          )}
+            
+                          {errors.size && <p className="text-red-600 text-sm">{errors.size}</p>}
+                        </div>
 
             {/* Category */}
             <div className="mb-4">
@@ -320,55 +425,7 @@ const ModifyProduct = () => {
               )}
             </div>
 
-            {/* Promo Section */}
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">
-                <input
-                  type="checkbox"
-                  name="hasPromo"
-                  checked={productData.hasPromo}
-                  onChange={handleInputChange}
-                  className="mr-2"
-                />
-                Has Promo
-              </label>
-            </div>
-
-            {productData.hasPromo && (
-              <>
-                <div className="mb-4">
-                  <label className="block text-gray-700 font-medium mb-2">Original Price</label>
-                  <input
-                    type="number"
-                    name="originalPrice"
-                    value={productData.originalPrice}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
-                      errors.originalPrice ? "border-red-600" : "focus:ring-blue-600"
-                    }`}
-                  />
-                  {errors.originalPrice && (
-                    <p className="text-red-600 text-sm">{errors.originalPrice}</p>
-                  )}
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-gray-700 font-medium mb-2">Promo Price</label>
-                  <input
-                    type="number"
-                    name="promoPrice"
-                    value={productData.promoPrice}
-                    onChange={handleInputChange}
-                    className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
-                      errors.promoPrice ? "border-red-600" : "focus:ring-blue-600"
-                    }`}
-                  />
-                  {errors.promoPrice && (
-                    <p className="text-red-600 text-sm">{errors.promoPrice}</p>
-                  )}
-                </div>
-              </>
-            )}
+            
 
             {/* Servings */}
             <div className="mb-4">
