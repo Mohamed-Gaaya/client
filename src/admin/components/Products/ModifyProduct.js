@@ -3,11 +3,16 @@ import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar";
 import Header from "../Navbar";
 import axios from "axios";
-import { FaTrashAlt, FaPlusCircle } from "react-icons/fa";
+import { FaTrashAlt, FaPlusCircle, FaClock } from "react-icons/fa";
 
 const ModifyProduct = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
+  const [clothes, setClothes] = useState([]);
+  const [accessories, setAccessories] = useState([]);
+  const [createdAt, setCreatedAt] = useState(null);
+  const [updatedAt, setUpdatedAt] = useState(null);
 
   const BrandDisplay = ({ name, logo }) => (
     <div className="flex items-center gap-2">
@@ -38,6 +43,28 @@ const ModifyProduct = () => {
     const newSizeList = sizeList.filter((_, i) => i !== index);
     setSizeList(newSizeList);
   };
+
+  // Add useEffect for fetching subcategories
+  useEffect(() => {
+    const fetchSubCategories = async () => {
+      try {
+        const [clothesResponse, accessoriesResponse] = await Promise.all([
+          axios.get("http://localhost:5000/api/clothes"),
+          axios.get("http://localhost:5000/api/accessories")
+        ]);
+        
+        setClothes(clothesResponse.data.clothes || []);
+        setAccessories(accessoriesResponse.data.accessories || []);
+        setLoadingCategories(false);
+      } catch (err) {
+        console.error("Error fetching subcategories:", err);
+        setError("Failed to fetch subcategories.");
+        setLoadingCategories(false);
+      }
+    };
+
+    fetchSubCategories();
+  }, []);
   
   
   
@@ -45,6 +72,7 @@ const ModifyProduct = () => {
     name: "",
     price: "",
     category: "",
+    subCategory: "",
     stock: "",
     size:"",
     brand: "",
@@ -71,6 +99,8 @@ const ModifyProduct = () => {
   const [productCategory, setProductCategory] = useState("");
   const [productSubCategory, setProductSubCategory] = useState("");
   const [flavourList, setFlavourList] = useState([""]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [loadingBrands, setLoadingBrands] = useState(true);
   const handleFlavourChange = (e, index) => {
     const newFlavourList = [...flavourList];
     newFlavourList[index] = e.target.value;
@@ -112,36 +142,36 @@ const ModifyProduct = () => {
         const product = response.data.product;
         
         console.log("Fetched product:", product);
+        setCreatedAt(product.createdAt);
+        setUpdatedAt(product.updatedAt);
 
         // Find the matching brand from the brands list
         const matchingBrand = brands.find(b => b.name === product.brand);
         
-        // Set all product data at once
+        // Set product data including subCategory
         setProductData({
           name: product.name || "",
           price: product.price || "",
           category: product.category || "",
+          subCategory: product.subCategory || "", // Make sure this is set
           stock: product.stock || "",
-          brand: product.brand || "", // Keep the brand name
-          brandId: matchingBrand?._id || "", // Store the brand ID
+          brand: product.brand || "",
+          brandId: matchingBrand?._id || "",
           images: product.images || [],
           hasPromo: product.hasPromo || false,
           originalPrice: product.originalPrice || "",
           promoPrice: product.promoPrice || "",
           servings: product.servings || "",
           shortDescription: product.shortDescription || "",
-          longDescription: product.longdescription || "",
+          longDescription: product.longDescription || "",
         });
 
         // Set other state values
         setSizeList(product.sizes || ['']);
         setFlavourList(product.flavours || ['']);
         setShortDescription(product.shortDescription || '');
-        setlongDescription(product.longdescription || '');
-        setProductCategory(product.category || '');
-        setProductSubCategory(product.subCategory || '');
-        
-        setLoading(false);
+        setlongDescription(product.longDescription || '');
+        setProductSubCategory(product.subCategory || ''); // Add this line to set the subcategory
       } catch (err) {
         console.error("Error fetching product:", err);
         alert("Error fetching product details");
@@ -149,10 +179,24 @@ const ModifyProduct = () => {
       }
     };
 
-    if (brands.length > 0) { // Only fetch product after brands are loaded
+    if (brands.length > 0) {
       fetchProduct();
     }
   }, [id, navigate, brands]);
+
+  // Helper function to format dates
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+  
 // Modified brand selection handler
 const handleBrandSelect = (brand) => {
   setProductData(prev => ({
@@ -184,12 +228,12 @@ const handleBrandSelect = (brand) => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+    if (name === "subCategory") {
+      setProductSubCategory(value);
+    }
     setProductData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-      // Preserve brand and brandId when other fields are updated
-      brand: prev.brand,
-      brandId: prev.brandId
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
@@ -241,6 +285,11 @@ const handleBrandSelect = (brand) => {
     formData.append('flavours', JSON.stringify(flavourList.filter(flavour => flavour.trim())));
     formData.append('shortDescription', shortDescription);
     formData.append('longdescription', longDescription);
+
+    // Add subcategory if the category is Clothes or Accessories
+    if (productData.category === "Clothes" || productData.category === "Accessories") {
+      formData.append('subCategory', productSubCategory);
+    }
     
     // Handle promotional fields
     if (productData.hasPromo) {
@@ -290,6 +339,18 @@ const handleBrandSelect = (brand) => {
         <Header />
         <div className="bg-white p-8 rounded shadow-md max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold mb-6 text-center">Edit Product</h2>
+          <div className="text-right text-sm text-gray-600">
+              <div className="flex items-center mb-1">
+                <FaClock className="mr-1" />
+                <span className="font-medium">Created:</span>
+                <span className="ml-1">{formatDate(createdAt)}</span>
+              </div>
+              <div className="flex items-center">
+                <FaClock className="mr-1" />
+                <span className="font-medium">Last Updated:</span>
+                <span className="ml-1">{formatDate(updatedAt)}</span>
+              </div>
+            </div>
           <form onSubmit={handleSubmit}>
             {/* Product Name */}
             <div className="mb-4">
@@ -424,61 +485,60 @@ const handleBrandSelect = (brand) => {
 
 
             {/* Product Category */}
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">Category</label>
-              <select
-                value={productData.category}
-                onChange={(e) => {
-                  setProductCategory(e.target.value);
-                  // Clear the subcategory when a new category is selected
-                  setProductSubCategory('');
-                }}
-                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.productCategory ? "border-red-600" : "focus:ring-blue-600"}`}
-                required
-              >
-                <option value="">Select a Category</option>
-                {categories.map((category) => (
-                  <option key={category._id} value={category.name}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-              {errors.productCategory && <p className="text-red-600 text-sm">{errors.productCategory}</p>}
-            </div>
+            {/* Category Selection */}
+    <div className="mb-4">
+      <label className="block text-gray-700 font-medium mb-2">Category</label>
+      <select
+        name="category"
+        value={productData.category}
+        onChange={handleInputChange}
+        className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
+          errors.category ? "border-red-600" : "focus:ring-blue-600"
+        }`}
+        required
+      >
+        <option value="">Select a Category</option>
+        {categories.map((category) => (
+          <option key={category._id} value={category.name}>
+            {category.name}
+          </option>
+        ))}
+      </select>
+      {errors.category && <p className="text-red-600 text-sm">{errors.category}</p>}
+    </div>
 
-            {/* Subcategory (shown if "Clothes" or "Accessories" is selected) */}
-            {(productCategory === "Clothes" || productCategory === "Accessories") && (
-              <div className="mb-4">
-                <label className="block text-gray-700 font-medium mb-2">Subcategory</label>
-                <select
-                  value={productSubCategory}
-                  onChange={(e) => setProductSubCategory(e.target.value)}
-                  className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
-                    errors.productSubCategory ? "border-red-600" : "focus:ring-blue-600"
-                  }`}
-                  required
-                >
-                  <option value="">Select a Subcategory</option>
-                  {loadingCategories ? (
-                    <option>Loading...</option>
-                  ) : productCategory === "Clothes" ? (
-                    Clothes.map((clothes) => (
-                      <option key={clothes._id} value={clothes.name}>
-                        {clothes.name}
-                      </option>
-                    ))
-                  ) : (
-                    accessories.map((accessory) => (
-                      <option key={accessory._id} value={accessory.name}>
-                        {accessory.name}
-                      </option>
-                    ))
-                  )}
-                </select>
-                {errors.productSubCategory && (
-                  <p className="text-red-600 text-sm">{errors.productSubCategory}</p>
-                )}
-              </div>
+    {/* Subcategory Selection */}
+    {(productData.category === "Clothes" || productData.category === "Accessories") && (
+      <div className="mb-4">
+        <label className="block text-gray-700 font-medium mb-2">Subcategory</label>
+        <select
+          name="subCategory"
+          value={productData.subCategory}
+          onChange={handleInputChange}
+          className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
+            errors.subCategory ? "border-red-600" : "focus:ring-blue-600"
+          }`}
+          required
+        >
+          <option value="">Select a Subcategory</option>
+          {loadingCategories ? (
+            <option>Loading...</option>
+          ) : productData.category === "Clothes" ? (
+            clothes.map((item) => (
+              <option key={item._id} value={item.name}>
+                {item.name}
+              </option>
+            ))
+          ) : (
+            accessories.map((item) => (
+              <option key={item._id} value={item.name}>
+                {item.name}
+              </option>
+            ))
+          )}
+        </select>
+        {errors.subCategory && <p className="text-red-600 text-sm">{errors.subCategory}</p>}
+      </div>
             )}
 
             {/* Brand */}
