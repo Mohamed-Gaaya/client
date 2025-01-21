@@ -140,12 +140,9 @@ const AddProduct = () => {
     formData.append("shortDescription", shortDescription.trim());
     formData.append("stock", stock);
     
-    // The backend expects 'size' as an array, not 'sizes'
-    if (sizeList.length > 0) {
-      sizeList.filter(sizes => sizes.trim()).forEach(size => {
-        formData.append("sizes[]", size); // Use 'sizes[]' to indicate an array
-      });
-    }
+     // Convert sizes array to JSON string before sending
+      const validSizes = sizeList.filter(size => size.trim());
+      formData.append("sizes", JSON.stringify(validSizes));
     
     // Optional fields
     if (longDescription) {

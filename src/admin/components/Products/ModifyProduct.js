@@ -98,7 +98,7 @@ const ModifyProduct = () => {
     }
 
   // Fetch Product Data
-  // Fetch Product Data
+// Update the useEffect fetch logic
 useEffect(() => {
   const fetchProduct = async () => {
     if (!id) {
@@ -111,7 +111,6 @@ useEffect(() => {
       const response = await axios.get(`http://localhost:5000/api/products/${id}`);
       const product = response.data.product;
       
-      // Log the fetched product data to debug
       console.log("Fetched product:", product);
 
       // Set main product data
@@ -120,24 +119,29 @@ useEffect(() => {
         price: product.price || "",
         category: product.category || "",
         stock: product.stock || "",
-        size: product.size || "",
-        brand: product.brand?.name || product.brand || "",
+        brand: product.brand || "",
         images: product.images || [],
         hasPromo: product.hasPromo || false,
         originalPrice: product.originalPrice || "",
         promoPrice: product.promoPrice || "",
         servings: product.servings || "",
         shortDescription: product.shortDescription || "",
-        longDescription: product.longDescription || "",
+        longDescription: product.longdescription || "", // Note: backend uses 'longdescription'
       });
 
-      // Set separate states
-      setSizeList(product.size || ['']);
-      setFlavourList(product.flavour ? product.flavour.split(',') : ['']);
+      // Handle sizes - use the 'sizes' array from backend
+      setSizeList(product.sizes || ['']);
+      
+      // Handle flavours - use the 'flavours' array from backend
+      setFlavourList(product.flavours || ['']);
+      
+      // Set descriptions
+      setShortDescription(product.shortDescription || '');
+      setlongDescription(product.longdescription || ''); // Note: backend uses 'longdescription'
+      
+      // Set category and subcategory
       setProductCategory(product.category || '');
       setProductSubCategory(product.subCategory || '');
-      setShortDescription(product.shortDescription || '');
-      setlongDescription(product.longDescription || '');
       
       setLoading(false);
     } catch (err) {
@@ -205,56 +209,56 @@ useEffect(() => {
     if (!productData.servings || productData.servings <= 0) {
       newErrors.servings = "Enter valid servings.";
     }
-    if (!productData.description.trim()) newErrors.description = "Description is required.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!validateForm()) return;
-
-  const formData = new FormData();
-  formData.append('size', sizeList.filter(size => size.trim()).join(','));
-  formData.append('flavour', flavourList.filter(flavour => flavour.trim()).join(','));
-  formData.append('shortDescription', shortDescription);
-  formData.append('longDescription', longDescription);
-  formData.append('subCategory', productSubCategory);
-    
-  // Find the complete brand object from the brands array
-  const selectedBrand = brands.find(brand => brand.name === productData.brand);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
   
-  // Append all product data except images
-  Object.keys(productData).forEach(key => {
-    if (key === 'brand') {
-      // Send the brand ID instead of just the name
-      formData.append('brand', selectedBrand?._id || productData.brand);
-    } else if (key !== 'images') {
-      formData.append(key, productData[key]);
-    }
-  });
-
-  // Append new images if any
-  newImages.forEach(image => {
-    formData.append("image", image);
-  });
-
-  try {
-    const response = await axios.put(`http://localhost:5000/api/products/${id}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    const formData = new FormData();
+    
+    // Use the correct property names for backend
+    formData.append('sizes', JSON.stringify(sizeList.filter(size => size.trim())));
+    formData.append('flavours', JSON.stringify(flavourList.filter(flavour => flavour.trim())));
+    formData.append('shortDescription', shortDescription);
+    formData.append('longdescription', longDescription); // Note: backend uses 'longdescription'
+    formData.append('subCategory', productSubCategory);
+      
+    // Find the complete brand object from the brands array
+    const selectedBrand = brands.find(brand => brand.name === productData.brand);
+    
+    // Append all product data except images
+    Object.keys(productData).forEach(key => {
+      if (key === 'brand') {
+        formData.append('brand', selectedBrand?._id || productData.brand);
+      } else if (key !== 'images') {
+        formData.append(key, productData[key]);
+      }
     });
-
-    if (response.status === 200) {
-      navigate("/admin/products");
+  
+    // Append new images if any
+    newImages.forEach(image => {
+      formData.append("image", image);
+    });
+  
+    try {
+      const response = await axios.put(`http://localhost:5000/api/products/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
+      if (response.status === 200) {
+        navigate("/admin/products");
+      }
+    } catch (err) {
+      console.error("Error updating product:", err);
+      alert(err.response?.data?.message || "Error updating product");
     }
-  } catch (err) {
-    console.error("Error updating product:", err);
-    alert(err.response?.data?.message || "Error updating product");
-  }
-};
+  };
 
   return (
     <div className="flex">
@@ -356,44 +360,45 @@ useEffect(() => {
               {errors.stock && <p className="text-red-600 text-sm">{errors.stock}</p>}
             </div>
             {/* Sizes */}
-                        <div className="mb-4">
-                          <label className="block text-gray-700 font-medium mb-2">Sizes</label>
-                          <div className="flex flex-wrap gap-2">
-                            {sizeList.map((size, index) => (
-                              <div key={index} className="flex items-center mb-2 space-x-2">
-                                <input
-                                  type="text"
-                                  value={size}
-                                  onChange={handleInputChange}
-                                  className={`w-40 px-4 py-2 border rounded ${errors.size ? "border-red-600" : ""}`}
-                                  placeholder={`Size ${index + 1}`}
-                                  required
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => removeSize(index)}
-                                  className="text-red-600 hover:text-red-800 focus:outline-none"
-                                >
-                                  <FaTrashAlt size={20} /> {/* Trash icon */}
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-            
-                          {/* Add size button */}
-                          {sizeList.length < 5 && (
-                            <button
-                              type="button"
-                              onClick={addSize}
-                              className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none flex items-center gap-2"
-                            >
-                              <FaPlusCircle size={18} /> {/* Add icon */}
-                              Add Size
-                            </button>
-                          )}
-            
-                          {errors.size && <p className="text-red-600 text-sm">{errors.size}</p>}
-                        </div>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">Sizes</label>
+              <div className="flex flex-wrap gap-2">
+                {sizeList.map((size, index) => (
+                  <div key={index} className="flex items-center mb-2 space-x-2">
+                    <input
+                        type="text"
+                        value={size}
+                        onChange={(e) => handleSizeChange(e, index)}
+                        className={`w-40 px-4 py-2 border rounded ${errors.size ? "border-red-600" : ""}`}
+                        placeholder={`Size ${index + 1}`}
+                        required
+                      />
+                    <button 
+                      type="button"
+                      onClick={() => removeSize(index)}
+                      className="text-red-600 hover:text-red-800 focus:outline-none"
+                    >
+                      <FaTrashAlt size={20} /> {/* Trash icon */}
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Add size button */}
+              {sizeList.length < 5 && (
+                <button
+                  type="button"
+                  onClick={addSize}
+                  className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none flex items-center gap-2"
+                >
+                  <FaPlusCircle size={18} /> {/* Add icon */}
+                  Add Size
+                </button>
+              )}
+
+              {errors.size && <p className="text-red-600 text-sm">{errors.size}</p>}
+            </div>
+
 
             {/* Product Category */}
             <div className="mb-4">
@@ -612,7 +617,6 @@ useEffect(() => {
                 onChange={(e) => setlongDescription(e.target.value)}
                 rows="6"
                 className={`w-full px-4 py-2 border rounded ${errors.longDescription ? "border-red-600" : ""}`}
-                required
               />
               {errors.longDescription && <p className="text-red-600 text-sm">{errors.longDescription}</p>}
             </div>
