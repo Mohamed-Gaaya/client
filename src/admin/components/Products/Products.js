@@ -18,32 +18,34 @@ const Products = () => {
   const [clothesAndAccessories, setClothesAndAccessories] = useState(false);
   const [brandDropdownOpen, setBrandDropdownOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [refreshTrigger, setRefreshTrigger] = useState(false);
 
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const productsResponse = await axios.get("http://localhost:5000/api/products");
+        const productsResponse = await axios.get("http://localhost:5000/api/products", {
+          params: { timestamp: new Date().getTime() },  // Adding a timestamp to avoid caching
+        });
+        
         console.log(productsResponse.data);
-
+  
         const sortedProducts = productsResponse.data.products || [];
         sortedProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         
         setProducts(sortedProducts);
-
+  
         const brandsResponse = await axios.get("http://localhost:5000/api/brands");
-        console.log(brandsResponse.data);
         setBrands(brandsResponse.data.brands || []);
         
         const categoriesResponse = await axios.get("http://localhost:5000/api/categories");
-        console.log(categoriesResponse.data);
         setCategories(categoriesResponse.data || []);
         
-        // Fetch specific categories for Clothes and Accessories
         const clothesCategoriesResponse = await axios.get("http://localhost:5000/api/clothes");
         const accessoriesCategoriesResponse = await axios.get("http://localhost:5000/api/accessories");
-
+  
         setClothesCategories(clothesCategoriesResponse.data || []);
         setAccessoriesCategories(accessoriesCategoriesResponse.data || []);
       } catch (error) {
@@ -54,7 +56,16 @@ const Products = () => {
     };
   
     fetchData();
-  }, []);
+  }, [refreshTrigger]); 
+  const handleAddProduct = async (newProductData) => {
+    try {
+      await axios.post("http://localhost:5000/api/products", newProductData);
+      setRefreshTrigger((prev) => !prev); // Toggle refreshTrigger to re-fetch data
+    } catch (error) {
+      console.error("Error adding product:", error);
+    }
+  };
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {

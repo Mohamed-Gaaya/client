@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar";
 import Header from "../Navbar";
 import axios from "axios";
+import { FaTrashAlt, FaPlusCircle } from "react-icons/fa";
 
 const ModifyProduct = () => {
   const { id } = useParams();
@@ -20,6 +21,23 @@ const ModifyProduct = () => {
       <span>{name}</span>
     </div>
   );
+  const handleSizeChange = (e, index) => {
+    const newSizeList = [...sizeList];
+    newSizeList[index] = e.target.value;
+    setSizeList(newSizeList);
+  };
+  
+  const addSize = () => {
+    if (sizeList.length < 5
+    ) {
+      setSizeList([...sizeList, ""]);
+    }
+  };
+  
+  const removeSize = (index) => {
+    const newSizeList = sizeList.filter((_, i) => i !== index);
+    setSizeList(newSizeList);
+  };
   
   
   
@@ -28,13 +46,15 @@ const ModifyProduct = () => {
     price: "",
     category: "",
     stock: "",
+    size:"",
     brand: "",
     images: [],
     hasPromo: false,
     originalPrice: "",
     promoPrice: "",
     servings: "",
-    description: "", 
+    longDescription: "", 
+    shortDescription:"",
   });
   
   const [newImages, setNewImages] = useState([]);
@@ -44,44 +64,91 @@ const ModifyProduct = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [sizeList, setSizeList] = useState([""]);
+  const [shortDescription, setShortDescription] = useState("");
+  const [longDescription, setlongDescription] = useState("");
+  const [productCategory, setProductCategory] = useState("");
+  const [productSubCategory, setProductSubCategory] = useState("");
+  const [flavourList, setFlavourList] = useState([""]);
+  const handleFlavourChange = (e, index) => {
+    const newFlavourList = [...flavourList];
+    newFlavourList[index] = e.target.value;
+    setFlavourList(newFlavourList);
+  };
+  
+  const addFlavour = () => {
+    if (flavourList.length < 10) {
+      setFlavourList([...flavourList, ""]);
+    }
+  };
+  
+  const removeFlavour = (index) => {
+    const newFlavourList = flavourList.filter((_, i) => i !== index);
+    setFlavourList(newFlavourList);
+  };
+
+  // Size validation - backend requires array and max 5 sizes
+    const validSizes = sizeList.filter(size => size.trim());
+    const newErrors = {};
+    if (validSizes.length === 0) {
+      newErrors.size = "At least one size is required.";
+    }
+    if (validSizes.length > 5) {
+      newErrors.size = "Maximum 5 sizes allowed.";
+    }
 
   // Fetch Product Data
-  useEffect(() => {
-    const fetchProduct = async () => {
-      if (!id) {
-        console.error("No product ID provided");
-        navigate("/admin/products");
-        return;
-      }
-  
-      try {
-        const response = await axios.get(`http://localhost:5000/api/products/${id}`);
-        const product = response.data.product;
-        
-        setProductData({
-          name: product.name || "",
-          price: product.price || "",
-          category: product.category || "",
-          stock: product.stock || "",
-          brand: product.brand?.name || product.brand || "", // Change this line
-          images: product.images || [],
-          hasPromo: product.hasPromo || false,
-          originalPrice: product.originalPrice || "",
-          promoPrice: product.promoPrice || "",
-          servings: product.servings || "",
-          description: product.description || "",
-        });
-        
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching product:", err);
-        alert("Error fetching product details");
-        navigate("/admin/products");
-      }
-    };
-  
-    fetchProduct();
-  }, [id, navigate]);
+  // Fetch Product Data
+useEffect(() => {
+  const fetchProduct = async () => {
+    if (!id) {
+      console.error("No product ID provided");
+      navigate("/admin/products");
+      return;
+    }
+
+    try {
+      const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+      const product = response.data.product;
+      
+      // Log the fetched product data to debug
+      console.log("Fetched product:", product);
+
+      // Set main product data
+      setProductData({
+        name: product.name || "",
+        price: product.price || "",
+        category: product.category || "",
+        stock: product.stock || "",
+        size: product.size || "",
+        brand: product.brand?.name || product.brand || "",
+        images: product.images || [],
+        hasPromo: product.hasPromo || false,
+        originalPrice: product.originalPrice || "",
+        promoPrice: product.promoPrice || "",
+        servings: product.servings || "",
+        shortDescription: product.shortDescription || "",
+        longDescription: product.longDescription || "",
+      });
+
+      // Set separate states
+      setSizeList(product.size || ['']);
+      setFlavourList(product.flavour ? product.flavour.split(',') : ['']);
+      setProductCategory(product.category || '');
+      setProductSubCategory(product.subCategory || '');
+      setShortDescription(product.shortDescription || '');
+      setlongDescription(product.longDescription || '');
+      
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching product:", err);
+      alert("Error fetching product details");
+      navigate("/admin/products");
+    }
+  };
+
+  fetchProduct();
+}, [id, navigate]);
 
   // Fetch Categories and Brands
   useEffect(() => {
@@ -120,7 +187,7 @@ const ModifyProduct = () => {
     if (!productData.name.trim()) newErrors.name = "Product name is required.";
     if (!productData.price || productData.price <= 0) newErrors.price = "Enter a valid price.";
     if (!productData.category) newErrors.category = "Please select a category.";
-    if (!stock || isNaN(stock) || stock < 0) {
+    if (!productData.stock || isNaN(productData.stock) || productData.stock < 0) {
       newErrors.stock = "Valid stock quantity is required.";
     }
     if (!productData.brand.trim()) newErrors.brand = "Brand name is required.";
@@ -149,7 +216,12 @@ const ModifyProduct = () => {
   if (!validateForm()) return;
 
   const formData = new FormData();
-  
+  formData.append('size', sizeList.filter(size => size.trim()).join(','));
+  formData.append('flavour', flavourList.filter(flavour => flavour.trim()).join(','));
+  formData.append('shortDescription', shortDescription);
+  formData.append('longDescription', longDescription);
+  formData.append('subCategory', productSubCategory);
+    
   // Find the complete brand object from the brands array
   const selectedBrand = brands.find(brand => brand.name === productData.brand);
   
@@ -275,6 +347,7 @@ const ModifyProduct = () => {
               <label className="block text-gray-700 font-medium mb-2">Stock Quantity</label>
               <input
                 type="number"
+                name="stock" 
                 value={productData.stock}
                 onChange={handleInputChange}
                 className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.stock ? "border-red-600" : "focus:ring-blue-600"}`}
@@ -290,8 +363,8 @@ const ModifyProduct = () => {
                               <div key={index} className="flex items-center mb-2 space-x-2">
                                 <input
                                   type="text"
-                                  value={productData.size}
-                                  onChange={(e) => handleSizeChange(e, index)}
+                                  value={size}
+                                  onChange={handleInputChange}
                                   className={`w-40 px-4 py-2 border rounded ${errors.size ? "border-red-600" : ""}`}
                                   placeholder={`Size ${index + 1}`}
                                   required
@@ -322,16 +395,18 @@ const ModifyProduct = () => {
                           {errors.size && <p className="text-red-600 text-sm">{errors.size}</p>}
                         </div>
 
-            {/* Category */}
+            {/* Product Category */}
             <div className="mb-4">
               <label className="block text-gray-700 font-medium mb-2">Category</label>
               <select
-                name="category"
                 value={productData.category}
-                onChange={handleInputChange}
-                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
-                  errors.category ? "border-red-600" : "focus:ring-blue-600"
-                }`}
+                onChange={(e) => {
+                  setProductCategory(e.target.value);
+                  // Clear the subcategory when a new category is selected
+                  setProductSubCategory('');
+                }}
+                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.productCategory ? "border-red-600" : "focus:ring-blue-600"}`}
+                required
               >
                 <option value="">Select a Category</option>
                 {categories.map((category) => (
@@ -340,8 +415,43 @@ const ModifyProduct = () => {
                   </option>
                 ))}
               </select>
-              {errors.category && <p className="text-red-600 text-sm">{errors.category}</p>}
+              {errors.productCategory && <p className="text-red-600 text-sm">{errors.productCategory}</p>}
             </div>
+
+            {/* Subcategory (shown if "Clothes" or "Accessories" is selected) */}
+            {(productCategory === "Clothes" || productCategory === "Accessories") && (
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium mb-2">Subcategory</label>
+                <select
+                  value={productSubCategory}
+                  onChange={(e) => setProductSubCategory(e.target.value)}
+                  className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
+                    errors.productSubCategory ? "border-red-600" : "focus:ring-blue-600"
+                  }`}
+                  required
+                >
+                  <option value="">Select a Subcategory</option>
+                  {loadingCategories ? (
+                    <option>Loading...</option>
+                  ) : productCategory === "Clothes" ? (
+                    Clothes.map((clothes) => (
+                      <option key={clothes._id} value={clothes.name}>
+                        {clothes.name}
+                      </option>
+                    ))
+                  ) : (
+                    accessories.map((accessory) => (
+                      <option key={accessory._id} value={accessory.name}>
+                        {accessory.name}
+                      </option>
+                    ))
+                  )}
+                </select>
+                {errors.productSubCategory && (
+                  <p className="text-red-600 text-sm">{errors.productSubCategory}</p>
+                )}
+              </div>
+            )}
 
             {/* Brand */}
             <div className="mb-4">
@@ -424,6 +534,45 @@ const ModifyProduct = () => {
                 </div>
               )}
             </div>
+            {/* Flavour */}
+                          <div className="mb-4">
+                            <label className="block text-gray-700 font-medium mb-2">Flavours</label>
+                            <div className="flex flex-wrap gap-2">
+                              {flavourList.map((flavour, index) => (
+                                <div key={index} className="flex items-center mb-2 space-x-2">
+                                  <input
+                                    type="text"
+                                    value={flavour}
+                                    onChange={(e) => handleFlavourChange(e, index)}
+                                    className={`w-40 px-4 py-2 border rounded ${errors.flavour ? "border-red-600" : ""}`}
+                                    placeholder={`Flavour ${index + 1}`}
+                                    required
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => removeFlavour(index)}
+                                    className="text-red-600 hover:text-red-800 focus:outline-none"
+                                  >
+                                    <FaTrashAlt size={20} /> {/* Trash icon */}
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+            
+                            {/* Add flavour button */}
+                            {flavourList.length < 10 && (
+                              <button
+                                type="button"
+                                onClick={addFlavour}
+                                className="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none flex items-center gap-2"
+                              >
+                                <FaPlusCircle size={18} /> {/* Add icon */}
+                                Add Flavour
+                              </button>
+                            )}
+            
+                            {errors.flavour && <p className="text-red-600 text-sm">{errors.flavour}</p>}
+                          </div>
 
             
 
@@ -442,21 +591,30 @@ const ModifyProduct = () => {
               {errors.servings && <p className="text-red-600 text-sm">{errors.servings}</p>}
             </div>
 
-            {/* Description */}
+            {/* Short Description */}
             <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">Description</label>
+              <label className="block text-gray-700 font-medium mb-2">Short Description</label>
               <textarea
-                name="description"
-                value={productData.description}
-                onChange={handleInputChange}
-                rows="4"
-                className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${
-                  errors.description ? "border-red-600" : "focus:ring-blue-600"
-                }`}
+                value={productData.shortDescription}
+                onChange={(e) => setShortDescription(e.target.value)}
+                rows="2"
+                className={`w-full px-4 py-2 border rounded ${errors.shortDescription ? "border-red-600" : ""}`}
+                required
               />
-              {errors.description && (
-                <p className="text-red-600 text-sm">{errors.description}</p>
-              )}
+              {errors.shortDescription && <p className="text-red-600 text-sm">{errors.shortDescription}</p>}
+            </div>
+
+            {/* Long Description */}
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">Long Description</label>
+              <textarea
+                value={productData.longDescription}
+                onChange={(e) => setlongDescription(e.target.value)}
+                rows="6"
+                className={`w-full px-4 py-2 border rounded ${errors.longDescription ? "border-red-600" : ""}`}
+                required
+              />
+              {errors.longDescription && <p className="text-red-600 text-sm">{errors.longDescription}</p>}
             </div>
 
             {/* Submit Button */}
