@@ -1,8 +1,25 @@
 import React, { useState } from "react";
 import logo from "../assets/images/logo.jpg"; // Adjust the path to your logo file
 import { StyledWrapper } from "./style";
+import { useTranslation } from "react-i18next";
 
 function Header() {
+  const { t, i18n } = useTranslation();
+  const switchLanguage = () => {
+    const languageOrder = ["en", "fr", "ar"];
+    const currentIndex = languageOrder.indexOf(i18n.language);
+    const nextIndex = (currentIndex + 1) % languageOrder.length;
+    const nextLanguage = languageOrder[nextIndex];
+    i18n.changeLanguage(nextLanguage);
+  };
+  const getLanguageName = (code) => {
+    const names = {
+      en: t("English"),
+      fr: t("Français"),
+      ar: t("العربية"),
+    };
+    return names[code] || code;
+  };
   const [isOpen, setIsOpen] = useState(false);
   const categories = [
     {
@@ -272,7 +289,20 @@ function Header() {
         </div>
 
         {/* Icons: Profile, Favorites, Cart */}
-        <div className="flex items-center space-x-4">
+        <div
+          className="flex items-center space-x-4 "
+          dir={i18n.language === "ar" ? "rtl" : "ltr"}
+        >
+          <button
+            onClick={switchLanguage}
+            className="text-gray-700 hover:text-blue-600 flex items-center"
+            title={t("common.switchLanguage")}
+          >
+            <span className="material-symbols-outlined text-3xl">language</span>
+            <span className="ml-1 text-sm">
+              {getLanguageName(i18n.language)}
+            </span>
+          </button>
           {/* Profile Icon */}
           <a
             href="/profile"

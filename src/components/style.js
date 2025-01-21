@@ -134,7 +134,7 @@ export const StyledCardWrapper = styled.div`
     font-size: small;
     font-weight: 500;
     color: #fff;
-  } /*# sourceMappingURL=index.css.map */
+  }
 `;
 
 export const StyledCardBestSellerWrapper = styled.div`
