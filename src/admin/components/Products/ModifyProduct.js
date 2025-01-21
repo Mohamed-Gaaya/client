@@ -48,6 +48,7 @@ const ModifyProduct = () => {
     stock: "",
     size:"",
     brand: "",
+    brandId: "",
     images: [],
     hasPromo: false,
     originalPrice: "",
@@ -98,61 +99,69 @@ const ModifyProduct = () => {
     }
 
   // Fetch Product Data
-// Update the useEffect fetch logic
-useEffect(() => {
-  const fetchProduct = async () => {
-    if (!id) {
-      console.error("No product ID provided");
-      navigate("/admin/products");
-      return;
+  useEffect(() => {
+    const fetchProduct = async () => {
+      if (!id) {
+        console.error("No product ID provided");
+        navigate("/admin/products");
+        return;
+      }
+
+      try {
+        const response = await axios.get(`http://localhost:5000/api/products/${id}`);
+        const product = response.data.product;
+        
+        console.log("Fetched product:", product);
+
+        // Find the matching brand from the brands list
+        const matchingBrand = brands.find(b => b.name === product.brand);
+        
+        // Set all product data at once
+        setProductData({
+          name: product.name || "",
+          price: product.price || "",
+          category: product.category || "",
+          stock: product.stock || "",
+          brand: product.brand || "", // Keep the brand name
+          brandId: matchingBrand?._id || "", // Store the brand ID
+          images: product.images || [],
+          hasPromo: product.hasPromo || false,
+          originalPrice: product.originalPrice || "",
+          promoPrice: product.promoPrice || "",
+          servings: product.servings || "",
+          shortDescription: product.shortDescription || "",
+          longDescription: product.longdescription || "",
+        });
+
+        // Set other state values
+        setSizeList(product.sizes || ['']);
+        setFlavourList(product.flavours || ['']);
+        setShortDescription(product.shortDescription || '');
+        setlongDescription(product.longdescription || '');
+        setProductCategory(product.category || '');
+        setProductSubCategory(product.subCategory || '');
+        
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching product:", err);
+        alert("Error fetching product details");
+        navigate("/admin/products");
+      }
+    };
+
+    if (brands.length > 0) { // Only fetch product after brands are loaded
+      fetchProduct();
     }
-
-    try {
-      const response = await axios.get(`http://localhost:5000/api/products/${id}`);
-      const product = response.data.product;
-      
-      console.log("Fetched product:", product);
-
-      // Set main product data
-      setProductData({
-        name: product.name || "",
-        price: product.price || "",
-        category: product.category || "",
-        stock: product.stock || "",
-        brand: product.brand || "",
-        images: product.images || [],
-        hasPromo: product.hasPromo || false,
-        originalPrice: product.originalPrice || "",
-        promoPrice: product.promoPrice || "",
-        servings: product.servings || "",
-        shortDescription: product.shortDescription || "",
-        longDescription: product.longdescription || "", // Note: backend uses 'longdescription'
-      });
-
-      // Handle sizes - use the 'sizes' array from backend
-      setSizeList(product.sizes || ['']);
-      
-      // Handle flavours - use the 'flavours' array from backend
-      setFlavourList(product.flavours || ['']);
-      
-      // Set descriptions
-      setShortDescription(product.shortDescription || '');
-      setlongDescription(product.longdescription || ''); // Note: backend uses 'longdescription'
-      
-      // Set category and subcategory
-      setProductCategory(product.category || '');
-      setProductSubCategory(product.subCategory || '');
-      
-      setLoading(false);
-    } catch (err) {
-      console.error("Error fetching product:", err);
-      alert("Error fetching product details");
-      navigate("/admin/products");
-    }
-  };
-
-  fetchProduct();
-}, [id, navigate]);
+  }, [id, navigate, brands]);
+// Modified brand selection handler
+const handleBrandSelect = (brand) => {
+  setProductData(prev => ({
+    ...prev,
+    brand: brand.name,
+    brandId: brand._id
+  }));
+  setDropdownOpen(false);
+};
 
   // Fetch Categories and Brands
   useEffect(() => {
@@ -177,7 +186,10 @@ useEffect(() => {
     const { name, value, type, checked } = e.target;
     setProductData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
+      // Preserve brand and brandId when other fields are updated
+      brand: prev.brand,
+      brandId: prev.brandId
     }));
   };
 
@@ -220,43 +232,54 @@ useEffect(() => {
   
     const formData = new FormData();
     
-    // Use the correct property names for backend
+    // Append all fields to formData with correct property names
+    formData.append('name', productData.name);
+    formData.append('price', productData.price);
+    formData.append('category', productData.category);
+    formData.append('stock', productData.stock);
     formData.append('sizes', JSON.stringify(sizeList.filter(size => size.trim())));
     formData.append('flavours', JSON.stringify(flavourList.filter(flavour => flavour.trim())));
     formData.append('shortDescription', shortDescription);
-    formData.append('longdescription', longDescription); // Note: backend uses 'longdescription'
-    formData.append('subCategory', productSubCategory);
-      
-    // Find the complete brand object from the brands array
-    const selectedBrand = brands.find(brand => brand.name === productData.brand);
+    formData.append('longdescription', longDescription);
     
-    // Append all product data except images
-    Object.keys(productData).forEach(key => {
-      if (key === 'brand') {
-        formData.append('brand', selectedBrand?._id || productData.brand);
-      } else if (key !== 'images') {
-        formData.append(key, productData[key]);
-      }
-    });
+    // Handle promotional fields
+    if (productData.hasPromo) {
+      formData.append('hasPromo', productData.hasPromo);
+      formData.append('originalPrice', productData.originalPrice);
+      formData.append('promoPrice', productData.promoPrice);
+    }
+  
+    // Handle brand - send the brand name instead of ID
+    formData.append('brand', productData.brand);
+  
+    // Handle servings
+    if (productData.servings) {
+      formData.append('servings', productData.servings);
+    }
   
     // Append new images if any
     newImages.forEach(image => {
-      formData.append("image", image);
+      formData.append('images', image);
     });
   
     try {
-      const response = await axios.put(`http://localhost:5000/api/products/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.put(
+        `http://localhost:5000/api/products/${id}`, 
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
   
       if (response.status === 200) {
-        navigate("/admin/products");
+        navigate('/admin/products');
       }
     } catch (err) {
-      console.error("Error updating product:", err);
-      alert(err.response?.data?.message || "Error updating product");
+      console.error('Error updating product:', err);
+      const errorMessage = err.response?.data?.error || err.response?.data?.details || 'Error updating product';
+      alert(errorMessage);
     }
   };
 
@@ -460,49 +483,41 @@ useEffect(() => {
 
             {/* Brand */}
             <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-2">Brand</label>
-            <div className="relative">
-            {/* Selected Brand Display */}
-            <div
-              className="border rounded px-4 py-2 bg-white cursor-pointer flex items-center justify-between"
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            >
-              {productData.brand ? (
+      <label className="block text-gray-700 font-medium mb-2">Brand</label>
+      <div className="relative">
+        <div
+          className="border rounded px-4 py-2 bg-white cursor-pointer flex items-center justify-between"
+          onClick={() => setDropdownOpen(!dropdownOpen)}
+        >
+          {productData.brand ? (
+            <BrandDisplay
+              name={productData.brand}
+              logo={`http://localhost:5000/uploads/${brands.find(brand => brand.name === productData.brand)?.logo}`}
+            />
+          ) : (
+            <span className="text-gray-400">Select a Brand</span>
+          )}
+          <span className="ml-2">▼</span>
+        </div>
+        {dropdownOpen && (
+          <ul className="absolute z-10 mt-2 bg-white border rounded shadow-lg max-h-60 overflow-auto w-full">
+            {brands.map((brand) => (
+              <li
+                key={brand._id}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                onClick={() => handleBrandSelect(brand)}
+              >
                 <BrandDisplay
-                  name={productData.brand}
-                  logo={`http://localhost:5000/uploads/${brands.find(brand => brand.name === productData.brand)?.logo}`}
+                  name={brand.name}
+                  logo={`http://localhost:5000/uploads/${brand.logo}`}
                 />
-              ) : (
-                <span className="text-gray-400">Select a Brand</span>
-              )}
-              <span className="ml-2">▼</span>
-            </div>
-              {dropdownOpen && (
-                <ul className="absolute z-10 mt-2 bg-white border rounded shadow-lg max-h-60 overflow-auto w-full">
-                  {brands.map((brand) => (
-                    <li
-                      key={brand._id}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
-                        setProductData((prev) => ({
-                          ...prev,
-                          brand: brand.name,
-                          brandLogo: brand.logo,
-                        }));
-                        setDropdownOpen(false);
-                      }}
-                    >
-                      <BrandDisplay
-                        name={brand.name}
-                        logo={`http://localhost:5000/uploads/${brand.logo}`}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-            {errors.brand && <p className="text-red-600 text-sm">{errors.brand}</p>}
-          </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      {errors.brand && <p className="text-red-600 text-sm">{errors.brand}</p>}
+    </div>
 
 
             {/* Images */}
