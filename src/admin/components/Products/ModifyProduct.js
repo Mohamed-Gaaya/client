@@ -675,8 +675,9 @@ const handleBrandSelect = (brand) => {
             <div className="mb-4">
               <label className="block text-gray-700 font-medium mb-2">Short Description</label>
               <textarea
+                name="shortDescription"
                 value={productData.shortDescription}
-                onChange={(e) => setShortDescription(e.target.value)}
+                onChange={handleInputChange}
                 rows="2"
                 className={`w-full px-4 py-2 border rounded ${errors.shortDescription ? "border-red-600" : ""}`}
                 required
@@ -688,14 +689,14 @@ const handleBrandSelect = (brand) => {
             <div className="mb-4">
               <label className="block text-gray-700 font-medium mb-2">Long Description</label>
               <textarea
+                name="longDescription"
                 value={productData.longDescription}
-                onChange={(e) => setlongDescription(e.target.value)}
+                onChange={handleInputChange}
                 rows="6"
                 className={`w-full px-4 py-2 border rounded ${errors.longDescription ? "border-red-600" : ""}`}
               />
               {errors.longDescription && <p className="text-red-600 text-sm">{errors.longDescription}</p>}
             </div>
-
             {/* Submit Button */}
             <div className="flex justify-center">
               <button
