@@ -549,7 +549,6 @@ const AddProduct = () => {
                         onChange={(e) => handleFlavourChange(e, index)}
                         className={`w-40 px-4 py-2 border rounded ${errors.flavour ? "border-red-600" : ""}`}
                         placeholder={`Flavour ${index + 1}`}
-                        required
                       />
                       <button
                         type="button"
@@ -585,7 +584,6 @@ const AddProduct = () => {
                 value={servings}
                 onChange={(e) => setServings(e.target.value)}
                 className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.servings ? "border-red-600" : "focus:ring-blue-600"}`}
-                required
               />
               {errors.servings && <p className="text-red-600 text-sm">{errors.servings}</p>}
             </div>

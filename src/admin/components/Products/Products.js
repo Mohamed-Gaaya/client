@@ -27,9 +27,14 @@ const Products = () => {
     const fetchData = async () => {
       try {
         const productsResponse = await axios.get("http://localhost:5000/api/products", {
-          params: { timestamp: new Date().getTime() },  // Adding a timestamp to avoid caching
+          params: { 
+            timestamp: new Date().getTime(),
+            limit: 1000,  // Move this inside params object
+            sort: "createdAt",  // Add sorting parameter
+            sortOrder: "asc"   // Sort in descending order
+          }
         });
-        
+        console.log("Total products received:", productsResponse.data.products.length);
         console.log(productsResponse.data);
   
         const sortedProducts = productsResponse.data.products || [];
@@ -208,27 +213,8 @@ const Products = () => {
               )}
             </select>
 
-            {clothesAndAccessories && selectedCategory && (
-              <select
-                className="border rounded px-4 py-2"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-              >
-                <option value="All">Select Category</option>
-                {selectedCategory === "Clothes" &&
-                  clothesCategories.map((category) => (
-                    <option key={category._id} value={category.name}>
-                      {category.name}
-                    </option>
-                  ))}
-                {selectedCategory === "Accessories" &&
-                  accessoriesCategories.map((category) => (
-                    <option key={category._id} value={category.name}>
-                      {category.name}
-                    </option>
-                  ))}
-              </select>
-            )}
+            
+            
 
             <label className="flex items-center space-x-2">
               <input
