@@ -122,92 +122,86 @@ const AddProduct = () => {
     setProductImages(files);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Update the handleSubmit function in AddProduct.js
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (!validateForm()) {
-      console.log("Validation failed", errors);
-      return;
-    }
+  if (!validateForm()) {
+    console.log("Validation failed", errors);
+    return;
+  }
 
-    const formData = new FormData();
-    
-    // Required fields - these must match the backend expectations
-    formData.append("name", productName.trim());
-    formData.append("price", productPrice);
-    formData.append("category", productCategory);
-    formData.append("brand", productBrand);
-    formData.append("shortDescription", shortDescription.trim());
-    formData.append("stock", stock);
-    
-     // Convert sizes array to JSON string before sending
-      const validSizes = sizeList.filter(size => size.trim());
-      formData.append("sizes", JSON.stringify(validSizes));
-    
-    // Optional fields
-    if (longDescription) {
-      formData.append("longdescription", longDescription.trim()); // Note: matches backend casing
-    }
-    
-    if (flavourList.length > 0) {
-      formData.append("flavours", JSON.stringify(flavourList.filter(flavour => flavour.trim())));
-    }
+  const formData = new FormData();
+  
+  // Required fields
+  formData.append("name", productName.trim());
+  formData.append("price", productPrice);
+  formData.append("category", productCategory);
+  formData.append("brand", productBrand);
+  formData.append("shortDescription", shortDescription.trim());
+  formData.append("stock", stock);
+  
+  // Add subcategory if it exists
+  if (productSubCategory) {
+    formData.append("subCategory", productSubCategory);
+  }
+  
+  // Add long description if it exists
+  if (longDescription) {
+    formData.append("longDescription", longDescription.trim()); // Changed from longdescription
+  }
+  
+  // Convert sizes array to JSON string before sending
+  const validSizes = sizeList.filter(size => size.trim());
+  formData.append("sizes", JSON.stringify(validSizes));
+  
+  // Optional fields
+  if (flavourList.length > 0) {
+    formData.append("flavours", JSON.stringify(flavourList.filter(flavour => flavour.trim())));
+  }
 
-    if (servings) {
-      formData.append("servings", servings);
-    }
-    
-    // Promo information - match backend expectations
-    formData.append("hasPromo", String(hasPromo));
-    if (hasPromo) {
-      formData.append("originalPrice", originalPrice);
-      formData.append("promoPrice", promoPrice);
-    }
+  if (servings) {
+    formData.append("servings", servings);
+  }
+  
+  // Promo information
+  formData.append("hasPromo", String(hasPromo));
+  if (hasPromo) {
+    formData.append("originalPrice", originalPrice);
+    formData.append("promoPrice", promoPrice);
+  }
 
-    // Subcategory if applicable
-    if (productSubCategory) {
-      formData.append("subCategory", productSubCategory);
-    }
+  // Handle image uploads
+  if (productImages && productImages.length > 0) {
+    productImages.forEach((file) => {
+      formData.append("image", file);
+    });
+  }
 
-    // Handle image uploads - backend expects "image", not "productImages" or "images"
-    if (productImages && productImages.length > 0) {
-      productImages.forEach((file) => {
-        formData.append("image", file);
-      });
-    }
-
-    // Log form data for debugging
-    console.log("Sending form data:");
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-
-    try {
-      const response = await axios.post("http://localhost:5000/api/products/add", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      });
-
-      if (response.status === 201) { // Backend returns 201 for successful creation
-        navigate("/admin/products");
+  try {
+    const response = await axios.post("http://localhost:5000/api/products/add", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data"
       }
-    } catch (err) {
-      console.error("Error details:", {
-        message: err.message,
-        response: err.response?.data,
-        status: err.response?.status
-      });
-      
-      if (err.response?.data?.error) {
-        alert(`Error: ${err.response.data.error}`);
-      } else if (err.response?.data?.details) {
-        alert(`Error: ${err.response.data.details}`);
-      } else {
-        alert("Error adding product. Please try again.");
-      }
+    });
+
+    if (response.status === 201) {
+      navigate("/admin/products");
     }
-  };
+  } catch (err) {
+    console.error("Error details:", {
+      message: err.message,
+      response: err.response?.data,
+      status: err.response?.status
+    });
+    
+    if (err.response?.data?.error) {
+      alert(`Error: ${err.response.data.error}`);
+    } else {
+      alert("Error adding product. Please try again.");
+    }
+  }
+};
 
   const validateForm = () => {
     const newErrors = {};

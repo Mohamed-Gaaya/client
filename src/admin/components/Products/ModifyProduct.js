@@ -262,9 +262,7 @@ const handleBrandSelect = (brand) => {
         newErrors.promoPrice = "Promo price must be less than the original price.";
       }
     }
-    if (!productData.servings || productData.servings <= 0) {
-      newErrors.servings = "Enter valid servings.";
-    }
+    
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -276,42 +274,31 @@ const handleBrandSelect = (brand) => {
   
     const formData = new FormData();
     
-    // Append all fields to formData with correct property names
-    formData.append('name', productData.name);
-    formData.append('price', productData.price);
-    formData.append('category', productData.category);
-    formData.append('stock', productData.stock);
-    formData.append('sizes', JSON.stringify(sizeList.filter(size => size.trim())));
-    formData.append('flavours', JSON.stringify(flavourList.filter(flavour => flavour.trim())));
-    formData.append('shortDescription', shortDescription);
-    formData.append('longdescription', longDescription);
-
-    // Add subcategory if the category is Clothes or Accessories
+    // Log what we're sending
+    const dataToSend = {
+      name: productData.name,
+      price: productData.price,
+      category: productData.category,
+      stock: productData.stock,
+      sizes: JSON.stringify(sizeList.filter(size => size.trim())),
+      flavours: JSON.stringify(flavourList.filter(flavour => flavour.trim())),
+      shortDescription: productData.shortDescription,
+      longDescription: productData.longDescription
+    };
+    
+    console.log('Preparing to send data:', dataToSend);
     if (productData.category === "Clothes" || productData.category === "Accessories") {
+      console.log("Adding subCategory:", productSubCategory); // Debug log
       formData.append('subCategory', productSubCategory);
     }
-    
-    // Handle promotional fields
-    if (productData.hasPromo) {
-      formData.append('hasPromo', productData.hasPromo);
-      formData.append('originalPrice', productData.originalPrice);
-      formData.append('promoPrice', productData.promoPrice);
-    }
   
-    // Handle brand - send the brand name instead of ID
-    formData.append('brand', productData.brand);
-  
-    // Handle servings
-    if (productData.servings) {
-      formData.append('servings', productData.servings);
-    }
-  
-    // Append new images if any
-    newImages.forEach(image => {
-      formData.append('images', image);
+    // Append to formData
+    Object.entries(dataToSend).forEach(([key, value]) => {
+      formData.append(key, value);
     });
   
     try {
+      console.log('Sending request to update product...');
       const response = await axios.put(
         `http://localhost:5000/api/products/${id}`, 
         formData,
@@ -322,13 +309,22 @@ const handleBrandSelect = (brand) => {
         }
       );
   
+      console.log('Update response:', response);
+  
       if (response.status === 200) {
         navigate('/admin/products');
       }
     } catch (err) {
-      console.error('Error updating product:', err);
-      const errorMessage = err.response?.data?.error || err.response?.data?.details || 'Error updating product';
-      alert(errorMessage);
+      console.error('Detailed error information:', {
+        error: err,
+        response: err.response?.data,
+        status: err.response?.status,
+        formData: Object.fromEntries(formData.entries()),
+        subCategory: productSubCategory
+      });
+      
+      const errorMessage = err.response?.data?.details || err.response?.data?.error || err.message;
+      alert(`Failed to update product: ${errorMessage}`);
     }
   };
 
