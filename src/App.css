@@ -44,4 +44,30 @@
   margin: 2rem auto;
   padding: 0 1rem;
 }
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+  display: inline-flex;
+  white-space: nowrap;
+}
+/* Add these to ensure smooth scrolling */
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap;
+}
+/* Add hover pause effect */
+.animate-scroll-left:hover {
+  animation-play-state: paused;
+}
 

@@ -1,0 +1,78 @@
+.brand-section {
+  padding: 2rem 0;
+  background-color: #f9f9f9;
+  text-align: center;
+  position: relative;
+}
+
+.brand-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.brand-loading,
+.brand-error,
+.brand-empty {
+  font-size: 1rem;
+  color: #555;
+}
+
+.brand-scroll-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.scroll-arrow {
+  background-color: #70c6e5;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  transition: all 0.5s ease;
+}
+
+.scroll-arrow:hover {
+  background-color: #ae4eb9;
+  transform: scale(1.1);
+}
+
+.left-arrow {
+  margin-right: -25px;
+}
+
+.right-arrow {
+  margin-left: -25px;
+}
+
+.brand-scroll-container {
+  overflow: hidden;
+  display: flex;
+  scroll-behavior: smooth;
+  width: 90%;
+  margin: auto;
+}
+
+.brand-item {
+  flex-shrink: 0;
+  width: 150px;
+  margin: 0 1rem;
+  text-align: center;
+}
+
+.brand-logo {
+  height: 150px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.brand-logo:hover {
+  transform: scale(1.1);
+  cursor: pointer; /* Makes the item appear clickable */
+  transform: scale(1.1); 
+}

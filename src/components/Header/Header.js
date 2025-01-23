@@ -1,7 +1,17 @@
-import React, { useState } from "react";
-import logo from "../assets/images/logo.jpg"; // Adjust the path to your logo file
-import { StyledWrapper } from "./style";
+import React, { useState, useEffect } from "react";
+import logo from "../../assets/images/logo.jpg";
+import { StyledWrapper } from "../../pages/HomePage/style";
 import { useTranslation } from "react-i18next";
+import Categories from "./Categories";
+import BrandHeaderDropdown from "./BrandHeaderDropdown"; 
+import Packs from "./Packs";
+import ClothingAccessories from "./ClothingAccessories";
+import Contact from "./Contact";
+import Profile from "./Profile";
+import Favourites from "./Favourites";
+import Cart from "./Cart";
+import LanguageSwitcher from "./LanguageSwitcher";
+import SearchBar from "./SearchBar";
 
 function Header() {
   const { t, i18n } = useTranslation();
@@ -334,58 +344,15 @@ function Header() {
 
       {/* Bottom Section */}
       <div className="bg-white-100 py-2">
-        <nav
-          className="mx-auto flex max-w-6xl items-center justify-between p-6 lg:px-6"
-          aria-label="Global"
-        >
+          <nav className="mx-auto flex max-w-6xl items-center justify-between p-6 lg:px-6" aria-label="Global">
           {/*-------------------------------- WEB INTERFACE -------------------------------- */}
           <div className="hidden sm:block">
-            <div className="flex lg:px-8 items-center justify-between space-x-6">
-              <a
-                href="/"
-                className="text-gray-700 hover:text-blue-600 transition text-xl font-bold"
-              >
-                HOME
-              </a>
-              <div className="relative group">
-                <a
-                  href="/categories"
-                  className="text-gray-700 hover:text-blue-600 transition text-xl font-bold"
-                >
-                  CATEGORIES
+              <div className="flex lg:px-8 items-center justify-between space-x-6">
+                <a href="/" className="text-gray-700 hover:text-blue-600 transition text-xl font-bold">
+                  HOME
                 </a>
-                <div className="absolute hidden group-hover:flex flex-col bg-white shadow-lg top-full left-0 w-[80vw] px-6 py-4">
-                  <div className="grid grid-cols-3 gap-4 max-w-screen-lg mx-auto">
-                    {categories.map((category, index) => (
-                      <div key={index} className="mb-2">
-                        <h3 className="font-semibold text-gray-700 mb-2">
-                          {category.label}
-                        </h3>
-                        <ul className="space-y-1">
-                          {category.subcategories.map((sub, subIndex) => (
-                            <li key={subIndex}>
-                              <a
-                                href={`/shop/${sub
-                                  .toLowerCase()
-                                  .replace(/\s+/g, "-")}`}
-                                className="block text-sm text-gray-700 hover:bg-blue-100 px-2 py-1 rounded"
-                              >
-                                {sub}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <a
-                href="/brands"
-                className="text-gray-700 hover:text-blue-600 transition text-xl font-bold"
-              >
-                BRANDS
-              </a>
+                <Categories  />
+                <BrandHeaderDropdown />
               <a
                 href="/packs"
                 className="text-gray-700 hover:text-blue-600 transition text-xl font-bold"

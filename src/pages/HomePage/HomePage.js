@@ -1,23 +1,48 @@
 import React, { useState, useEffect } from "react";
-import bg1 from "../assets/images/bg1.jpg";
-import bg2 from "../assets/images/bg5.jpg";
-import bg3 from "../assets/images/bg3.jpg";
-import bg4 from "../assets/images/bg2.jpg";
-import { FooterPage } from "../components/FooterPage";
+import bg1 from "../../assets/images/bg1.jpg";
+import bg2 from "../../assets/images/bg5.jpg";
+import bg3 from "../../assets/images/bg3.jpg";
+import bg4 from "../../assets/images/bg2.jpg";
+import { FooterPage } from "../../components/FooterPage";
+import BrandsSection from "./BrandsSection"; 
+import ScrollableHero from "./ScrollableHero";
 import {
   StyledCardBestSellerWrapper,
   StyledCardWrapper,
-} from "../components/style";
+} from "./style";
 
 const images = [bg1, bg2, bg3, bg4];
 
 function HomePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [brands, setBrands] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => handleNextClick(), 5000);
     return () => clearInterval(interval);
   }, [currentIndex]);
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/brands');
+        if (!response.ok) {
+          throw new Error('Failed to fetch brands');
+        }
+        const data = await response.json();
+        setBrands(data.brands);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching brands:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBrands();
+  }, []);
 
   const handlePrevClick = () => {
     setCurrentIndex((prevIndex) =>
@@ -40,91 +65,17 @@ function HomePage() {
         <p>🚚 Free Shipping on Orders Over $50! Limited Time Only! 🚀</p>
       </div>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div
-          className="flex transition-transform duration-500 ease-in-out"
-          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-        >
-          {images.map((image, index) => (
-            <div
-              key={index}
-              className="min-w-full h-screen relative bg-cover bg-center"
-              style={{ backgroundImage: `url(${image})` }}
-            >
-              <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-white text-center p-4">
-                <h1 className="text-4xl md:text-6xl font-bold mb-4">
-                  Welcome to Our Store
-                </h1>
-                <p className="text-lg md:text-2xl mb-6">
-                  Discover amazing deals and exclusive products!
-                </p>
-                <a
-                  href="/shop"
-                  className="px-6 py-3 bg-customBlue hover:bg-customPink rounded text-white text-lg"
-                >
-                  Shop Now
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
+      <ScrollableHero images={images} />
 
-        {/* Arrows */}
-        <button
-          className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 p-2 rounded-full hover:bg-gray-900"
-          onClick={handlePrevClick}
-        >
-          &#10094;
-        </button>
-        <button
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-gray-700 bg-opacity-50 p-2 rounded-full hover:bg-gray-900"
-          onClick={handleNextClick}
-        >
-          &#10095;
-        </button>
+      <BrandsSection brands={brands} loading={loading} error={error} />
 
-        {/* Dots */}
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-          {images.map((_, index) => (
-            <button
-              key={index}
-              className={`w-3 h-3 rounded-full ${
-                index === currentIndex
-                  ? "bg-white"
-                  : "bg-gray-500 hover:bg-gray-300"
-              }`}
-              onClick={() => handleDotClick(index)}
-            ></button>
-          ))}
-        </div>
-      </section>
-
-      {/* Brand Section */}
-      <section className="py-12 bg-gray-50">
-        <h2 className="text-3xl font-bold text-center mb-8">
-          Trusted by Top Brands
-        </h2>
-        <div className="flex justify-center gap-8 flex-wrap px-4">
-          {["brand1.png", "brand2.png", "brand3.png", "brand4.png"].map(
-            (brand, index) => (
-              <img
-                key={index}
-                src={`/assets/images/${brand}`}
-                alt={`Brand ${index + 1}`}
-                className="h-16 md:h-20 object-contain"
-              />
-            )
-          )}
-        </div>
-      </section>
       {/* Featured Products */}
       <section className="py-12 bg-gray-50">
         <h2 className="text-3xl font-bold text-center mb-8">Best Sellers</h2>
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4">
           {[1, 2, 3, 4].map((product) => (
-            <StyledCardWrapper>
-              <div className="card" key={product}>
+            <StyledCardWrapper key={product}>
+              <div className="card">
                 <div className="img">
                   <div className="save">
                     <svg
@@ -172,9 +123,9 @@ function HomePage() {
                 <div className="text">
                   <p className="h3">Product {product}</p>
                   <p className="p">$29.99</p>
-                  <button class="relative inline-flex items-center justify-center px-8 py-2.5 overflow-hidden tracking-tighter text-white bg-customBlue rounded-md group">
-                    <span class="absolute w-0 h-0 transition-all duration-200 ease-out bg-customPink rounded-full group-hover:w-56 group-hover:h-56"></span>
-                    <span class="relative text-base font-semibold">
+                  <button className="relative inline-flex items-center justify-center px-8 py-2.5 overflow-hidden tracking-tighter text-white bg-customBlue rounded-md group">
+                    <span className="absolute w-0 h-0 transition-all duration-200 ease-out bg-customPink rounded-full group-hover:w-56 group-hover:h-56"></span>
+                    <span className="relative text-base font-semibold">
                       View Details
                     </span>
                   </button>
@@ -184,6 +135,7 @@ function HomePage() {
           ))}
         </div>
       </section>
+
       {/* Testimonials */}
       <section className="py-12 bg-white">
         <h2 className="text-3xl font-bold text-center mb-8">
@@ -227,14 +179,13 @@ function HomePage() {
           <StyledCardBestSellerWrapper>
             <div className="card">
               <div className="card-details">
-                <div className="w-52 h-40  rounded-2xl">
+                <div className="w-52 h-40 rounded-2xl">
                   <img
-                    className="w-52 h-40  rounded-2xl"
+                    className="w-52 h-40 rounded-2xl"
                     src={bg1}
                     alt="Free Shipping"
                   />
                 </div>
-                <div className=""></div>
                 <p className="text-title">Free Shipping</p>
                 <p className="text-body">On orders over $50.</p>
               </div>
@@ -244,32 +195,29 @@ function HomePage() {
           <StyledCardBestSellerWrapper>
             <div className="card">
               <div className="card-details">
-                <div className="w-52 h-40  rounded-2xl">
+                <div className="w-52 h-40 rounded-2xl">
                   <img
-                    className="w-52 h-40  rounded-2xl"
+                    className="w-52 h-40 rounded-2xl"
                     src={bg2}
                     alt="Top Quality"
                   />
                 </div>
-                <div className=""></div>
                 <p className="text-title">Top Quality</p>
                 <p className="text-body">Best products guaranteed.</p>
               </div>
               <button className="card-button">Shop Now</button>
             </div>
           </StyledCardBestSellerWrapper>
-
           <StyledCardBestSellerWrapper>
             <div className="card">
               <div className="card-details">
-                <div className="w-52 h-40  rounded-2xl">
+                <div className="w-52 h-40 rounded-2xl">
                   <img
-                    className="w-52 h-40  rounded-2xl"
+                    className="w-52 h-40 rounded-2xl"
                     src={bg3}
                     alt="24/7 Support"
                   />
                 </div>
-                <div className=""></div>
                 <p className="text-title">24/7 Support</p>
                 <p className="text-body">Always here to help.</p>
               </div>

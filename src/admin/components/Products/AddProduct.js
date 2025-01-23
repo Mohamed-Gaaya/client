@@ -401,7 +401,9 @@ const handleSubmit = async (e) => {
                 className={`w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 ${errors.productCategory ? "border-red-600" : "focus:ring-blue-600"}`}
                 required
               >
-                <option value="">Select a Category</option>
+                <option value="">Select a Category</option>   
+                <option value="Clothes">Clothes</option>
+                  <option value="Accessories">Accessories</option>          
                 {categories.map((category) => (
                   <option key={category._id} value={category.name}>
                     {category.name}
