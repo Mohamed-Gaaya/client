@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import ProductCard from "./ProductCard";
 
 const CategoryProductsPage = () => {
   const { categoryName } = useParams();
@@ -43,34 +44,15 @@ const CategoryProductsPage = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <div 
+            <ProductCard 
               key={product._id} 
-              className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 flex flex-col h-full"
-            >
-              <div className="relative pt-[100%]">
-                <img
-                  src={`http://localhost:5000${product.images[0]}`}
-                  alt={product.name}
-                  className="absolute top-0 left-0 w-full h-full object-cover rounded-t-lg"
-                />
-              </div>
-              
-              <div className="p-4 flex-grow">
-                <h3 className="font-semibold text-lg mb-2 line-clamp-2">{product.name}</h3>
-                <div className="flex justify-between items-center mt-2">
-                  <span className="bg-gray-100 text-gray-800 text-sm px-2 py-1 rounded">
-                    {product.brand}
-                  </span>
-                  <span className="font-bold text-lg">${product.price.toFixed(2)}</span>
-                </div>
-              </div>
-              
-              <div className="p-4 pt-0">
-                <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded transition-colors duration-200">
-                  Add to Cart
-                </button>
-              </div>
-            </div>
+              product={{
+                name: product.name, 
+                price: product.price,
+                image: `http://localhost:5000${product.images[0]}`,
+                brand: product.brand
+              }} 
+            />
           ))}
         </div>
       )}
