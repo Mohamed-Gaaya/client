@@ -5,65 +5,36 @@ import { useTranslation } from "react-i18next";
 import Categories from "./Categories";
 import BrandHeaderDropdown from "./BrandHeaderDropdown"; 
 import ClothingAccessories from "./ClothingAccessories";
-import SearchBar from "./SearchBar";  // Import SearchBar component
+import SearchBar from "./SearchBar";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 function Header() {
   const { t, i18n } = useTranslation();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  
-  const switchLanguage = () => {
-    const languageOrder = ["en", "fr", "ar"];
-    const currentIndex = languageOrder.indexOf(i18n.language);
-    const nextIndex = (currentIndex + 1) % languageOrder.length;
-    const nextLanguage = languageOrder[nextIndex];
-    i18n.changeLanguage(nextLanguage);
-  };
-
-  const getLanguageName = (code) => {
-    const names = {
-      en: t("English"),
-      fr: t("Français"),
-      ar: t("العربية"),
-    };
-    return names[code] || code;
-  };
-
-  const categories = [
-    {
-      label: "Proteins",
-      subcategories: [
-        "Casein",
-        "Slow-Release Proteins",
-        "Egg Proteins",
-        "Whey Protein",
-        "Whey Protein Blend",
-        "Whey Protein Concentrates",
-        "Hydrolyzed Proteins",
-        "Whey Protein Isolates",
-      ],
-    },
-    {
-      label: "Amino Acids",
-      subcategories: [
-        "L-Arginine",
-        "Amino Acid Blend",
-        "BCAA's (Branched-Chain Amino Acids)",
-        "Meat-Based Amino Acids",
-        "Glutamine",
-        "BCAA's + Glutamine",
-      ],
-    },
-    // Rest of categories...
-  ];
 
   return (
     <>
+      {/* Top Search Bar */}
+      {isSearchOpen && (
+        <div className="fixed top-0 left-0 w-full bg-white z-[100] p-4 shadow-md">
+          <div className="container mx-auto max-w-md relative">
+            <SearchBar />
+            <button 
+              onClick={() => setIsSearchOpen(false)}
+              className="absolute -top-2 right-0 text-3xl text-gray-600 hover:text-red-600"
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+      )}
+
       <header className="bg-white shadow-md sticky top-0 z-50 w-full">
-        {/* Top Section */}
-        <div className="container mx-auto flex justify-between items-center p-4">
-          {/* Mobile Menu Toggle */}
-          <div className="flex sm:hidden">
+        {/* Mobile Header */}
+        <div className="container mx-auto flex justify-between items-center p-4 sm:hidden">
+          <div className="flex items-center space-x-2">
+            {/* Mobile Menu Toggle */}
             <StyledWrapper>
               <div className="relative">
                 <div className="container">
@@ -99,18 +70,12 @@ function Header() {
                       <a href="/" className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
                         HOME
                       </a>
-                      
                       <Categories />
-                        
-                      <a href="/brands" className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
-                        BRANDS
-                      </a>
+                      <BrandHeaderDropdown />
                       <a href="/packs" className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
                         PACKS
                       </a>
-                      <a href="/clothing-accessories" className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
-                        CLOTHING AND ACCESSORIES
-                      </a>
+                      <ClothingAccessories />
                       <a href="/contact" className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
                         CONTACT
                       </a>
@@ -119,19 +84,8 @@ function Header() {
                 </div>
               </div>
             </StyledWrapper>
-          </div>
 
-          {/* Logo */}
-          <div className="hidden sm:block">
-            <a href="/">
-              <img
-                src={logo}
-                alt="YODA Logo"
-                className="h-20 w-22 rounded-full object-cover border-2 border-black"
-              />
-            </a>
-          </div>
-          <div className="flex sm:hidden mx-8">
+            {/* Mobile Logo */}
             <a href="/">
               <img
                 src={logo}
@@ -141,59 +95,21 @@ function Header() {
             </a>
           </div>
 
-          {/* Search Bar */}
-          
-            <div className="hidden sm:block">
-              <div className="flex items-center justify-center mx-6">
-                <SearchBar />
-              </div>
-            </div>
-          <div className="flex sm:hidden">
-            <div className="flex items-center justify-center">
-              <div className="p-2 overflow-hidden w-[40px] h-[40px] hover:w-[270px] bg-[white] rounded-full flex group items-center hover:duration-300 duration-300">
-                <div className="flex items-center justify-center fill-gray-700 bold">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    id="Isolation_Mode"
-                    data-name="Isolation Mode"
-                    viewBox="0 0 24 24"
-                    width="22"
-                    height="22"
-                  >
-                    <path d="M18.9,16.776A10.539,10.539,0,1,0,16.776,18.9l5.1,5.1L24,21.88ZM10.5,18A7.5,7.5,0,1,1,18,10.5,7.507,7.507,0,0,1,10.5,18Z"></path>
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  className="outline-none text-[20px] bg-transparent w-full text-white font-normal px-4"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Icons and Language Switcher */}
+          {/* Mobile Icons */}
           <div
-            className="flex items-center space-x-4"
+            className="flex items-center space-x-2"
             dir={i18n.language === "ar" ? "rtl" : "ltr"}
           >
             <button
-              onClick={switchLanguage}
+              onClick={() => setIsSearchOpen(true)}
               className="text-gray-700 hover:text-blue-600 flex items-center"
-              title={t("common.switchLanguage")}
+              title={t("common.search")}
             >
-              <span className="material-symbols-outlined text-3xl">language</span>
-              <span className="ml-1 text-sm">
-                {getLanguageName(i18n.language)}
-              </span>
+              <span className="material-symbols-outlined text-3xl">search</span>
             </button>
-            <a
-              href="/profile"
-              className="text-gray-700 hover:text-blue-600 flex items-center"
-            >
-              <span className="material-symbols-outlined text-3xl">
-                account_circle
-              </span>
-            </a>
+
+            <LanguageSwitcher />
+            
             <a
               href="/favorites"
               className="text-gray-700 hover:text-blue-600 flex items-center"
@@ -211,32 +127,77 @@ function Header() {
           </div>
         </div>
 
-        {/* Bottom Section Navigation */}
-        <div className="bg-white-100 py-2">
-          <nav className="mx-auto flex max-w-6xl items-center justify-between p-6 lg:px-6" aria-label="Global">
-            <div className="hidden sm:block">
-              <div className="flex lg:px-8 items-center justify-between space-x-6">
-                <a href="/" className="text-gray-700 hover:text-blue-600 transition text-xl font-bold">
-                  HOME
-                </a>
-                <Categories />
-                <BrandHeaderDropdown />
-                <a
-                  href="/packs"
-                  className="text-gray-700 hover:text-blue-600 transition text-xl font-bold"
-                >
-                  PACKS
-                </a>
-                <ClothingAccessories />
-                <a
-                  href="/contact"
-                  className="text-gray-700 hover:text-blue-600 transition text-xl font-bold"
-                >
-                  CONTACT
-                </a>
-              </div>
+        {/* Desktop Header */}
+        
+        {/* Desktop Header */}
+        <div className="hidden sm:block">
+          <div className="container mx-auto flex items-center justify-between py-2 px-6">
+            {/* Left Section - Logo */}
+            <div>
+              <a href="/">
+                <img
+                  src={logo}
+                  alt="YODA Logo"
+                  className="h-16 w-16 rounded-full object-cover border-2 border-black"
+                />
+              </a>
             </div>
-          </nav>
+
+            {/* Center Section - Navigation */}
+            <nav className="flex items-center space-x-4">
+              <a href="/" className="text-gray-700 hover:text-blue-600 transition font-bold">
+                HOME
+              </a>
+              <Categories />
+              <BrandHeaderDropdown />
+              <a href="/packs" className="text-gray-700 hover:text-blue-600 transition font-bold">
+                PACKS
+              </a>
+              <ClothingAccessories />
+              <a href="/contact" className="text-gray-700 hover:text-blue-600 transition font-bold">
+                CONTACT
+              </a>
+            </nav>
+
+            {/* Right Section - Icons */}
+            <div 
+              className="flex items-center space-x-4"
+              dir={i18n.language === "ar" ? "rtl" : "ltr"}
+            >
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="text-gray-700 hover:text-blue-600 flex items-center"
+                title={t("common.search")}
+              >
+                <span className="material-symbols-outlined text-3xl">search</span>
+              </button>
+
+              <LanguageSwitcher />
+              
+              <a
+                href="/profile"
+                className="text-gray-700 hover:text-blue-600 flex items-center"
+              >
+                <span className="material-symbols-outlined text-3xl">
+                  account_circle
+                </span>
+              </a>
+              <a
+                href="/favorites"
+                className="text-gray-700 hover:text-blue-600 flex items-center"
+              >
+                <span className="material-symbols-outlined text-3xl">favorite</span>
+              </a>
+              <a
+                href="/cart"
+                className="text-gray-700 hover:text-blue-600 flex items-center"
+              >
+                <span className="material-symbols-outlined text-3xl">
+                  shopping_cart
+                </span>
+              </a>
+            </div>
+          </div>
         </div>
       </header>
     </>

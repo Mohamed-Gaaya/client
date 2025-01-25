@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import ProductCard from "./ProductCard";
 
 const BrandProductsPage = () => {
   const { brandName } = useParams();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,15 +45,16 @@ const BrandProductsPage = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => (
-            <ProductCard 
-              key={product._id} 
-              product={{
-                name: product.name, 
-                price: product.price,
-                image: `http://localhost:5000${product.images[0]}`,
-                brand: brandName
-              }} 
-            />
+            <div key={product._id} onClick={() => navigate(`/product/${product._id}`)}>
+              <ProductCard 
+                product={{
+                  name: product.name, 
+                  price: product.price,
+                  image: `http://localhost:5000${product.images[0]}`,
+                  brand: brandName
+                }} 
+              />
+            </div>
           ))}
         </div>
       )}

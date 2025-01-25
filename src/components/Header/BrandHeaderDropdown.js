@@ -7,7 +7,7 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeBrand, setActiveBrand] = useState(null);
-  const navigate = useNavigate(); // Add useNavigate hook
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBrandHeader = async () => {
@@ -28,27 +28,56 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
   }, []);
 
   const handleBrandClick = (brandName) => {
-    navigate(`/brandProduct/${brandName}`); // Use the same route as in BrandsSection
+    navigate(`/brandProduct/${brandName}`);
+    if (onClose) onClose();
   };
 
-  const renderBrandHeader = () => {
-    if (loading) {
-      return (
-        <div className="loading-spinner"></div>
-      );
-    }
+  if (loading) {
+    return (
+      <div className="brand-header-wrapper">
+        <div className="brand-header-button">
+          <span>BRANDS</span>
+          <div className="loading-spinner"></div>
+        </div>
+      </div>
+    );
+  }
 
-    if (error) {
+  const renderBrandHeader = () => {
+    if (isMobile) {
       return (
-        <div className="error-message">
-          <p>{error}</p>
-          <p className="error-subtitle">Please try again later</p>
+        <div 
+          className="brand-header-mobile-dropdown" 
+          style={{ 
+            maxHeight: '70vh', 
+            overflowY: 'auto', 
+            padding: '10px 0' 
+          }}
+        >
+          {brandHeader.map((brand) => (
+            <div 
+              key={brand._id} 
+              className="brand-header-mobile-item"
+              style={{ 
+                margin: '5px 0', 
+                padding: '5px 15px' 
+              }}
+            >
+              <button 
+                className="brand-header-mobile-button"
+                onClick={() => handleBrandClick(brand.name)}
+                style={{ 
+                  width: '100%', 
+                  textAlign: 'left', 
+                  padding: '8px 0' 
+                }}
+              >
+                {brand.name}
+              </button>
+            </div>
+          ))}
         </div>
       );
-    }
-
-    if (brandHeader.length === 0) {
-      return <div className="empty-message">No brands available</div>;
     }
 
     return (
