@@ -9,7 +9,7 @@ import AdminRoutes from "./admin/AdminRoutes";
 import BrandsSection from "./pages/HomePage/BrandsSection";
 import BrandProductsPage from "./pages/HomePage/BrandProductsPage";
 import CategoryProductsPage from "./pages/HomePage/CategoryProductsPage";
-import ProductDetails from './pages/ProductDetailsPage';
+import ProductDetails from './pages/ProductDetails/ProductDetailsPage';
 
 // Conditional Header component that hides the header on /admin routes
 const AppHeader = () => {
