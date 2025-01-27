@@ -3,7 +3,7 @@ import logo from "../../assets/images/logo.jpg";
 import { StyledWrapper } from "../../pages/HomePage/style";
 import { useTranslation } from "react-i18next";
 import Categories from "./Categories";
-import BrandHeaderDropdown from "./BrandHeaderDropdown"; 
+import BrandHeaderDropdown from "./BrandHeaderDropdown";
 import ClothingAccessories from "./ClothingAccessories";
 import SearchBar from "./SearchBar";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -20,11 +20,24 @@ function Header() {
         <div className="fixed top-0 left-0 w-full bg-white z-[100] p-4 shadow-md">
           <div className="container mx-auto max-w-md relative">
             <SearchBar />
-            <button 
+            <button
               onClick={() => setIsSearchOpen(false)}
-              className="absolute -top-2 right-0 text-3xl text-gray-600 hover:text-red-600"
+              type="reset"
+              className="absolute right-3 -translate-y-1/2 top-1/2 p-1"
             >
-              &times;
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 text-gray-700"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
             </button>
           </div>
         </div>
@@ -42,8 +55,20 @@ function Header() {
                     <span className="icon">
                       <svg viewBox="0 0 175 80" width={40} height={40}>
                         <rect width={80} height={15} fill="#040f16" rx={10} />
-                        <rect y={30} width={80} height={15} fill="#040f16" rx={10} />
-                        <rect y={60} width={80} height={15} fill="#040f16" rx={10} />
+                        <rect
+                          y={30}
+                          width={80}
+                          height={15}
+                          fill="#040f16"
+                          rx={10}
+                        />
+                        <rect
+                          y={60}
+                          width={80}
+                          height={15}
+                          fill="#040f16"
+                          rx={10}
+                        />
                       </svg>
                     </span>
                   </button>
@@ -55,7 +80,7 @@ function Header() {
                     isOpen ? "translate-x-0" : "-translate-x-full"
                   }`}
                 >
-                  <div className="fixed top-0 left-0 w-64 h-full bg-white shadow-lg p-6">
+                  <div className="fixed  top-0 left-0 w-64 h-full bg-white shadow-lg p-6">
                     <div className="text-right">
                       <button
                         onClick={() => setIsOpen(false)}
@@ -66,17 +91,25 @@ function Header() {
                         </svg>
                       </button>
                     </div>
-                    <nav className="flex flex-col space-y-4">
-                      <a href="/" className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
-                        HOME
+                    <nav className="flex flex-col justify-start space-y-4">
+                      <a href="/">
+                        <span className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
+                          HOME
+                        </span>
                       </a>
                       <Categories />
                       <BrandHeaderDropdown />
-                      <a href="/packs" className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
+                      <a
+                        href="/packs"
+                        className="text-gray-700 hover:text-blue-600 transition text-lg font-bold"
+                      >
                         PACKS
                       </a>
                       <ClothingAccessories />
-                      <a href="/contact" className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
+                      <a
+                        href="/contact"
+                        className="text-gray-700 hover:text-blue-600 transition text-lg font-bold"
+                      >
                         CONTACT
                       </a>
                     </nav>
@@ -90,7 +123,7 @@ function Header() {
               <img
                 src={logo}
                 alt="YODA Logo"
-                className="h-10 w-10 rounded-full object-cover border-1 border-black"
+                className="h-10 w-10 rounded-full object-cover border-1 border-black mx-10"
               />
             </a>
           </div>
@@ -109,12 +142,14 @@ function Header() {
             </button>
 
             <LanguageSwitcher />
-            
+
             <a
               href="/favorites"
               className="text-gray-700 hover:text-blue-600 flex items-center"
             >
-              <span className="material-symbols-outlined text-3xl">favorite</span>
+              <span className="material-symbols-outlined text-3xl">
+                favorite
+              </span>
             </a>
             <a
               href="/cart"
@@ -128,7 +163,7 @@ function Header() {
         </div>
 
         {/* Desktop Header */}
-        
+
         {/* Desktop Header */}
         <div className="hidden sm:block">
           <div className="container mx-auto flex items-center justify-between py-2 px-6">
@@ -145,22 +180,31 @@ function Header() {
 
             {/* Center Section - Navigation */}
             <nav className="flex items-center space-x-4">
-              <a href="/" className="text-gray-700 hover:text-blue-600 transition font-bold">
+              <a
+                href="/"
+                className="text-gray-700 hover:text-blue-600 transition font-bold"
+              >
                 HOME
               </a>
               <Categories />
               <BrandHeaderDropdown />
-              <a href="/packs" className="text-gray-700 hover:text-blue-600 transition font-bold">
+              <a
+                href="/packs"
+                className="text-gray-700 hover:text-blue-600 transition font-bold"
+              >
                 PACKS
               </a>
               <ClothingAccessories />
-              <a href="/contact" className="text-gray-700 hover:text-blue-600 transition font-bold">
+              <a
+                href="/contact"
+                className="text-gray-700 hover:text-blue-600 transition font-bold"
+              >
                 CONTACT
               </a>
             </nav>
 
             {/* Right Section - Icons */}
-            <div 
+            <div
               className="flex items-center space-x-4"
               dir={i18n.language === "ar" ? "rtl" : "ltr"}
             >
@@ -169,11 +213,13 @@ function Header() {
                 className="text-gray-700 hover:text-blue-600 flex items-center"
                 title={t("common.search")}
               >
-                <span className="material-symbols-outlined text-3xl">search</span>
+                <span className="material-symbols-outlined text-3xl">
+                  search
+                </span>
               </button>
 
               <LanguageSwitcher />
-              
+
               <a
                 href="/profile"
                 className="text-gray-700 hover:text-blue-600 flex items-center"
@@ -186,7 +232,9 @@ function Header() {
                 href="/favorites"
                 className="text-gray-700 hover:text-blue-600 flex items-center"
               >
-                <span className="material-symbols-outlined text-3xl">favorite</span>
+                <span className="material-symbols-outlined text-3xl">
+                  favorite
+                </span>
               </a>
               <a
                 href="/cart"

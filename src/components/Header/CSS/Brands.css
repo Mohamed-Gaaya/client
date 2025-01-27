@@ -3,7 +3,7 @@
     display: inline-block;
   }
   
-  .brand-header-button { /* Updated class */
+  /* .brand-header-button {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -14,7 +14,7 @@
     border: none;
     cursor: pointer;
     padding: 8px;
-  }
+  } */
   
   .brand-header-button:hover { /* Updated class */
     color: #2563eb;
@@ -64,6 +64,14 @@
     gap: 16px;
     padding: 8px;
   }
+
+  .brand-header-container {
+    height: 300px; /* Set a fixed height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    padding: 10px; /* Add padding for spacing */
+  }
+  
   
   .brand-header-item {
     padding: 8px;

@@ -1,13 +1,14 @@
 .clothing-accessories-wrapper {
     position: relative;
+    display: inline-block;
   }
   
-  .clothing-accessories-button {
+  /* .clothing-accessories-button {
     color: #475569;
     font-weight: 700;
     font-size: 1.25rem;
     transition: color 0.3s ease;
-  }
+  } */
   
   .clothing-accessories-button:hover {
     color: #2563eb;
