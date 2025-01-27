@@ -1,15 +1,15 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import { useNavigate } from "react-router-dom";
 import "./CSS/BrandsSection.css";
 
 function BrandsSection({ brands, loading, error }) {
   const scrollContainerRef = useRef(null);
   const [isPaused, setIsPaused] = useState(false);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const BASE_URL = "http://localhost:5000/uploads";
 
-  // Auto-scroll logic
+  // Auto-scroll logic remains the same
   useEffect(() => {
     const container = scrollContainerRef.current;
     let interval;
@@ -33,7 +33,7 @@ function BrandsSection({ brands, loading, error }) {
     return () => clearInterval(interval);
   }, [isPaused, brands]);
 
-  // Manual scroll handler with throttling
+  // Manual scroll handler remains the same
   const handleScroll = (direction) => {
     setIsPaused(true);
     const container = scrollContainerRef.current;
@@ -44,14 +44,14 @@ function BrandsSection({ brands, loading, error }) {
 
     container.scrollBy({ left: scrollValue, behavior: "smooth" });
 
-    // Resume auto-scroll after a short delay
     setTimeout(() => setIsPaused(false), 2000);
   };
 
-  // Navigate to the brand's product page
+  // Updated navigation handler to use search parameters
   const handleBrandClick = (brand) => {
     if (brand.name) {
-      navigate(`/brandProduct/${brand.name}`); // Adjust the route as needed
+      // Navigate to the products page with brand filter
+      navigate(`/products?brand=${encodeURIComponent(brand.name)}`);
     }
   };
 
@@ -84,7 +84,7 @@ function BrandsSection({ brands, loading, error }) {
                 key={index}
                 className="brand-item"
                 draggable="false"
-                onClick={() => handleBrandClick(brand)} // Handle navigation on click
+                onClick={() => handleBrandClick(brand)}
               >
                 <img
                   src={`${BASE_URL}/${brand.logo}`}

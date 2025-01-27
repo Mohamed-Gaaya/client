@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import './CSS/Categories.css';
 
 const Categories = ({ isOpen, onClose, isMobile }) => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,11 +31,53 @@ const Categories = ({ isOpen, onClose, isMobile }) => {
 
   const handleCategoryClick = (categoryName) => {
     if (isMobile) {
-      setActiveCategory(activeCategory === categoryName ? null : categoryName);
-      setShowSubcategories(!showSubcategories);
+      if (activeCategory === categoryName) {
+        setShowSubcategories(!showSubcategories);
+      } else {
+        setActiveCategory(categoryName);
+        setShowSubcategories(true);
+      }
     }
-    navigate(`/category/${encodeURIComponent(categoryName)}`);
+    
+    // Match the FilterSidebar behavior
+    const newParams = new URLSearchParams(searchParams);
+    
+    // Clear other filters when selecting a category from header
+    newParams.delete('brand');
+    newParams.delete('sizes');
+    newParams.delete('flavors');
+    
+    // Set the single category
+    newParams.set('category', categoryName);
+    
+    navigate({
+      pathname: '/products',
+      search: newParams.toString()
+    });
+    
     if (onClose) onClose();
+  };
+
+  const handleSubcategoryClick = (e, subcategory) => {
+    e.stopPropagation();
+    
+    const newParams = new URLSearchParams(searchParams);
+    // Clear other filters
+    newParams.delete('category');
+    newParams.delete('sizes');
+    newParams.delete('flavors');
+    
+    // Set the brand (subcategory)
+    newParams.set('brand', subcategory);
+    
+    navigate({
+      pathname: '/products',
+      search: newParams.toString()
+    });
+    
+    if (onClose) onClose();
+    setActiveCategory(null);
+    setShowSubcategories(false);
   };
 
   if (loading) {
@@ -55,7 +98,7 @@ const Categories = ({ isOpen, onClose, isMobile }) => {
           {categories.map((category) => (
             <div key={category._id} className="mobile-category-item">
               <button 
-                className="mobile-category-button"
+                className={`mobile-category-button ${activeCategory === category.name ? 'active' : ''}`}
                 onClick={() => handleCategoryClick(category.name)}
               >
                 {category.name}
@@ -64,13 +107,12 @@ const Categories = ({ isOpen, onClose, isMobile }) => {
                 <ul className="mobile-subcategories-list">
                   {category.subcategories.map((sub, index) => (
                     <li key={index}>
-                      <a 
-                        href={`/brand/${encodeURIComponent(sub)}`}
+                      <button 
                         className="mobile-subcategory-link"
-                        onClick={onClose}
+                        onClick={(e) => handleSubcategoryClick(e, sub)}
                       >
                         {sub}
-                      </a>
+                      </button>
                     </li>
                   ))}
                 </ul>
@@ -87,9 +129,7 @@ const Categories = ({ isOpen, onClose, isMobile }) => {
           {categories.map((category) => (
             <div 
               key={category._id} 
-              className={`category-item ${activeCategory === category.name ? 'active' : ''}`}
-              onMouseEnter={() => setActiveCategory(category.name)}
-              onMouseLeave={() => setActiveCategory(null)}
+              className="category-item"
               onClick={() => handleCategoryClick(category.name)}
             >
               <h3 className="category-title">{category.name}</h3>
@@ -97,12 +137,12 @@ const Categories = ({ isOpen, onClose, isMobile }) => {
                 <ul className="subcategories-list">
                   {category.subcategories.map((sub, subIndex) => (
                     <li key={subIndex} className="subcategory-item">
-                      <a
-                        href={`/brand/${encodeURIComponent(sub)}`}
+                      <button
                         className="subcategory-link"
+                        onClick={(e) => handleSubcategoryClick(e, sub)}
                       >
                         {sub}
-                      </a>
+                      </button>
                     </li>
                   ))}
                 </ul>
@@ -116,7 +156,7 @@ const Categories = ({ isOpen, onClose, isMobile }) => {
 
   return (
     <div className="categories-wrapper">
-      <a href="/categories" className="categories-button">
+      <a href="/products" className="categories-button">
         <span>CATEGORIES</span>
       </a>
       {renderCategories()}

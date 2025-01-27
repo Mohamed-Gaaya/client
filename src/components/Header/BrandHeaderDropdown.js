@@ -28,7 +28,8 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
   }, []);
 
   const handleBrandClick = (brandName) => {
-    navigate(`/brandProduct/${brandName}`);
+    // Navigate to the products page with brand filter instead of a separate brandProduct route
+    navigate(`/products?brand=${encodeURIComponent(brandName)}`);
     if (onClose) onClose();
   };
 

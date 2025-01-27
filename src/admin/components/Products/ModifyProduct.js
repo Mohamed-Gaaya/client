@@ -285,6 +285,10 @@ const handleBrandSelect = (brand) => {
       shortDescription: productData.shortDescription,
       longDescription: productData.longDescription
     };
+    // Append new images
+  newImages.forEach((image, index) => {
+    formData.append('images', image);
+  });
     
     console.log('Preparing to send data:', dataToSend);
     if (productData.category === "Clothes" || productData.category === "Accessories") {
