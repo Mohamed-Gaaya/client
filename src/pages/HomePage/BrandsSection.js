@@ -9,7 +9,7 @@ function BrandsSection({ brands, loading, error }) {
 
   const BASE_URL = "http://localhost:5000/uploads";
 
-  // Auto-scroll logic remains the same
+  // Auto-scroll logic
   useEffect(() => {
     const container = scrollContainerRef.current;
     let interval;
@@ -33,7 +33,6 @@ function BrandsSection({ brands, loading, error }) {
     return () => clearInterval(interval);
   }, [isPaused, brands]);
 
-  // Manual scroll handler remains the same
   const handleScroll = (direction) => {
     setIsPaused(true);
     const container = scrollContainerRef.current;
@@ -47,12 +46,11 @@ function BrandsSection({ brands, loading, error }) {
     setTimeout(() => setIsPaused(false), 2000);
   };
 
-  // Updated navigation handler to use search parameters
+  // Updated navigation handler to use brand name
   const handleBrandClick = (brand) => {
-    if (brand.name) {
-      // Navigate to the products page with brand filter
-      navigate(`/products?brand=${encodeURIComponent(brand.name)}`);
-    }
+    // Make sure we're using the brand name, not the entire brand object
+    const brandName = brand.name || brand;
+    navigate(`/brandProduct/${brandName}`);
   };
 
   return (
@@ -79,9 +77,9 @@ function BrandsSection({ brands, loading, error }) {
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
           >
-            {brands.map((brand, index) => (
+            {brands.map((brand) => (
               <div
-                key={index}
+                key={brand.id}
                 className="brand-item"
                 draggable="false"
                 onClick={() => handleBrandClick(brand)}
