@@ -82,7 +82,7 @@ const ProductsPage = () => {
       setLoading(true);
       try {
         const queryParams = new URLSearchParams();
-
+    
         if (activeFilters.brands.length > 0) {
           queryParams.set("brand", activeFilters.brands.join(","));
         }
@@ -95,18 +95,20 @@ const ProductsPage = () => {
         if (activeFilters.flavors.length > 0) {
           queryParams.set("flavors", activeFilters.flavors.join(","));
         }
+        // Modified price range parameters
         if (activeFilters.priceRange[0] !== 0 || activeFilters.priceRange[1] !== 1000) {
-          queryParams.set("priceRange", activeFilters.priceRange.join(","));
+          queryParams.set("minPrice", activeFilters.priceRange[0]);
+          queryParams.set("maxPrice", activeFilters.priceRange[1]);
         }
-
+    
         const response = await fetch(
           `http://localhost:5000/api/products?${queryParams.toString()}`
         );
-
+    
         if (!response.ok) {
           throw new Error("Failed to fetch products");
         }
-
+    
         const data = await response.json();
         setProducts(data.products);
       } catch (err) {

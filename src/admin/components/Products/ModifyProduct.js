@@ -283,7 +283,10 @@ const handleBrandSelect = (brand) => {
       sizes: JSON.stringify(sizeList.filter(size => size.trim())),
       flavours: JSON.stringify(flavourList.filter(flavour => flavour.trim())),
       shortDescription: productData.shortDescription,
-      longDescription: productData.longDescription
+      longDescription: productData.longDescription,
+      hasPromo: productData.hasPromo,
+      promoPrice: productData.hasPromo ? productData.promoPrice : undefined,
+      originalPrice: productData.hasPromo ? productData.originalPrice : undefined,
     };
     // Append new images
   newImages.forEach((image, index) => {
