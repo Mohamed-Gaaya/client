@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Check, ChevronDown, ChevronUp, X } from "lucide-react";
 
-const PriceRangeFilter = ({ onPriceChange, minPrice = 0, maxPrice = 1000 }) => {
-  const [priceRange, setPriceRange] = useState([minPrice, maxPrice]);
+const PriceRangeFilter = ({ 
+  priceRange, 
+  onPriceChange, 
+  minPrice = 0, 
+  maxPrice = 1000 
+}) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isDragging, setIsDragging] = useState(null);
+  const [localPriceRange, setLocalPriceRange] = useState(priceRange);
+  const [isLoading, setIsLoading] = useState(false);
   const sliderRef = useRef(null);
 
   const getPercentage = (value) => {
@@ -13,23 +19,21 @@ const PriceRangeFilter = ({ onPriceChange, minPrice = 0, maxPrice = 1000 }) => {
 
   const handleMouseMove = useCallback((e) => {
     if (!isDragging || !sliderRef.current) return;
-
+  
     const rect = sliderRef.current.getBoundingClientRect();
     const percentage = Math.min(Math.max(0, (e.clientX - rect.left) / rect.width * 100), 100);
     const value = Math.round(minPrice + (percentage / 100) * (maxPrice - minPrice));
-
+  
     if (isDragging === 'min') {
-      if (value < priceRange[1]) {
-        setPriceRange([value, priceRange[1]]);
-        onPriceChange([value, priceRange[1]]);
+      if (value < localPriceRange[1]) {
+        setLocalPriceRange([value, localPriceRange[1]]);
       }
     } else {
-      if (value > priceRange[0]) {
-        setPriceRange([priceRange[0], value]);
-        onPriceChange([priceRange[0], value]);
+      if (value > localPriceRange[0]) {
+        setLocalPriceRange([localPriceRange[0], value]);
       }
     }
-  }, [isDragging, minPrice, maxPrice, priceRange, onPriceChange]);
+  }, [isDragging, minPrice, maxPrice, localPriceRange]);
 
   const handleMouseUp = useCallback(() => {
     setIsDragging(null);
@@ -48,14 +52,26 @@ const PriceRangeFilter = ({ onPriceChange, minPrice = 0, maxPrice = 1000 }) => {
 
   const handleInputChange = (type, value) => {
     const newValue = Math.min(Math.max(Number(value) || minPrice, minPrice), maxPrice);
-    if (type === 'min' && newValue <= priceRange[1]) {
-      setPriceRange([newValue, priceRange[1]]);
-      onPriceChange([newValue, priceRange[1]]);
-    } else if (type === 'max' && newValue >= priceRange[0]) {
-      setPriceRange([priceRange[0], newValue]);
-      onPriceChange([priceRange[0], newValue]);
+    if (type === 'min' && newValue <= localPriceRange[1]) {
+      setLocalPriceRange([newValue, localPriceRange[1]]);
+    } else if (type === 'max' && newValue >= localPriceRange[0]) {
+      setLocalPriceRange([localPriceRange[0], newValue]);
     }
   };
+
+  const handleApplyFilter = async () => {
+    setIsLoading(true);
+    try {
+      onPriceChange(localPriceRange);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Update local price range when props change (e.g., when filters are cleared)
+  useEffect(() => {
+    setLocalPriceRange(priceRange);
+  }, [priceRange]);
 
   return (
     <div className="mb-6 bg-white rounded-lg shadow-sm p-4">
@@ -76,7 +92,7 @@ const PriceRangeFilter = ({ onPriceChange, minPrice = 0, maxPrice = 1000 }) => {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
                 <input
                   type="number"
-                  value={priceRange[0]}
+                  value={localPriceRange[0]}
                   onChange={(e) => handleInputChange('min', e.target.value)}
                   className="w-full pl-8 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -88,7 +104,7 @@ const PriceRangeFilter = ({ onPriceChange, minPrice = 0, maxPrice = 1000 }) => {
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
                 <input
                   type="number"
-                  value={priceRange[1]}
+                  value={localPriceRange[1]}
                   onChange={(e) => handleInputChange('max', e.target.value)}
                   className="w-full pl-8 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
@@ -97,32 +113,35 @@ const PriceRangeFilter = ({ onPriceChange, minPrice = 0, maxPrice = 1000 }) => {
           </div>
 
           <div className="relative h-2 mt-8 mb-4" ref={sliderRef}>
-            {/* Track background */}
             <div className="absolute w-full h-full bg-gray-200 rounded-full" />
-            
-            {/* Selected range */}
             <div
               className="absolute h-full bg-blue-500 rounded-full"
               style={{
-                left: `${getPercentage(priceRange[0])}%`,
-                right: `${100 - getPercentage(priceRange[1])}%`
+                left: `${getPercentage(localPriceRange[0])}%`,
+                right: `${100 - getPercentage(localPriceRange[1])}%`
               }}
             />
-
-            {/* Min handle */}
             <div
               className="absolute w-4 h-4 bg-white border-2 border-blue-500 rounded-full cursor-pointer -mt-1.5 transform -translate-x-1/2"
-              style={{ left: `${getPercentage(priceRange[0])}%` }}
+              style={{ left: `${getPercentage(localPriceRange[0])}%` }}
               onMouseDown={() => setIsDragging('min')}
             />
-
-            {/* Max handle */}
             <div
               className="absolute w-4 h-4 bg-white border-2 border-blue-500 rounded-full cursor-pointer -mt-1.5 transform -translate-x-1/2"
-              style={{ left: `${getPercentage(priceRange[1])}%` }}
+              style={{ left: `${getPercentage(localPriceRange[1])}%` }}
               onMouseDown={() => setIsDragging('max')}
             />
           </div>
+
+          <button
+            onClick={handleApplyFilter}
+            disabled={isLoading}
+            className={`w-full mt-4 bg-blue-500 text-white py-2 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+              isLoading ? 'opacity-75 cursor-not-allowed' : 'hover:bg-blue-600'
+            }`}
+          >
+            {isLoading ? 'Applying...' : 'Apply Filter'}
+          </button>
         </div>
       )}
     </div>
@@ -291,7 +310,7 @@ const FilterSidebar = ({ onFiltersChange, initialFilters = {} }) => {
         if (prices.length) {
           const maxProductPrice = Math.max(...prices);
           setMaxPrice(maxProductPrice);
-          setPriceRange([0, maxProductPrice]);
+          setPriceRange([0, maxProductPrice]); // Initialize with actual max price
         }
       } catch (error) {
         console.error("Error fetching product filters:", error);
@@ -390,9 +409,10 @@ const FilterSidebar = ({ onFiltersChange, initialFilters = {} }) => {
       </div>
 
       <div className="space-y-4">
-        <PriceRangeFilter
+          <PriceRangeFilter
           minPrice={0}
           maxPrice={maxPrice}
+          priceRange={priceRange}
           onPriceChange={setPriceRange}
         />
 

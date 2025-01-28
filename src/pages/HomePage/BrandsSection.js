@@ -48,9 +48,8 @@ function BrandsSection({ brands, loading, error }) {
 
   // Updated navigation handler to use brand name
   const handleBrandClick = (brand) => {
-    // Make sure we're using the brand name, not the entire brand object
-    const brandName = brand.name || brand;
-    navigate(`/brandProduct/${brandName}`);
+    // Navigate to products page with brand name parameter
+    navigate(`/products?brand=${encodeURIComponent(brand.name)}`);
   };
 
   return (

@@ -11,71 +11,72 @@ const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeFilters, setActiveFilters] = useState({
-    brands: [],
-    categories: [],
-    sizes: [],
-    flavors: [],
+  
+  // Function to parse search params into filters
+  const getFiltersFromSearchParams = (params) => ({
+    brands: params.get("brand")?.split(",") || [],
+    categories: params.get("category")?.split(",") || [],
+    sizes: params.get("sizes")?.split(",") || [],
+    flavors: params.get("flavors")?.split(",") || [],
+    priceRange: params.get("priceRange")?.split(",").map(Number) || [0, 1000]
   });
-
-  // Update filters whenever URL params change
+  
+  // Initialize filters from URL and update when URL changes
+  const [activeFilters, setActiveFilters] = useState(getFiltersFromSearchParams(searchParams));
+  
+  // Update filters when URL changes
   useEffect(() => {
-    const brand = searchParams.get("brand");
-    const category = searchParams.get("category");
-    const sizes = searchParams.get("sizes")?.split(",") || [];
-    const flavors = searchParams.get("flavors")?.split(",") || [];
+    const newFilters = getFiltersFromSearchParams(searchParams);
+    setActiveFilters(newFilters);
+  }, [searchParams]);
 
-    // Handle both single values and arrays for categories and brands
-    const categoryArray = category ? category.split(",") : [];
-    const brandArray = brand ? brand.split(",") : [];
-
-    setActiveFilters({
-      brands: brandArray,
-      categories: categoryArray,
-      sizes,
-      flavors,
-    });
-  }, [searchParams]); // Re-run when searchParams changes
-
-  // Update URL when filters change
+  // Handle filter changes from sidebar
   const handleFiltersChange = (newFilters) => {
     const params = new URLSearchParams(searchParams);
     
-    // Update each filter type in the URL
+    // Update brand parameter
     if (newFilters.brands.length > 0) {
       params.set("brand", newFilters.brands.join(","));
     } else {
       params.delete("brand");
     }
     
+    // Update category parameter
     if (newFilters.categories.length > 0) {
       params.set("category", newFilters.categories.join(","));
     } else {
       params.delete("category");
     }
     
+    // Update sizes parameter
     if (newFilters.sizes.length > 0) {
       params.set("sizes", newFilters.sizes.join(","));
     } else {
       params.delete("sizes");
     }
     
+    // Update flavors parameter
     if (newFilters.flavors.length > 0) {
       params.set("flavors", newFilters.flavors.join(","));
     } else {
       params.delete("flavors");
     }
+    
+    // Update price range parameter
+    if (newFilters.priceRange[0] !== 0 || newFilters.priceRange[1] !== 1000) {
+      params.set("priceRange", newFilters.priceRange.join(","));
+    } else {
+      params.delete("priceRange");
+    }
 
-    // Update URL without triggering a page reload
+    // Update URL
     navigate({
       pathname: '/products',
       search: params.toString()
-    }, { replace: true });
-
-    setActiveFilters(newFilters);
+    });
   };
 
-  // Fetch products whenever filters change
+  // Fetch products when filters change
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -92,7 +93,10 @@ const ProductsPage = () => {
           queryParams.set("sizes", activeFilters.sizes.join(","));
         }
         if (activeFilters.flavors.length > 0) {
-          queryParams.set("flavours", activeFilters.flavors.join(","));
+          queryParams.set("flavors", activeFilters.flavors.join(","));
+        }
+        if (activeFilters.priceRange[0] !== 0 || activeFilters.priceRange[1] !== 1000) {
+          queryParams.set("priceRange", activeFilters.priceRange.join(","));
         }
 
         const response = await fetch(
@@ -113,18 +117,7 @@ const ProductsPage = () => {
     };
 
     fetchProducts();
-  }, [activeFilters]); // Re-run when activeFilters changes
-
-  // Generate page title based on active filters
-  const getPageTitle = () => {
-    if (activeFilters.brands.length === 1) {
-      return `${activeFilters.brands[0]} Products`;
-    }
-    if (activeFilters.categories.length === 1) {
-      return `${activeFilters.categories[0]} Products`;
-    }
-    return "All Products";
-  };
+  }, [activeFilters]);
 
   return (
     <div className="flex">
@@ -135,7 +128,9 @@ const ProductsPage = () => {
 
       <div className="flex-1 container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8 text-center">
-          {getPageTitle()}
+        {activeFilters.brands.length === 1 ? `${activeFilters.brands[0]} Products` :
+        activeFilters.categories.length === 1 ? `${activeFilters.categories[0]} Products` :
+        "All Products"}
         </h1>
 
         {loading ? (

@@ -28,8 +28,12 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
     fetchBrandHeader();
   }, []);
 
-  const handleBrandClick = (brandName) => {
-    // Navigate to the products page with brand filter instead of a separate brandProduct route
+  const handleBrandClick = (event, brandName) => {
+    // Prevent any parent elements from handling the click
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Navigate to products page with brand parameter
     navigate(`/products?brand=${encodeURIComponent(brandName)}`);
     if (onClose) onClose();
   };
@@ -45,49 +49,9 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
     );
   }
 
-  const renderBrandHeader = () => {
-    if (isMobile) {
-      return (
-        <>
-          <div
-            className="brand-header-mobile-dropdown"
-            style={{
-              maxHeight: "70vh",
-              overflowY: "auto",
-              padding: "10px 0",
-            }}
-          >
-            {brandHeader.map((brand) => (
-              <div
-                key={brand._id}
-                className="brand-header-mobile-item"
-                style={{
-                  margin: "5px 0",
-                  padding: "5px 15px",
-                }}
-              >
-                <button
-                  className="brand-header-mobile-button"
-                  onClick={() => handleBrandClick(brand.name)}
-                  style={{
-                    width: "100%",
-                    textAlign: "left",
-                    padding: "8px 0",
-                  }}
-                >
-                  {brand.name}
-                </button>
-              </div>
-            ))}
-          </div>
-        </>
-      );
-    }
-  };
-
   return (
     <div className="brand-header-wrapper">
-      <a href="/brands">
+      <div> {/* Removed the anchor tag wrapper */}
         <ul>
           <li>
             <details className="group">
@@ -99,8 +63,8 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
               <ul>
                 <li>
                   <div className="block md:hidden">
-                    {/* This content only shows on mobile */}
-                    <a className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                    {/* Mobile view */}
+                    <div className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
                       <div className="brand-header-container">
                         {brandHeader.map((brand) => (
                           <div
@@ -110,7 +74,7 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
                             }`}
                             onMouseEnter={() => setActiveBrand(brand._id)}
                             onMouseLeave={() => setActiveBrand(null)}
-                            onClick={() => handleBrandClick(brand.name)}
+                            onClick={(e) => handleBrandClick(e, brand.name)}
                             style={{ cursor: "pointer" }}
                           >
                             <div className="brand-header-info">
@@ -131,10 +95,10 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
                           </div>
                         ))}
                       </div>
-                    </a>
+                    </div>
                   </div>
                   <div className="hidden md:block">
-                    {/* This content only shows on desktop */}
+                    {/* Desktop view */}
                     <div className="brand-header-dropdown">
                       <div className="categories-grid">
                         {brandHeader.map((brand) => (
@@ -145,7 +109,7 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
                             }`}
                             onMouseEnter={() => setActiveBrand(brand._id)}
                             onMouseLeave={() => setActiveBrand(null)}
-                            onClick={() => handleBrandClick(brand.name)}
+                            onClick={(e) => handleBrandClick(e, brand.name)}
                             style={{ cursor: "pointer" }}
                           >
                             <div className="brand-header-info">
@@ -173,8 +137,8 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
             </details>
           </li>
         </ul>
-      </a>
-      {renderBrandHeader()}
+      </div>
+      {isMobile && renderBrandHeader()}
     </div>
   );
 };

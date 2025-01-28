@@ -7,8 +7,6 @@ import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
 import AdminRoutes from "./admin/AdminRoutes";
 import BrandsSection from "./pages/HomePage/BrandsSection";
-import BrandProductsPage from "./pages/HomePage/BrandProductsPage";
-import CategoryProductsPage from "./pages/HomePage/CategoryProductsPage";
 import ProductDetails from './pages/ProductDetails/ProductDetailsPage';
 import ProductsPage from './pages/HomePage/ProductsPage';
 
@@ -35,8 +33,6 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/" element={<BrandsSection />} />
-        <Route path="/brandProduct/:brandName" element={<BrandProductsPage />} />
-        <Route path="/category/:categoryName" element={<CategoryProductsPage />} />
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/shop" element={<BrandPage />} />
