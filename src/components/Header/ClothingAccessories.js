@@ -148,12 +148,12 @@ const ClothingAccessories = ({ isOpen, onClose, isMobile }) => {
 
   return (
     <div className="clothing-accessories-wrapper">
-      <a href="/clothing-accessories">
+      <div>
         <ul>
           <li>
             <details className="group">
               <summary className="flex items-center justify-between cursor-pointer">
-                <span className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
+                <span className="text-gray-700 hover:text-blue-600 transition font-bold">
                   CLOTHING & ACCESSORIES
                 </span>
               </summary>
@@ -166,7 +166,7 @@ const ClothingAccessories = ({ isOpen, onClose, isMobile }) => {
                         <li>
                           <details className="group">
                             <summary className="flex items-center justify-between cursor-pointer">
-                              <span className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
+                              <span className="text-gray-700 hover:text-blue-600 transition font-bold">
                                 Clothes
                               </span>
                             </summary>
@@ -218,7 +218,7 @@ const ClothingAccessories = ({ isOpen, onClose, isMobile }) => {
                         <li>
                           <details className="group">
                             <summary className="flex items-center justify-between cursor-pointer">
-                              <span className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
+                              <span className="text-gray-700 hover:text-blue-600 transition font-bold">
                                 Accessories
                               </span>
                             </summary>
@@ -335,7 +335,7 @@ const ClothingAccessories = ({ isOpen, onClose, isMobile }) => {
             </details>
           </li>
         </ul>
-      </a>
+      </div>
       {renderClothingAndAccessories()}
     </div>
   );

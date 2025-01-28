@@ -48,11 +48,7 @@
     border: 1px solid #eee;
     padding: 12px;
   }
-  
-  .categories-wrapper {
-    position: relative; /* Ensures the dropdown is positioned relative to the wrapper */
-  }
-  
+
   .categories-wrapper:hover .categories-dropdown {
     opacity: 1;
     visibility: visible;

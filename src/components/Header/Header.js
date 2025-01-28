@@ -93,24 +93,22 @@ function Header() {
                     </div>
                     <nav className="flex flex-col justify-start space-y-4">
                       <a href="/">
-                        <span className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
+                        <span className="text-gray-700 hover:text-blue-600 transition font-bold">
                           HOME
                         </span>
                       </a>
                       <Categories />
                       <BrandHeaderDropdown />
-                      <a
-                        href="/packs"
-                        className="text-gray-700 hover:text-blue-600 transition text-lg font-bold"
-                      >
-                        PACKS
+                      <a href="/packs">
+                        <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+                          PACKS
+                        </span>
                       </a>
                       <ClothingAccessories />
-                      <a
-                        href="/contact"
-                        className="text-gray-700 hover:text-blue-600 transition text-lg font-bold"
-                      >
-                        CONTACT
+                      <a href="/contact">
+                        <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+                          CONTACT
+                        </span>
                       </a>
                     </nav>
                   </div>
@@ -179,27 +177,24 @@ function Header() {
             </div>
 
             {/* Center Section - Navigation */}
-            <nav className="flex items-center space-x-4">
-              <a
-                href="/"
-                className="text-gray-700 hover:text-blue-600 transition font-bold"
-              >
-                HOME
+            <nav className="flex flex-row justify-between space-x-4">
+              <a href="/">
+                <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+                  HOME
+                </span>
               </a>
               <Categories />
               <BrandHeaderDropdown />
-              <a
-                href="/packs"
-                className="text-gray-700 hover:text-blue-600 transition font-bold"
-              >
-                PACKS
+              <a href="/packs">
+                <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+                  PACKS
+                </span>
               </a>
               <ClothingAccessories />
-              <a
-                href="/contact"
-                className="text-gray-700 hover:text-blue-600 transition font-bold"
-              >
-                CONTACT
+              <a href="/contact">
+                <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+                  CONTACT
+                </span>
               </a>
             </nav>
 

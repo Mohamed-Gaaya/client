@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
 import "./CSS/Categories.css";
 
 const Categories = ({ isOpen, onClose, isMobile }) => {
@@ -136,7 +135,7 @@ const Categories = ({ isOpen, onClose, isMobile }) => {
         <li>
           <details className="group">
             <summary className="flex items-center justify-between cursor-pointer">
-              <span className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
+              <span className="text-gray-700 hover:text-blue-600 transition font-bold">
                 CATEGORIES
               </span>
             </summary>
