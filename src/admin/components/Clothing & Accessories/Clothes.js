@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../Sidebar";
-import Header from "../Navbar";
+import Header from "../Header/Header";
 import axios from "axios";
 import { FaTimes } from "react-icons/fa";
 

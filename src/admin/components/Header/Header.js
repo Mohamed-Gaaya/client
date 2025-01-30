@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import logo from "../../assets/images/logo.jpg";
-import { useNavigate } from "react-router-dom";
-import { StyledWrapper } from "../../pages/HomePage/style";
+import logo from "../../../assets/images/logo.jpg";
+import { StyledWrapper } from "../../../pages/HomePage/style";
 import { useTranslation } from "react-i18next";
 import Categories from "./Categories";
 import BrandHeaderDropdown from "./BrandHeaderDropdown";
@@ -9,18 +8,11 @@ import ClothingAccessories from "./ClothingAccessories";
 import SearchBar from "./SearchBar";
 import LanguageSwitcher from "./LanguageSwitcher";
 
-
 function Header() {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const handleNavigation = (path) => {
-    navigate(path);
-    setIsOpen(false); // Close mobile menu if open
-  };
 
-  
   return (
     <>
       {/* Top Search Bar */}
@@ -101,22 +93,24 @@ function Header() {
                     </div>
                     <nav className="flex flex-col justify-start space-y-4">
                       <a href="/">
-                        <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+                        <span className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
                           HOME
                         </span>
                       </a>
                       <Categories />
                       <BrandHeaderDropdown />
-                      <button onClick={() => handleNavigation('/packs')} className="text-left">
-                        <span className="text-gray-700 hover:text-blue-600 transition font-bold">
-                          PACKS
-                        </span>
-                      </button>
+                      <a
+                        href="/packs"
+                        className="text-gray-700 hover:text-blue-600 transition text-lg font-bold"
+                      >
+                        PACKS
+                      </a>
                       <ClothingAccessories />
-                      <a href="/contact">
-                        <span className="text-gray-700 hover:text-blue-600 transition font-bold">
-                          CONTACT
-                        </span>
+                      <a
+                        href="/contact"
+                        className="text-gray-700 hover:text-blue-600 transition text-lg font-bold"
+                      >
+                        CONTACT
                       </a>
                     </nav>
                   </div>
@@ -175,34 +169,31 @@ function Header() {
           <div className="container mx-auto flex items-center justify-between py-2 px-6">
             {/* Left Section - Logo */}
             <div>
-              <a href="/">
-                <img
-                  src={logo}
-                  alt="YODA Logo"
-                  className="h-16 w-16 rounded-full object-cover border-2 border-black"
-                />
-              </a>
+              
             </div>
 
             {/* Center Section - Navigation */}
-            <nav className="flex flex-row justify-between space-x-4">
-              <a href="/">
-                <span className="text-gray-700 hover:text-blue-600 transition font-bold">
-                  HOME
-                </span>
+            <nav className="flex items-center space-x-4">
+              <a
+                href="/"
+                className="text-gray-700 hover:text-blue-600 transition font-bold"
+              >
+                HOME
               </a>
               <Categories />
               <BrandHeaderDropdown />
-              <button onClick={() => handleNavigation('/packs')} className="text-left">
-                <span className="text-gray-700 hover:text-blue-600 transition font-bold">
-                  PACKS
-                </span>
-              </button>
+              <a
+                href="/packs"
+                className="text-gray-700 hover:text-blue-600 transition font-bold"
+              >
+                PACKS
+              </a>
               <ClothingAccessories />
-              <a href="/contact">
-                <span className="text-gray-700 hover:text-blue-600 transition font-bold">
-                  CONTACT
-                </span>
+              <a
+                href="/contact"
+                className="text-gray-700 hover:text-blue-600 transition font-bold"
+              >
+                CONTACT
               </a>
             </nav>
 

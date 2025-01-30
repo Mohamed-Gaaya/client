@@ -1,0 +1,157 @@
+.categories-wrapper {
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* .categories-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  } */
+  
+  .categories-button:hover {
+    color: #2563eb;
+  }
+  
+  .loading-spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid #2563eb;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .categories-dropdown {
+    position: absolute; /* Change from 'fixed' to 'absolute' */
+    top: 100%; /* Ensures it is positioned directly below the button */
+    left: 0;
+    width: 600px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 1000;
+    border: 1px solid #eee;
+    padding: 12px;
+  }
+  
+  .categories-wrapper {
+    position: relative; /* Ensures the dropdown is positioned relative to the wrapper */
+  }
+  
+  .categories-wrapper:hover .categories-dropdown {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 8px;
+  }
+  
+  .category-item {
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+  }
+  
+  .category-item:hover {
+    background-color: #f8fafc;
+  }
+  
+  .category-title {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #000;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+  }
+  
+  .subcategories-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .subcategory-item {
+    margin-bottom: 2px;
+  }
+  .category-item:hover .category-title {
+    color: #2563eb; /* Change title color on hover */
+  }
+  
+  .category-item:hover {
+    background-color: #f0f4f8; /* Slightly more pronounced hover state */
+  }
+  
+  .subcategory-link {
+    color: #666;
+    text-decoration: none;
+    display: block;
+    padding: 2px 0;
+    font-size: 0.8rem;
+  }
+  
+  .subcategory-link:hover {
+    color: #2563eb;
+  }
+  
+  /* Mobile Styles */
+  .mobile-categories {
+    width: 100%;
+    padding: 16px;
+  }
+  
+  .mobile-category-item {
+    margin-bottom: 8px;
+  }
+  
+  .mobile-category-button {
+    width: 100%;
+    text-align: left;
+    padding: 12px;
+    background: none;
+    border: none;
+    font-weight: 600;
+    color: #000;
+    cursor: pointer;
+  }
+  
+  .mobile-subcategories-list {
+    padding-left: 24px;
+  }
+  
+  .mobile-subcategory-link {
+    display: block;
+    padding: 8px 12px;
+    color: #666;
+    text-decoration: none;
+  }
+  
+  @media (max-width: 768px) {
+    .categories-dropdown {
+      width: 90%;
+      top: 100px;
+    }
+    
+    .categories-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+  }

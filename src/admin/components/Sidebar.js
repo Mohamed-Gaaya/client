@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import logo from "../../assets/images/logo.jpg";
 import { useLocation } from "react-router-dom";
-import { FaTshirt, FaDumbbell, FaHome, FaUsers, FaTags, FaTrademark, FaBoxOpen, FaClipboardList } from "react-icons/fa";
+import { FaTshirt, FaDumbbell, FaHome, FaUsers, FaTags, FaTrademark, FaBoxOpen, FaClipboardList, FaCubes } from "react-icons/fa";
 
 const Sidebar = () => {
   const [showSubMenu, setShowSubMenu] = useState(false); // State to toggle subcategories
@@ -9,7 +9,8 @@ const Sidebar = () => {
 
   const menuItems = [
     { label: "Dashboard", path: "/admin", icon: <FaHome /> },
-    { label: "Users", path: "/admin/users", icon: <FaUsers /> },
+    { label: "Orders", path: "/admin/orders", icon: <FaClipboardList /> },
+    /*{ label: "Users", path: "/admin/users", icon: <FaUsers /> },*/
     { label: "Categories", path: "/admin/categories", icon: <FaTags /> },
     { label: "Brands", path: "/admin/brands", icon: <FaTrademark /> },
     {
@@ -21,7 +22,7 @@ const Sidebar = () => {
       ],
     },
     { label: "Products", path: "/admin/products", icon: <FaBoxOpen /> },
-    { label: "Orders", path: "/admin/orders", icon: <FaClipboardList /> },
+    { label: "Packs", path: "/admin/packs", icon: <FaCubes /> },
   ];
 
   // Function to determine if the current item or submenu is active

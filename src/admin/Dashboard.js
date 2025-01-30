@@ -1,6 +1,6 @@
 import React from "react";
 import Sidebar from "./components/Sidebar";
-import Navbar from "./components/Navbar";
+import Header from "./components/Header/Header";
 import DashboardContent from "./components/DashboardContent";
 
 function Dashboard() {
@@ -11,7 +11,7 @@ function Dashboard() {
 
       <div className="flex-1 flex flex-col">
         {/* Navbar */}
-        <Navbar />
+        <Header />
 
         {/* Main Content */}
         <div className="p-4 bg-gray-100 flex-1">

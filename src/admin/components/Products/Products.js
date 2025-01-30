@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../Sidebar";
-import Header from "../Navbar";
+import Header from "../Header/Header";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import axios from "axios";

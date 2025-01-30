@@ -9,6 +9,7 @@ import AdminRoutes from "./admin/AdminRoutes";
 import BrandsSection from "./pages/HomePage/BrandsSection";
 import ProductDetails from './pages/ProductDetails/ProductDetailsPage';
 import ProductsPage from './pages/HomePage/ProductsPage';
+import PacksPage from './pages/HomePage/Packs/PacksPage';
 
 // Conditional Header component that hides the header on /admin routes
 const AppHeader = () => {
@@ -36,6 +37,7 @@ function App() {
         <Route path="/product/:id" element={<ProductDetails />} />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/shop" element={<BrandPage />} />
+        <Route path="/packs" element={<PacksPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
       </Routes>

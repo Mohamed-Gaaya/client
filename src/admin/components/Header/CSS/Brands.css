@@ -1,0 +1,164 @@
+.brand-header-wrapper { /* Updated class */
+    position: relative;
+    display: inline-block;
+  }
+  
+  /* .brand-header-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+  } */
+  
+  .brand-header-button:hover { /* Updated class */
+    color: #2563eb;
+  }
+  
+  .loading-spinner {
+    width: 12px;
+    height: 12px;
+    border: 2px solid #2563eb;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .brand-header-dropdown { /* Updated class */
+    position: absolute; /* Change from 'fixed' to 'absolute' */
+    top: 100%; /* Ensures it is positioned directly below the button */
+    left: 0;
+    width: 600px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 1000;
+    border: 1px solid #eee;
+    padding: 12px;
+  }
+  
+  .brand-header-wrapper {
+    position: relative; /* Ensures the dropdown is positioned relative to the wrapper */
+  }
+  
+  .brand-header-wrapper:hover .brand-header-dropdown { /* Updated class */
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .brand-header-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 8px;
+  }
+
+  .brand-header-container {
+    height: 300px; /* Set a fixed height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    padding: 10px; /* Add padding for spacing */
+  }
+  
+  
+  .brand-header-item {
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+  
+  .brand-header-item:hover .category-title {
+    color: #2563eb; /* Change title color on hover */
+  }
+  
+  .brand-header-item:hover {
+    background-color: #f0f4f8; /* Slightly more pronounced hover state */
+  }
+  
+  .brand-header-logo {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    margin-bottom: 4px;
+  }
+  
+  .brand-header-name {
+    font-weight: 600;
+    color: #000;
+    font-size: 0.9rem;
+    margin-top: 6px;
+  }
+  
+  .error-message {
+    text-align: center;
+    padding: 16px;
+    color: #ef4444;
+  }
+  
+  .error-subtitle {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 4px;
+  }
+  
+  .empty-message {
+    text-align: center;
+    padding: 16px;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+  
+ /* Mobile Dropdown Styles */
+.brand-header-mobile-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 8px 0;
+}
+
+.brand-header-mobile-item {
+  width: 100%;
+}
+
+.brand-header-mobile-button {
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.brand-header-mobile-button:hover {
+  background-color: #f0f4f8;
+}
+
+@media (max-width: 768px) {
+  .brand-header-mobile-dropdown {
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    max-height: 250px;
+  }
+}
