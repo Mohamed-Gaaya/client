@@ -147,197 +147,209 @@ const ClothingAccessories = ({ isOpen, onClose, isMobile }) => {
   };
 
   return (
-    <div className="clothing-accessories-wrapper">
-      <div>
-        <ul>
-          <li>
-            <details className="group">
-              <summary className="flex items-center justify-between cursor-pointer">
-                <span className="text-gray-700 hover:text-blue-600 transition font-bold">
-                  CLOTHING & ACCESSORIES
-                </span>
-              </summary>
-              <ul>
-                <li>
-                  <div className="block md:hidden">
-                    {/* This content only shows on mobile */}
-                    <a className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
-                      <ul>
-                        <li>
-                          <details className="group">
-                            <summary className="flex items-center justify-between cursor-pointer">
-                              <span className="text-gray-700 hover:text-blue-600 transition font-bold">
-                                Clothes
-                              </span>
-                            </summary>
-                            <ul>
-                              <li>
-                                <div className="block md:hidden">
-                                  {/* This content only shows on mobile */}
-                                  <a className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
-                                    {clothesData.map((item) => (
-                                      <div
-                                        key={item._id}
-                                        className={`item ${
-                                          activeCategory === "Clothes"
-                                            ? "active"
-                                            : ""
-                                        }`}
-                                        onMouseEnter={() =>
-                                          setActiveCategory("Clothes")
-                                        }
-                                        onMouseLeave={() =>
-                                          setActiveCategory(null)
-                                        }
-                                        onClick={() =>
-                                          handleItemClick("Clothes", item.name)
-                                        }
-                                      >
-                                        <a
-                                          href={`/clothes/${encodeURIComponent(
-                                            item.name
-                                          )}`}
-                                          className="item-link"
+    <>
+      <div className="block md:hidden">
+        {/* This content only shows on mobile */}
+        <div className="clothing-accessories-wrapper">
+          <div>
+            <ul>
+              <li>
+                <details className="group">
+                  <summary className="flex items-center justify-between cursor-pointer">
+                    <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+                      CLOTHING & ACCESSORIES
+                    </span>
+                  </summary>
+                  <ul>
+                    <li>
+                      <a className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                        <ul>
+                          <li>
+                            <details className="group">
+                              <summary className="flex items-center justify-between cursor-pointer">
+                                <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+                                  Clothes
+                                </span>
+                              </summary>
+                              <ul>
+                                <li>
+                                  <div className="block md:hidden">
+                                    {/* This content only shows on mobile */}
+                                    <a className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                                      {clothesData.map((item) => (
+                                        <div
+                                          key={item._id}
+                                          className={`item ${
+                                            activeCategory === "Clothes"
+                                              ? "active"
+                                              : ""
+                                          }`}
+                                          onMouseEnter={() =>
+                                            setActiveCategory("Clothes")
+                                          }
+                                          onMouseLeave={() =>
+                                            setActiveCategory(null)
+                                          }
+                                          onClick={() =>
+                                            handleItemClick(
+                                              "Clothes",
+                                              item.name
+                                            )
+                                          }
                                         >
-                                          {item.name}
-                                        </a>
-                                      </div>
-                                    ))}
-                                  </a>
-                                </div>
-                                <div className="hidden md:block">
-                                  {/* This content only shows on desktop */}
-                                  <div></div>
-                                </div>
-                              </li>
-                            </ul>
-                          </details>
-                        </li>
-                      </ul>
-                      <ul>
-                        <li>
-                          <details className="group">
-                            <summary className="flex items-center justify-between cursor-pointer">
-                              <span className="text-gray-700 hover:text-blue-600 transition font-bold">
-                                Accessories
-                              </span>
-                            </summary>
-                            <ul>
-                              <li>
-                                <div className="block md:hidden">
-                                  {/* This content only shows on mobile */}
-                                  <a className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
-                                    {accessoriesData.map((item) => (
-                                      <div
-                                        key={item._id}
-                                        className={`item ${
-                                          activeCategory === "Accessories"
-                                            ? "active"
-                                            : ""
-                                        }`}
-                                        onMouseEnter={() =>
-                                          setActiveCategory("Accessories")
-                                        }
-                                        onMouseLeave={() =>
-                                          setActiveCategory(null)
-                                        }
-                                        onClick={() =>
-                                          handleItemClick(
-                                            "Accessories",
-                                            item.name
-                                          )
-                                        }
-                                      >
-                                        <a
-                                          href={`/accessories/${encodeURIComponent(
-                                            item.name
-                                          )}`}
-                                          className="item-link"
+                                          <a
+                                            href={`/clothes/${encodeURIComponent(
+                                              item.name
+                                            )}`}
+                                            className="item-link"
+                                          >
+                                            {item.name}
+                                          </a>
+                                        </div>
+                                      ))}
+                                    </a>
+                                  </div>
+                                  <div className="hidden md:block">
+                                    {/* This content only shows on desktop */}
+                                    <div></div>
+                                  </div>
+                                </li>
+                              </ul>
+                            </details>
+                          </li>
+                        </ul>
+                        <ul>
+                          <li>
+                            <details className="group">
+                              <summary className="flex items-center justify-between cursor-pointer">
+                                <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+                                  Accessories
+                                </span>
+                              </summary>
+                              <ul>
+                                <li>
+                                  <div className="block md:hidden">
+                                    {/* This content only shows on mobile */}
+                                    <a className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                                      {accessoriesData.map((item) => (
+                                        <div
+                                          key={item._id}
+                                          className={`item ${
+                                            activeCategory === "Accessories"
+                                              ? "active"
+                                              : ""
+                                          }`}
+                                          onMouseEnter={() =>
+                                            setActiveCategory("Accessories")
+                                          }
+                                          onMouseLeave={() =>
+                                            setActiveCategory(null)
+                                          }
+                                          onClick={() =>
+                                            handleItemClick(
+                                              "Accessories",
+                                              item.name
+                                            )
+                                          }
                                         >
-                                          {item.name}
-                                        </a>
-                                      </div>
-                                    ))}
-                                  </a>
-                                </div>
-                                <div className="hidden md:block">
-                                  {/* This content only shows on desktop */}
-                                  <div></div>
-                                </div>
-                              </li>
-                            </ul>
-                          </details>
-                        </li>
-                      </ul>
-                    </a>
-                  </div>
-                  <div className="hidden md:block">
-                    {/* This content only shows on desktop */}
-                    <div className="clothing-accessories-dropdown">
-                      <div className="clothing-accessories-grid">
-                        <div className="clothes-column">
-                          <h3 className="section-title">Clothes</h3>
-                          {clothesData.map((item) => (
-                            <div
-                              key={item._id}
-                              className={`item ${
-                                activeCategory === "Clothes" ? "active" : ""
-                              }`}
-                              onMouseEnter={() => setActiveCategory("Clothes")}
-                              onMouseLeave={() => setActiveCategory(null)}
-                              onClick={() =>
-                                handleItemClick("Clothes", item.name)
-                              }
-                            >
-                              <a
-                                href={`/clothes/${encodeURIComponent(
-                                  item.name
-                                )}`}
-                                className="item-link"
-                              >
-                                {item.name}
-                              </a>
-                            </div>
-                          ))}
+                                          <a
+                                            href={`/accessories/${encodeURIComponent(
+                                              item.name
+                                            )}`}
+                                            className="item-link"
+                                          >
+                                            {item.name}
+                                          </a>
+                                        </div>
+                                      ))}
+                                    </a>
+                                  </div>
+                                  <div className="hidden md:block">
+                                    {/* This content only shows on desktop */}
+                                    <div></div>
+                                  </div>
+                                </li>
+                              </ul>
+                            </details>
+                          </li>
+                        </ul>
+                      </a>
+                    </li>
+                  </ul>
+                </details>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="hidden md:block">
+        {/* This content only shows on desktop */}
+        <div className="clothing-accessories-wrapper">
+          <div class="dropdown dropdown-hover">
+            <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+              CLOTHING & ACCESSORIES
+            </span>
+            <ul>
+              <li>
+                <div className="clothing-accessories-dropdown">
+                  <div className="clothing-accessories-grid">
+                    <div className="clothes-column">
+                      <h3 className="section-title">Clothes</h3>
+                      {clothesData.map((item) => (
+                        <div
+                          key={item._id}
+                          className={`item ${
+                            activeCategory === "Clothes" ? "active" : ""
+                          }`}
+                          onMouseEnter={() => setActiveCategory("Clothes")}
+                          onMouseLeave={() => setActiveCategory(null)}
+                          onClick={() => handleItemClick("Clothes", item.name)}
+                        >
+                          <a
+                            href={`/clothes/${encodeURIComponent(item.name)}`}
+                            className="item-link"
+                          >
+                            {item.name}
+                          </a>
                         </div>
-                        <div className="accessories-column">
-                          <h3 className="section-title">Accessories</h3>
-                          {accessoriesData.map((item) => (
-                            <div
-                              key={item._id}
-                              className={`item ${
-                                activeCategory === "Accessories" ? "active" : ""
-                              }`}
-                              onMouseEnter={() =>
-                                setActiveCategory("Accessories")
-                              }
-                              onMouseLeave={() => setActiveCategory(null)}
-                              onClick={() =>
-                                handleItemClick("Accessories", item.name)
-                              }
-                            >
-                              <a
-                                href={`/accessories/${encodeURIComponent(
-                                  item.name
-                                )}`}
-                                className="item-link"
-                              >
-                                {item.name}
-                              </a>
-                            </div>
-                          ))}
+                      ))}
+                    </div>
+                    <div className="accessories-column">
+                      <h3 className="section-title">Accessories</h3>
+                      {accessoriesData.map((item) => (
+                        <div
+                          key={item._id}
+                          className={`item ${
+                            activeCategory === "Accessories" ? "active" : ""
+                          }`}
+                          onMouseEnter={() => setActiveCategory("Accessories")}
+                          onMouseLeave={() => setActiveCategory(null)}
+                          onClick={() =>
+                            handleItemClick("Accessories", item.name)
+                          }
+                        >
+                          <a
+                            href={`/accessories/${encodeURIComponent(
+                              item.name
+                            )}`}
+                            className="item-link"
+                          >
+                            {item.name}
+                          </a>
                         </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
-                </li>
-              </ul>
-            </details>
-          </li>
-        </ul>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
+
       {renderClothingAndAccessories()}
-    </div>
+    </>
   );
 };
 

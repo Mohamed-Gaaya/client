@@ -50,86 +50,112 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
   }
 
   return (
-    <div className="brand-header-wrapper">
-      <div className="group relative">
-        {/* Desktop Menu */}
-        <div className="hidden md:block">
-          <button className="text-gray-700 hover:text-blue-600 transition font-bold peer">
-            BRANDS
-          </button>
-          <div className="invisible hover:visible peer-hover:visible absolute left-0 w-max bg-white shadow-lg rounded-md mt-2 py-2">
-            <div className="categories-grid grid grid-cols-2 gap-4 p-4">
-              {brandHeader.map((brand) => (
-                <div
-                  key={brand._id}
-                  className={`brand-header-item ${
-                    activeBrand === brand._id ? "active" : ""
-                  }`}
-                  onMouseEnter={() => setActiveBrand(brand._id)}
-                  onMouseLeave={() => setActiveBrand(null)}
-                  onClick={(e) => handleBrandClick(e, brand.name)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <div className="brand-header-info">
-                    {brand.logo && (
-                      <img
-                        src={`/uploads/${brand.logo}`}
-                        alt={brand.name}
-                        className="brand-header-logo"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                        }}
-                      />
-                    )}
-                    <span className="brand-header-name">{brand.name}</span>
+    <>
+      <div className="block md:hidden">
+        <div className="brand-header-wrapper">
+          <div>
+            {" "}
+            {/* Removed the anchor tag wrapper */}
+            <ul>
+              <li>
+                <details className="group">
+                  <summary className="flex items-center justify-between cursor-pointer">
+                    <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+                      BRANDS
+                    </span>
+                  </summary>
+                  <ul>
+                    <li>
+                      {/* Mobile view */}
+                      <div className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                        <div className="brand-header-container">
+                          {brandHeader.map((brand) => (
+                            <div
+                              key={brand._id}
+                              className={`brand-header-item ${
+                                activeBrand === brand._id ? "active" : ""
+                              }`}
+                              onMouseEnter={() => setActiveBrand(brand._id)}
+                              onMouseLeave={() => setActiveBrand(null)}
+                              onClick={(e) => handleBrandClick(e, brand.name)}
+                              style={{ cursor: "pointer" }}
+                            >
+                              <div className="brand-header-info">
+                                {brand.logo && (
+                                  <img
+                                    src={`/uploads/${brand.logo}`}
+                                    alt={brand.name}
+                                    className="brand-header-logo"
+                                    onError={(e) => {
+                                      e.target.style.display = "none";
+                                    }}
+                                  />
+                                )}
+                                <span className="brand-header-name">
+                                  {brand.name}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </details>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div className="hidden md:block">
+        {/* Desktop view */}
+        <div className="brand-header-wrapper">
+          <div class="dropdown dropdown-hover">
+            <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+              BRANDS
+            </span>
+            <ul>
+              <li>
+                <div className="brand-header-dropdown">
+                  <div className="grid grid-cols-4 gap-2">
+                    {brandHeader.map((brand) => (
+                      <div
+                        key={brand._id}
+                        className={`brand-header-item ${
+                          activeBrand === brand._id ? "active" : ""
+                        }`}
+                        onMouseEnter={() => setActiveBrand(brand._id)}
+                        onMouseLeave={() => setActiveBrand(null)}
+                        onClick={(e) => handleBrandClick(e, brand.name)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <div className="brand-header-info">
+                          {brand.logo && (
+                            <img
+                              src={`/uploads/${brand.logo}`}
+                              alt={brand.name}
+                              className="brand-header-logo"
+                              onError={(e) => {
+                                e.target.style.display = "none";
+                              }}
+                            />
+                          )}
+                          <span className="brand-header-name">
+                            {brand.name}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        <div className="block md:hidden">
-          <details className="group">
-            <summary className="flex items-center justify-between cursor-pointer">
-              <span className="text-gray-700 hover:text-blue-600 transition font-bold">
-                BRANDS
-              </span>
-            </summary>
-            <div className="p-2">
-              {brandHeader.map((brand) => (
-                <div
-                  key={brand._id}
-                  className={`brand-header-item ${
-                    activeBrand === brand._id ? "active" : ""
-                  }`}
-                  onMouseEnter={() => setActiveBrand(brand._id)}
-                  onMouseLeave={() => setActiveBrand(null)}
-                  onClick={(e) => handleBrandClick(e, brand.name)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <div className="brand-header-info">
-                    {brand.logo && (
-                      <img
-                        src={`/uploads/${brand.logo}`}
-                        alt={brand.name}
-                        className="brand-header-logo"
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                        }}
-                      />
-                    )}
-                    <span className="brand-header-name">{brand.name}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </details>
-        </div>
+        {isMobile && renderBrandHeader()}
       </div>
-      {isMobile && renderBrandHeader()}
-    </div>
+    </>
   );
 };
 

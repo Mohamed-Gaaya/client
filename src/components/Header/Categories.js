@@ -130,92 +130,103 @@ const Categories = ({ isOpen, onClose, isMobile }) => {
   };
 
   return (
-    <div className="categories-wrapper">
-      <ul>
-        <li>
-          <details className="group">
-            <summary className="flex items-center justify-between cursor-pointer">
-              <span className="text-gray-700 hover:text-blue-600 transition font-bold">
-                CATEGORIES
-              </span>
-            </summary>
+    <>
+      <div className="block md:hidden">
+        {/* This content only shows on mobile */}
+        <div className="categories-wrapper">
+          <ul>
+            <li>
+              <details className="group">
+                <summary className="flex items-center justify-between cursor-pointer">
+                  <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+                    CATEGORIES
+                  </span>
+                </summary>
+                <ul>
+                  <li>
+                    {/* This content only shows on mobile */}
+                    {/* <a className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer"> */}
+                    {categories.map((category) => (
+                      <div
+                        key={category._id}
+                        className="category-item"
+                        onClick={() => handleCategoryClick(category.name)}
+                      >
+                        <h3 className="category-title">{category.name}</h3>
+                        {category.subcategories &&
+                          category.subcategories.length > 0 && (
+                            <ul className="subcategories-list">
+                              {category.subcategories.map((sub, subIndex) => (
+                                <li key={subIndex} className="subcategory-item">
+                                  <button
+                                    className="subcategory-link"
+                                    onClick={(e) =>
+                                      handleSubcategoryClick(e, sub)
+                                    }
+                                  >
+                                    {sub}
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                      </div>
+                    ))}
+                    {/* </a> */}
+                  </li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div className="hidden md:block">
+        <div className="categories-wrapper">
+          <div class="dropdown dropdown-hover">
+            <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+              CATEGORIES
+            </span>
             <ul>
               <li>
-                <div className="block md:hidden">
-                  {/* This content only shows on mobile */}
-                  {/* <a className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer"> */}
-                  {categories.map((category) => (
-                    <div
-                      key={category._id}
-                      className="category-item"
-                      onClick={() => handleCategoryClick(category.name)}
-                    >
-                      <h3 className="category-title">{category.name}</h3>
-                      {category.subcategories &&
-                        category.subcategories.length > 0 && (
-                          <ul className="subcategories-list">
-                            {category.subcategories.map((sub, subIndex) => (
-                              <li key={subIndex} className="subcategory-item">
-                                <button
-                                  className="subcategory-link"
-                                  onClick={(e) =>
-                                    handleSubcategoryClick(e, sub)
-                                  }
-                                >
-                                  {sub}
-                                </button>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                    </div>
-                  ))}
-                  {/* </a> */}
-                </div>
-                <div className="hidden md:block">
-                  {/* This content only shows on desktop */}
-                  <div className="categories-dropdown dropdown dropdown-hover">
-                    <div className="categories-grid">
-                      {categories.map((category) => (
-                        <div
-                          key={category._id}
-                          className="category-item"
-                          onClick={() => handleCategoryClick(category.name)}
-                        >
-                          <h3 className="category-title">{category.name}</h3>
-                          {category.subcategories &&
-                            category.subcategories.length > 0 && (
-                              <ul className="subcategories-list">
-                                {category.subcategories.map((sub, subIndex) => (
-                                  <li
-                                    key={subIndex}
-                                    className="subcategory-item"
+                {/* This content only shows on desktop */}
+                <div className="categories-dropdown dropdown dropdown-hover">
+                  <div className="grid grid-cols-4 gap-2">
+                    {categories.map((category) => (
+                      <div
+                        key={category._id}
+                        className="p-1 rounded-md transition-colors duration-200 cursor-pointer hover:bg-blue-50"
+                        onClick={() => handleCategoryClick(category.name)}
+                      >
+                        <h3 className="category-title">{category.name}</h3>
+                        {category.subcategories &&
+                          category.subcategories.length > 0 && (
+                            <ul className="subcategories-list">
+                              {category.subcategories.map((sub, subIndex) => (
+                                <li key={subIndex} className="subcategory-item">
+                                  <button
+                                    className="subcategory-link"
+                                    onClick={(e) =>
+                                      handleSubcategoryClick(e, sub)
+                                    }
                                   >
-                                    <button
-                                      className="subcategory-link"
-                                      onClick={(e) =>
-                                        handleSubcategoryClick(e, sub)
-                                      }
-                                    >
-                                      {sub}
-                                    </button>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                        </div>
-                      ))}
-                    </div>
+                                    {sub}
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </li>
             </ul>
-          </details>
-        </li>
-      </ul>
+          </div>
+        </div>
 
-      {renderCategories()}
-    </div>
+        {renderCategories()}
+      </div>
+    </>
   );
 };
 
