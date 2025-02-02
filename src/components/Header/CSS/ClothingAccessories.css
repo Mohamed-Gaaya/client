@@ -1,107 +1,147 @@
 .clothing-accessories-wrapper {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
+}
+
+.clothing-accessories-wrapper span {
+  position: relative;
+  display: inline-block;
+  color: white !important;
+}
+
+.clothing-accessories-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: black !important;
+  border-radius: 4px;
+  border: 1px solid #333;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 10;
+  color: white !important;
+  width: 100%;
+  min-width: 200px;
+}
+
+.clothing-accessories-wrapper:hover .clothing-accessories-dropdown {
+  opacity: 1;
+  visibility: visible;
+}
+
+.clothing-accessories-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 1px;
+}
+
+.clothes-column, .accessories-column {
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  padding: 8px;
+}
+
+.clothes-column:hover, .accessories-column:hover {
+  background-color: #1e293b;
+}
+
+.section-title {
+  color: white !important;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.item {
+  margin-bottom: 0px;
+}
+
+.item-link {
+  color: white !important;
+  text-decoration: none;
+  display: block;
+  padding: 2px 0;
+  font-size: 0.8rem;
+}
+
+.item-link:hover {
+  color: #ffcc00;
+}
+
+.item.active {
+  background-color: #1e293b;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .clothing-accessories-wrapper ul {
+    background-color: white;
   }
   
-  /* .clothing-accessories-button {
-    color: #475569;
-    font-weight: 700;
-    font-size: 1.25rem;
-    transition: color 0.3s ease;
-  } */
+  .clothing-accessories-wrapper details > summary {
+    padding: 0.5rem 1rem;
+    background-color: white;
+  }
   
-  .clothing-accessories-button:hover {
-    color: #2563eb;
+  .clothing-accessories-wrapper details[open] > summary {
+    background-color: white;
   }
   
   .clothing-accessories-dropdown {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background-color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: none;
-    z-index: 50;
-  }
-  
-  .clothing-accessories-wrapper:hover .clothing-accessories-dropdown {
-    display: block;
+    width: 90%;
+    top: 100px;
   }
   
   .clothing-accessories-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    padding: 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
+    grid-template-columns: 1fr;
+    gap: 4px;
   }
-  
-  .clothes-column, .accessories-column {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .section-title {
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    color: #1f2937;
-  }
-  
-  .item {
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-  }
-  
-  .item:hover {
-    background-color: #f3f4f6;
-  }
-  
-  .item-link {
-    color: #4b5563;
-    text-decoration: none;
-    display: block;
-  }
-  
-  .item.active {
-    background-color: #e5e7eb;
-  }
-  
-  /* Mobile Styles */
-  .mobile-clothing-accessories {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .mobile-clothes-section,
-  .mobile-accessories-section {
-    margin-bottom: 1rem;
-  }
-  
-  .mobile-item-button {
-    width: 100%;
-    text-align: left;
-    padding: 0.5rem;
-    background-color: transparent;
-    border: none;
-    color: #4b5563;
-  }
-  
-  .mobile-item-button:hover {
-    background-color: #f3f4f6;
-  }
-  
-  .loading-spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    animation: spin 1s linear infinite;
-  }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+}
+
+.loading-spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #2563eb;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Category title styles */
+.category-title {
+  color: white !important;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+/* Subcategory styles */
+.subcategories-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.subcategory-item {
+  margin: 0.25rem 0;
+}
+
+.subcategory-link {
+  color: white !important;
+  text-decoration: none;
+  font-size: 0.875rem;
+  padding: 0.25rem 0;
+  display: block;
+  transition: color 0.2s ease;
+}
+
+.subcategory-link:hover {
+  color: #ffcc00 !important;
+}

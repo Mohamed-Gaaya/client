@@ -219,16 +219,23 @@ const FilterSidebarPacks = ({ onFiltersChange, initialFilters = {} }) => {
   const [maxPrice, setMaxPrice] = useState(1000);
 
   useEffect(() => {
-    const fetchFilters = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/packs");
-        const data = await response.json();
-        const packs = data.packs || [];
+        // First fetch all products to get unique brands
+        const productsResponse = await fetch("http://localhost:5000/api/products");
+        const productsData = await productsResponse.json();
+        const uniqueBrands = new Set(
+          productsData.products
+            .map(product => product.brand)
+            .filter(Boolean)
+        );
+        setBrands(Array.from(uniqueBrands).sort());
 
-        // Extract unique brands from packs
-        const uniqueBrands = [...new Set(packs.map((pack) => pack.brand))].filter(Boolean);
-        setBrands(uniqueBrands);
-
+        // Then fetch packs for price range
+        const packsResponse = await fetch("http://localhost:5000/api/packs");
+        const packsData = await packsResponse.json();
+        const packs = packsData.packs || [];
+        
         // Set initial price range based on packs
         const prices = packs.map(p => p.price).filter(Boolean);
         if (prices.length) {
@@ -237,20 +244,21 @@ const FilterSidebarPacks = ({ onFiltersChange, initialFilters = {} }) => {
           setPriceRange([0, maxPackPrice]);
         }
       } catch (error) {
-        console.error("Error fetching pack filters:", error);
+        console.error("Error fetching filters:", error);
       }
     };
-
-    fetchFilters();
+  
+    fetchData();
   }, []);
 
+  // Rest of the component remains unchanged...
   const handleFiltersChange = useCallback(() => {
     const filters = {
       brands: selectedBrands,
       priceRange
     };
     onFiltersChange(filters);
-  }, [selectedBrands, priceRange]);
+  }, [selectedBrands, priceRange, onFiltersChange]);
 
   useEffect(() => {
     handleFiltersChange();

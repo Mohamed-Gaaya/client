@@ -40,7 +40,7 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
 
   if (loading) {
     return (
-      <div className="brand-header-wrapper">
+      <div className="brand-header-wrapper ">
         <div>
           <span>BRANDS</span>
           <div className="loading-spinner"></div>
@@ -60,7 +60,7 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
               <li>
                 <details className="group">
                   <summary className="flex items-center justify-between cursor-pointer">
-                    <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+                    <span className="text-white hover:text-white transition font-bold ">
                       BRANDS
                     </span>
                   </summary>
@@ -71,15 +71,12 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
                         <div className="brand-header-container">
                           {brandHeader.map((brand) => (
                             <div
-                              key={brand._id}
-                              className={`brand-header-item ${
-                                activeBrand === brand._id ? "active" : ""
-                              }`}
-                              onMouseEnter={() => setActiveBrand(brand._id)}
-                              onMouseLeave={() => setActiveBrand(null)}
-                              onClick={(e) => handleBrandClick(e, brand.name)}
-                              style={{ cursor: "pointer" }}
-                            >
+                            key={brand._id}
+                            className="p-1 rounded-md transition-colors duration-200 cursor-pointer hover:bg-gray-600 brand-header-item"
+                            onMouseEnter={() => setActiveBrand(brand._id)}
+                            onMouseLeave={() => setActiveBrand(null)}
+                            onClick={(e) => handleBrandClick(e, brand.name)}
+                          >
                               <div className="brand-header-info">
                                 {brand.logo && (
                                   <img
@@ -111,24 +108,21 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
         {/* Desktop view */}
         <div className="brand-header-wrapper">
           <div class="dropdown dropdown-hover">
-            <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+            <span className="text-white  transition font-bold cursor-pointer ">
               BRANDS
             </span>
             <ul>
               <li>
-                <div className="brand-header-dropdown">
+                <div className="brand-header-dropdown ">
                   <div className="grid grid-cols-4 gap-2">
                     {brandHeader.map((brand) => (
                       <div
-                        key={brand._id}
-                        className={`brand-header-item ${
-                          activeBrand === brand._id ? "active" : ""
-                        }`}
-                        onMouseEnter={() => setActiveBrand(brand._id)}
-                        onMouseLeave={() => setActiveBrand(null)}
-                        onClick={(e) => handleBrandClick(e, brand.name)}
-                        style={{ cursor: "pointer" }}
-                      >
+                      key={brand._id}
+                      className="p-1 rounded-md transition-colors duration-200 cursor-pointer hover:bg-gray-600 brand-header-item"
+                      onMouseEnter={() => setActiveBrand(brand._id)}
+                      onMouseLeave={() => setActiveBrand(null)}
+                      onClick={(e) => handleBrandClick(e, brand.name)}
+                    >
                         <div className="brand-header-info">
                           {brand.logo && (
                             <img

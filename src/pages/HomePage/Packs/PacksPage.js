@@ -1,13 +1,24 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import FilterSidebarPacks from "./FilterSidebarPacks";
+import { debounce } from 'lodash';
 
-const PackCard = ({ pack }) => {
+const PackCard = ({ pack, onClick }) => {
+  // Transform the image URLs to handle both array of images and single image
+  const displayImage = pack.images 
+    ? `http://localhost:5000/uploads/${pack.images[0].split('/').pop()}`
+    : pack.image
+    ? `http://localhost:5000/uploads/${pack.image.split('/').pop()}`
+    : '/placeholder.jpg';
+
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+    <div 
+      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+      onClick={onClick}
+    >
       <div className="relative pb-[100%]">
         <img
-          src={`http://localhost:5000${pack.image}`}
+          src={displayImage}
           alt={pack.name}
           className="absolute top-0 left-0 w-full h-full object-cover"
         />
@@ -20,9 +31,11 @@ const PackCard = ({ pack }) => {
             {pack.products?.length || 0} products
           </span>
         </div>
-        <div className="mt-2 text-gray-500 text-sm">
-          Value: ${pack.totalValue.toFixed(2)}
-        </div>
+        {pack.totalValue && (
+          <div className="mt-2 text-gray-500 text-sm">
+            Value: ${pack.totalValue.toFixed(2)}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -54,27 +67,36 @@ const PacksPage = () => {
   }, [searchParams]);
 
   // Handle filter changes
-  const handleFiltersChange = (newFilters) => {
+  const handleFiltersChange = debounce((newFilters) => {
     const newParams = new URLSearchParams();
     
-    // Update brands parameter
-    if (newFilters.brands && newFilters.brands.length > 0) {
+    if (newFilters.brands?.length > 0) {
       newParams.set("brands", newFilters.brands.join(","));
+    } else {
+      newParams.delete("brands");
     }
     
-    // Update price range parameters
     if (newFilters.priceRange) {
-      if (newFilters.priceRange[0] > 0) {
-        newParams.set("minPrice", newFilters.priceRange[0].toString());
+      const [min, max] = newFilters.priceRange;
+      if (min > 0) {
+        newParams.set("minPrice", min.toString());
+      } else {
+        newParams.delete("minPrice");
       }
-      if (newFilters.priceRange[1] < 1000) {
-        newParams.set("maxPrice", newFilters.priceRange[1].toString());
+      if (max < 1000) {
+        newParams.set("maxPrice", max.toString());
+      } else {
+        newParams.delete("maxPrice");
       }
     }
-
-    // Update URL using setSearchParams
-    setSearchParams(newParams);
-  };
+  
+    const currentParams = searchParams.toString();
+    const nextParams = newParams.toString();
+  
+    if (currentParams !== nextParams) {
+      setSearchParams(newParams);
+    }
+  }, 300); 
 
   // Fetch packs when filters change
   useEffect(() => {
@@ -82,7 +104,7 @@ const PacksPage = () => {
       setLoading(true);
       try {
         const queryParams = new URLSearchParams();
-    
+        
         if (activeFilters.brands.length > 0) {
           queryParams.set("brands", activeFilters.brands.join(","));
         }
@@ -93,14 +115,16 @@ const PacksPage = () => {
           queryParams.set("maxPrice", activeFilters.priceRange[1].toString());
         }
     
+        // Add cache-busting parameter
+        queryParams.set("_t", Date.now());
+    
         const response = await fetch(
           `http://localhost:5000/api/packs?${queryParams.toString()}`
         );
     
-        if (!response.ok) {
-          throw new Error("Failed to fetch packs");
-        }
-    
+        // Handle navigation cancellation
+        if (!response.ok) throw new Error("Failed to fetch packs");
+        
         const data = await response.json();
         setPacks(data.packs);
       } catch (err) {
@@ -112,6 +136,11 @@ const PacksPage = () => {
 
     fetchPacks();
   }, [activeFilters]);
+
+  const handlePackClick = (packId) => {
+    navigate(`/packs/${packId}`);
+    window.scrollTo(0, 0);
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -138,13 +167,11 @@ const PacksPage = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {packs.map((pack) => (
-              <div
+              <PackCard
                 key={pack._id}
-                onClick={() => navigate(`/pack/${pack._id}`)}
-                className="cursor-pointer"
-              >
-                <PackCard pack={pack} />
-              </div>
+                pack={pack}
+                onClick={() => handlePackClick(pack._id)}
+              />
             ))}
           </div>
         )}

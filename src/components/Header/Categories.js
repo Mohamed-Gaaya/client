@@ -83,9 +83,10 @@ const Categories = ({ isOpen, onClose, isMobile }) => {
 
   if (loading) {
     return (
-      <div className="categories-wrapper">
+      <div className="categories-wrapper ">
         <div>
-          <span className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
+          <span className="text-gray-700 hover:text-blue-600 transition text-lg font-bold cursor-pointer"
+          onClick={() => setShowDropdown(!showDropdown)}>
             CATEGORIES
           </span>
           <div className="loading-spinner"></div>
@@ -131,7 +132,7 @@ const Categories = ({ isOpen, onClose, isMobile }) => {
 
   return (
     <>
-      <div className="block md:hidden">
+      <div className="block md:hidden ">
         {/* This content only shows on mobile */}
         <div className="categories-wrapper">
           <ul>
@@ -183,18 +184,18 @@ const Categories = ({ isOpen, onClose, isMobile }) => {
       <div className="hidden md:block">
         <div className="categories-wrapper">
           <div class="dropdown dropdown-hover">
-            <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+            <span className="text-white transition font-bold cursor-pointer">
               CATEGORIES
             </span>
             <ul>
               <li>
                 {/* This content only shows on desktop */}
-                <div className="categories-dropdown dropdown dropdown-hover">
+                <div className="categories-dropdown dropdown dropdown-hover ">
                   <div className="grid grid-cols-4 gap-2">
                     {categories.map((category) => (
                       <div
                         key={category._id}
-                        className="p-1 rounded-md transition-colors duration-200 cursor-pointer hover:bg-blue-50"
+                        className="p-1 rounded-md transition-colors duration-200 cursor-pointer hover:bg-gray-600"
                         onClick={() => handleCategoryClick(category.name)}
                       >
                         <h3 className="category-title">{category.name}</h3>

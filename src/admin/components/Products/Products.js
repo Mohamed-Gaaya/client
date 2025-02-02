@@ -12,6 +12,7 @@ const Products = () => {
   const [clothesCategories, setClothesCategories] = useState([]); // For Clothes category
   const [accessoriesCategories, setAccessoriesCategories] = useState([]); // For Accessories category
   const [loading, setLoading] = useState(true);
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false); 
 
   const [selectedBrand, setSelectedBrand] = useState("All");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -74,14 +75,20 @@ const Products = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (brandDropdownOpen && !event.target.closest(".relative")) {
+      const brandDropdown = event.target.closest(".brand-dropdown");
+      const categoryDropdown = event.target.closest(".category-dropdown");
+      
+      if (brandDropdownOpen && !brandDropdown) {
         setBrandDropdownOpen(false);
+      }
+      if (categoryDropdownOpen && !categoryDropdown) {
+        setCategoryDropdownOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [brandDropdownOpen]);
+  }, [brandDropdownOpen, categoryDropdownOpen]);
 
   const handleDelete = async (id) => {
     try {
@@ -137,7 +144,7 @@ const Products = () => {
 
           {/* Filters */}
           <div className="mb-6 flex space-x-4">
-            <div className="relative inline-block">
+            <div className="relative inline-block brand-dropdown">
               <button
                 type="button"
                 onClick={() => setBrandDropdownOpen(!brandDropdownOpen)}
@@ -161,7 +168,7 @@ const Products = () => {
               </button>
 
               {brandDropdownOpen && (
-                <div className="absolute z-50 mt-1 w-full bg-white border rounded-md shadow-lg">
+                <div className="absolute z-50 mt-1 w-full bg-white border rounded-md shadow-lg max-h-60 overflow-y-auto">
                   <div
                     className="p-2 hover:bg-gray-100 cursor-pointer"
                     onClick={() => {

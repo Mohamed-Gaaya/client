@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../../../assets/images/logo.jpg";
+import logo from "../../../assets/images/YODA-LOGO.svg";
 import { StyledWrapper } from "../../../pages/HomePage/style";
 import { useTranslation } from "react-i18next";
 import Categories from "./Categories";

@@ -1,7 +1,8 @@
-.brand-header-wrapper { /* Updated class */
-    position: relative;
-    display: inline-block;
-  }
+.brand-header-wrapper {
+  position: relative;
+  display: inline-block;
+  color: white !important;
+}
   
   /* .brand-header-button {
     display: flex;
@@ -33,22 +34,23 @@
     to { transform: rotate(360deg); }
   }
   
-  .brand-header-dropdown { /* Updated class */
-    position: absolute; /* Change from 'fixed' to 'absolute' */
-    top: 100%; /* Ensures it is positioned directly below the button */
+  .brand-header-dropdown {
+    position: absolute;
+    top: 100%;
     left: 0;
-    width: 600px;
-    background: white;
+    background: black !important;
     border-radius: 4px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #333;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     opacity: 0;
     visibility: hidden;
     transition: all 0.2s ease;
-    z-index: 1000;
-    border: 1px solid #eee;
-    padding: 12px;
-  }
+    z-index: 10;
+    color: white !important;
+    padding: 1px;
+}
   
+
   .brand-header-wrapper {
     position: relative; /* Ensures the dropdown is positioned relative to the wrapper */
   }
@@ -75,17 +77,19 @@
   
   .brand-header-item {
     padding: 8px;
+    border-radius: 0.375rem; 
     border-radius: 4px;
     transition: background-color 0.2s;
-  }
-  
-  .brand-header-item:hover .category-title {
-    color: #2563eb; /* Change title color on hover */
+    background: transparent;
   }
   
   .brand-header-item:hover {
-    background-color: #f0f4f8; /* Slightly more pronounced hover state */
+    background-color: rgb(75, 85, 99) !important; /* matches hover:bg-gray-600 */
   }
+  
+  .brand-header-item:hover .brand-header-name {
+    color: white !important;
+}
   
   .brand-header-logo {
     width: 48px;
@@ -96,7 +100,7 @@
   
   .brand-header-name {
     font-weight: 600;
-    color: #000;
+    color: white !important;
     font-size: 0.9rem;
     margin-top: 6px;
   }
@@ -128,8 +132,8 @@
   width: 100%;
   max-height: 250px;
   overflow-y: auto;
-  background: white;
-  border: 1px solid #eee;
+  background: black; /* Changed to black */
+  border: 1px solid #333;
   border-radius: 4px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
@@ -148,10 +152,19 @@
   border: none;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  color: white;
 }
 
 .brand-header-mobile-button:hover {
-  background-color: #f0f4f8;
+  background-color: #333;
+}
+details > ul {
+  background-color: black !important;
+}
+
+details > ul > li > div {
+  background-color: black !important;
+  color: white !important;
 }
 
 @media (max-width: 768px) {
