@@ -7,6 +7,28 @@ function ProductCard({ product }) {
   const handleImageLoad = () => {
     setImageLoaded(true);
   };
+  const addToCart = (e) => {
+    e.stopPropagation(); // Prevent navigation if card is clickable
+    const cartItem = {
+      _id: product._id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      quantity: 1
+    };
+    
+    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existingItemIndex = existingCart.findIndex(item => item._id === product._id);
+    
+    if (existingItemIndex >= 0) {
+      existingCart[existingItemIndex].quantity += 1;
+    } else {
+      existingCart.push(cartItem);
+    }
+    
+    localStorage.setItem('cart', JSON.stringify(existingCart));
+    // Optionally show a notification that item was added
+  };
 
   return (
     <StyledCardWrapper>
@@ -58,7 +80,7 @@ function ProductCard({ product }) {
         <div className="text">
           <p className="h3">{product.name}</p>
           <p className="p">${product.price.toFixed(2)}</p>
-          <button className="relative inline-flex items-center justify-center px-8 py-2.5 overflow-hidden tracking-tighter text-white bg-customBlue rounded-md group">
+          <button onClick={addToCart} className="relative inline-flex items-center justify-center px-8 py-2.5 overflow-hidden tracking-tighter text-white bg-customBlue rounded-md group">
             <span className="absolute w-0 h-0 transition-all duration-200 ease-out bg-customPink rounded-full group-hover:w-56 group-hover:h-56"></span>
             <span className="relative text-base font-semibold">
               Add to Cart

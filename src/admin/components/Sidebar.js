@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../../assets/images/logo.jpg";
+import logo from "../../assets/images/YODA-LOGO-removebg-preview.png";
 import { useLocation } from "react-router-dom";
 import { FaTshirt, FaDumbbell, FaHome, FaUsers, FaTags, FaTrademark, FaBoxOpen, FaClipboardList, FaCubes } from "react-icons/fa";
 
@@ -39,7 +39,7 @@ const Sidebar = () => {
         <img
           src={logo}
           alt="YODA Logo"
-          className="h-32 w-32 rounded-full object-cover border-4 border-black"
+          className=" object-cover "
         />
       </a>
 

@@ -32,7 +32,7 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
     // Prevent any parent elements from handling the click
     event.preventDefault();
     event.stopPropagation();
-    
+
     // Navigate to products page with brand parameter
     navigate(`/products?brand=${encodeURIComponent(brandName)}`);
     if (onClose) onClose();
@@ -40,7 +40,7 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
 
   if (loading) {
     return (
-      <div className="brand-header-wrapper">
+      <div className="brand-header-wrapper ">
         <div>
           <span>BRANDS</span>
           <div className="loading-spinner"></div>
@@ -50,96 +50,106 @@ const BrandHeaderDropdown = ({ isOpen, onClose, isMobile }) => {
   }
 
   return (
-    <div className="brand-header-wrapper">
-      <div> {/* Removed the anchor tag wrapper */}
-        <ul>
-          <li>
-            <details className="group">
-              <summary className="flex items-center justify-between cursor-pointer">
-                <span className="text-gray-700 hover:text-blue-600 transition text-lg font-bold">
-                  BRANDS
-                </span>
-              </summary>
-              <ul>
-                <li>
-                  <div className="block md:hidden">
-                    {/* Mobile view */}
-                    <div className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
-                      <div className="brand-header-container">
-                        {brandHeader.map((brand) => (
-                          <div
+    <>
+      <div className="block md:hidden">
+        <div className="brand-header-wrapper">
+          <div>
+            {" "}
+            {/* Removed the anchor tag wrapper */}
+            <ul>
+              <li>
+                <details className="group">
+                  <summary className="flex items-center justify-between cursor-pointer">
+                    <span className="text-white hover:text-white transition font-bold ">
+                      BRANDS
+                    </span>
+                  </summary>
+                  <ul>
+                    <li>
+                      {/* Mobile view */}
+                      <div className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                        <div className="brand-header-container">
+                          {brandHeader.map((brand) => (
+                            <div
                             key={brand._id}
-                            className={`brand-header-item ${
-                              activeBrand === brand._id ? "active" : ""
-                            }`}
+                            className="p-1 rounded-md transition-colors duration-200 cursor-pointer hover:bg-gray-600 brand-header-item"
                             onMouseEnter={() => setActiveBrand(brand._id)}
                             onMouseLeave={() => setActiveBrand(null)}
                             onClick={(e) => handleBrandClick(e, brand.name)}
-                            style={{ cursor: "pointer" }}
                           >
-                            <div className="brand-header-info">
-                              {brand.logo && (
-                                <img
-                                  src={`/uploads/${brand.logo}`}
-                                  alt={brand.name}
-                                  className="brand-header-logo"
-                                  onError={(e) => {
-                                    e.target.style.display = "none";
-                                  }}
-                                />
-                              )}
-                              <span className="brand-header-name">
-                                {brand.name}
-                              </span>
+                              <div className="brand-header-info">
+                                {brand.logo && (
+                                  <img
+                                    src={`/uploads/${brand.logo}`}
+                                    alt={brand.name}
+                                    className="brand-header-logo"
+                                    onError={(e) => {
+                                      e.target.style.display = "none";
+                                    }}
+                                  />
+                                )}
+                                <span className="brand-header-name">
+                                  {brand.name}
+                                </span>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="hidden md:block">
-                    {/* Desktop view */}
-                    <div className="brand-header-dropdown">
-                      <div className="categories-grid">
-                        {brandHeader.map((brand) => (
-                          <div
-                            key={brand._id}
-                            className={`brand-header-item ${
-                              activeBrand === brand._id ? "active" : ""
-                            }`}
-                            onMouseEnter={() => setActiveBrand(brand._id)}
-                            onMouseLeave={() => setActiveBrand(null)}
-                            onClick={(e) => handleBrandClick(e, brand.name)}
-                            style={{ cursor: "pointer" }}
-                          >
-                            <div className="brand-header-info">
-                              {brand.logo && (
-                                <img
-                                  src={`/uploads/${brand.logo}`}
-                                  alt={brand.name}
-                                  className="brand-header-logo"
-                                  onError={(e) => {
-                                    e.target.style.display = "none";
-                                  }}
-                                />
-                              )}
-                              <span className="brand-header-name">
-                                {brand.name}
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </details>
-          </li>
-        </ul>
+                    </li>
+                  </ul>
+                </details>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
-      {isMobile && renderBrandHeader()}
-    </div>
+      <div className="hidden md:block">
+        {/* Desktop view */}
+        <div className="brand-header-wrapper">
+          <div class="dropdown dropdown-hover">
+            <span className="text-white  transition font-bold cursor-pointer ">
+              BRANDS
+            </span>
+            <ul>
+              <li>
+                <div className="brand-header-dropdown ">
+                  <div className="grid grid-cols-4 gap-2">
+                    {brandHeader.map((brand) => (
+                      <div
+                      key={brand._id}
+                      className="p-1 rounded-md transition-colors duration-200 cursor-pointer hover:bg-gray-600 brand-header-item"
+                      onMouseEnter={() => setActiveBrand(brand._id)}
+                      onMouseLeave={() => setActiveBrand(null)}
+                      onClick={(e) => handleBrandClick(e, brand.name)}
+                    >
+                        <div className="brand-header-info">
+                          {brand.logo && (
+                            <img
+                              src={`/uploads/${brand.logo}`}
+                              alt={brand.name}
+                              className="brand-header-logo"
+                              onError={(e) => {
+                                e.target.style.display = "none";
+                              }}
+                            />
+                          )}
+                          <span className="brand-header-name">
+                            {brand.name}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {isMobile && renderBrandHeader()}
+      </div>
+    </>
   );
 };
 

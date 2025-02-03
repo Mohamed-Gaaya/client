@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Sidebar from "../Sidebar";
-import Header from "../Navbar";
+import Header from "../Header/Header";
 import axios from "axios";
 import { FaTrashAlt, FaPlusCircle, FaClock } from "react-icons/fa";
 
@@ -338,7 +338,7 @@ const handleBrandSelect = (brand) => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="flex-1 p-6 bg-gray-100">
+      <div className="flex-1">
         <Header />
         <div className="bg-white p-8 rounded shadow-md max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold mb-6 text-center">Edit Product</h2>

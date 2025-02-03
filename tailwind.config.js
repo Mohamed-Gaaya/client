@@ -5,7 +5,7 @@ module.exports = {
         customBlue: "#70c6e5",
         customPink:"#ae4eb9",
         customGrey:"#8b90d0",
-        customDark:"#353353",
+        customDark:"#2e1f2f",
       },},
   },
   plugins: [],

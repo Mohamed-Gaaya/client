@@ -113,7 +113,7 @@ const Categories = () => {
   return (
     <div className="flex">
       <Sidebar />
-      <div className="flex-1 p-6">
+      <div className="flex-1">
         <Header />
         <div className="bg-white shadow-lg rounded-lg p-6">
           <div className="flex justify-between items-center mb-6">

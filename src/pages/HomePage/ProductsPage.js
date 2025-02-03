@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import ProductCard from "./ProductCard";
 import FilterSidebar from "./FilterSidebar";
+import { FooterPage } from "../../components/FooterPage";
 
 const ProductsPage = () => {
   const navigate = useNavigate();
@@ -162,10 +163,13 @@ const ProductsPage = () => {
               </div>
             ))}
           </div>
+          
         )}
       </div>
+        
     </div>
   );
+
 };
 
 export default ProductsPage;

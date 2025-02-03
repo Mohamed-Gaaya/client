@@ -6,6 +6,7 @@ import Categories from "./Categories";
 import BrandHeaderDropdown from "./BrandHeaderDropdown";
 import ClothingAccessories from "./ClothingAccessories";
 import SearchBar from "./SearchBar";
+import Cart from "./Cart";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 function Header() {
@@ -13,6 +14,7 @@ function Header() {
   const navigate = useNavigate();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   
   const handleNavigation = (path) => {
     navigate(path);
@@ -23,17 +25,17 @@ function Header() {
     <>
       {/* Top Search Bar */}
       {isSearchOpen && (
-        <div className="fixed top-0 left-0 w-full bg-white z-[100] p-4 shadow-md">
+        <div className="fixed top-0 left-0 w-full bg-black z-[100] p-4 shadow-md">
           <div className="container mx-auto max-w-md relative">
             <SearchBar />
             <button
               onClick={() => setIsSearchOpen(false)}
               type="reset"
-              className="absolute right-3 -translate-y-1/2 top-1/2 p-1"
+              className="absolute right-3 -translate-y-1/2 top-1/2 p-1 text-white"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="w-5 h-5 text-gray-700"
+                className="w-5 h-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -84,9 +86,12 @@ function Header() {
             <a href="/favorites" className="text-white hover:text-gray-300">
               <span className="material-symbols-outlined text-3xl">favorite</span>
             </a>
-            <a href="/cart" className="text-white hover:text-gray-300">
-              <span className="material-symbols-outlined text-3xl">shopping_cart</span>
-            </a>
+            <button onClick={() => setIsCartOpen(true)} className="text-white hover:text-gray-300">
+            <span className="material-symbols-outlined text-3xl">shopping_cart</span>
+          </button>
+          <Cart isOpen={isCartOpen} 
+          onClose={() => setIsCartOpen(false)} 
+          key={isCartOpen ? 'cart-open' : 'cart-closed'}/>
           </div>
         </div>
 
@@ -138,9 +143,11 @@ function Header() {
               <a href="/favorites" className="text-white hover:text-gray-300">
                 <span className="material-symbols-outlined text-3xl">favorite</span>
               </a>
-              <a href="/cart" className="text-white hover:text-gray-300">
-                <span className="material-symbols-outlined text-3xl">shopping_cart</span>
-              </a>
+              <button onClick={() => setIsCartOpen(true)} className="text-white hover:text-gray-300">
+              <span className="material-symbols-outlined text-3xl">shopping_cart</span>
+            </button>
+            <Cart isOpen={isCartOpen}
+            onClose={() => setIsCartOpen(false)}key={isCartOpen ? 'cart-open' : 'cart-closed'} />
             </div>
           </div>
         </div>

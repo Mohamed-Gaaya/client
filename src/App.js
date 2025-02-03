@@ -12,6 +12,7 @@ import ProductsPage from './pages/HomePage/ProductsPage';
 import PacksPage from './pages/HomePage/Packs/PacksPage';
 import PacksDetailsPage from './pages/HomePage/Packs/PacksDetails/PacksDetailsPage';
 
+
 // Conditional Header component that hides the header on /admin routes
 const AppHeader = () => {
   const location = useLocation();
