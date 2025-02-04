@@ -3,6 +3,8 @@ import bg1 from "../../assets/images/bg1.jpg";
 import bg2 from "../../assets/images/bg5.jpg";
 import bg3 from "../../assets/images/bg3.jpg";
 import bg4 from "../../assets/images/bg2.jpg";
+import bg6 from "../../assets/images/bg6.jpeg";
+import bg7 from "../../assets/images/bg7.jpeg";
 import { FooterPage } from "../../components/FooterPage";
 import BrandsSection from "./BrandsSection"; 
 import ScrollableHero from "./ScrollableHero";
@@ -11,7 +13,7 @@ import {
   StyledCardWrapper,
 } from "./style";
 
-const images = [bg1, bg2, bg3, bg4];
+const images = [bg6, bg7, bg3, bg4, bg1, bg2];
 
 function HomePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -182,7 +184,7 @@ function HomePage() {
                 <div className="w-52 h-40 rounded-2xl">
                   <img
                     className="w-52 h-40 rounded-2xl"
-                    src={bg1}
+                    src={bg6}
                     alt="Free Shipping"
                   />
                 </div>
@@ -198,7 +200,7 @@ function HomePage() {
                 <div className="w-52 h-40 rounded-2xl">
                   <img
                     className="w-52 h-40 rounded-2xl"
-                    src={bg2}
+                    src={bg7}
                     alt="Top Quality"
                   />
                 </div>
@@ -214,7 +216,7 @@ function HomePage() {
                 <div className="w-52 h-40 rounded-2xl">
                   <img
                     className="w-52 h-40 rounded-2xl"
-                    src={bg3}
+                    src={bg2}
                     alt="24/7 Support"
                   />
                 </div>

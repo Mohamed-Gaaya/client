@@ -20,7 +20,10 @@ const ProductDetails = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState(null);
+  const [showAddedNotification, setShowAddedNotification] = useState(false);
 
+
+  
   // Add these functions
   const openModal = (image) => {
     setModalImage(image);
@@ -109,12 +112,35 @@ const ProductDetails = () => {
   }, [id]);
 
   const handleAddToCart = () => {
-    console.log('Added to cart', {
-      product,
+    const cartItem = {
+      _id: product._id,
+      name: product.name,
+      price: product.hasPromo ? product.promoPrice : product.price,
+      image: product.images[0],
+      quantity: quantity,
       flavour: selectedFlavour,
-      size: selectedSize,
-      quantity
-    });
+      size: selectedSize
+    };
+  
+    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existingItemIndex = existingCart.findIndex(item => 
+      item._id === cartItem._id &&
+      item.flavour === cartItem.flavour &&
+      item.size === cartItem.size
+    );
+  
+    if (existingItemIndex >= 0) {
+      existingCart[existingItemIndex].quantity += cartItem.quantity;
+    } else {
+      existingCart.push(cartItem);
+    }
+  
+    localStorage.setItem('cart', JSON.stringify(existingCart));
+    
+    // Trigger global update
+    window.dispatchEvent(new Event('cart-updated'));
+    setShowAddedNotification(true);
+    setTimeout(() => setShowAddedNotification(false), 2000);
   };
 
   const handleSlideNext = () => {

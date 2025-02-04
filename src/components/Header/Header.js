@@ -8,6 +8,7 @@ import ClothingAccessories from "./ClothingAccessories";
 import SearchBar from "./SearchBar";
 import Cart from "./Cart";
 import LanguageSwitcher from "./LanguageSwitcher";
+import CartButton from './CartButton';
 
 function Header() {
   const { t, i18n } = useTranslation();
@@ -86,12 +87,12 @@ function Header() {
             <a href="/favorites" className="text-white hover:text-gray-300">
               <span className="material-symbols-outlined text-3xl">favorite</span>
             </a>
-            <button onClick={() => setIsCartOpen(true)} className="text-white hover:text-gray-300">
-            <span className="material-symbols-outlined text-3xl">shopping_cart</span>
-          </button>
-          <Cart isOpen={isCartOpen} 
-          onClose={() => setIsCartOpen(false)} 
-          key={isCartOpen ? 'cart-open' : 'cart-closed'}/>
+            <CartButton onClick={() => setIsCartOpen(true)} />
+          <Cart 
+              isOpen={isCartOpen}
+              onClose={() => setIsCartOpen(false)}
+              key={isCartOpen ? 'cart-open' : 'cart-closed'}
+            />
           </div>
         </div>
 
@@ -143,11 +144,12 @@ function Header() {
               <a href="/favorites" className="text-white hover:text-gray-300">
                 <span className="material-symbols-outlined text-3xl">favorite</span>
               </a>
-              <button onClick={() => setIsCartOpen(true)} className="text-white hover:text-gray-300">
-              <span className="material-symbols-outlined text-3xl">shopping_cart</span>
-            </button>
-            <Cart isOpen={isCartOpen}
-            onClose={() => setIsCartOpen(false)}key={isCartOpen ? 'cart-open' : 'cart-closed'} />
+              <CartButton onClick={() => setIsCartOpen(true)} />
+            <Cart 
+              isOpen={isCartOpen}
+              onClose={() => setIsCartOpen(false)}
+              key={isCartOpen ? 'cart-open' : 'cart-closed'}
+            />
             </div>
           </div>
         </div>

@@ -8,28 +8,40 @@ function ProductCard({ product }) {
     setImageLoaded(true);
   };
   const addToCart = (e) => {
-    e.stopPropagation(); // Prevent navigation if card is clickable
+    e.stopPropagation();
     const cartItem = {
       _id: product._id,
       name: product.name,
       price: product.price,
       image: product.image,
-      quantity: 1
+      quantity: 1,
+      flavour: product.flavour || null,
+      size: product.size || null,
+      brand: product.brand || null
     };
     
     const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    const existingItemIndex = existingCart.findIndex(item => item._id === product._id);
+    
+    const existingItemIndex = existingCart.findIndex(item => 
+      item._id === cartItem._id && 
+      (item.flavour === cartItem.flavour || (item.flavour === null && cartItem.flavour === null)) && 
+      (item.size === cartItem.size || (item.size === null && cartItem.size === null))
+    );
     
     if (existingItemIndex >= 0) {
-      existingCart[existingItemIndex].quantity += 1;
+      // Create a new array to trigger React state update
+      const updatedCart = [...existingCart];
+      updatedCart[existingItemIndex].quantity += 1;
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
     } else {
-      existingCart.push(cartItem);
+      // Create a new array with the new item
+      const updatedCart = [...existingCart, cartItem];
+      localStorage.setItem('cart', JSON.stringify(updatedCart));
     }
     
-    localStorage.setItem('cart', JSON.stringify(existingCart));
-    // Optionally show a notification that item was added
+    // Trigger cart update
+    window.dispatchEvent(new Event('cart-updated'));
   };
-
   return (
     <StyledCardWrapper>
       <div className="card" style={{height: '420px'}}>
