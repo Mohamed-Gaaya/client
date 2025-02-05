@@ -156,13 +156,13 @@ const Packs = () => {
                     
                     <div className="space-y-2">
                       <p className="text-green-600 font-medium">
-                        Pack Price: ${pack.price.toFixed(2)}
+                        Pack Price: {pack.price.toFixed(2)} TND
                       </p>
                       <p className="text-gray-500">
-                        Total Value: ${pack.totalValue.toFixed(2)}
+                        Total Value: {pack.totalValue.toFixed(2)} TND
                       </p>
                       <p className="text-blue-600">
-                        Save: ${savings.toFixed(2)} ({savingsPercentage.toFixed(1)}%)
+                        Save: {savings.toFixed(2)} TND ({savingsPercentage.toFixed(1)}%)
                       </p>
                       <p className="text-gray-600">
                         Products: {pack.products?.length || 0}

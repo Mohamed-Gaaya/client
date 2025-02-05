@@ -215,7 +215,7 @@ const AddPack = () => {
                           <div>
                             <p className="font-medium">{product.name}</p>
                             <p className="text-sm text-gray-500">
-                              ${(product.promoPrice || product.price).toFixed(2)}
+                              {(product.promoPrice || product.price).toFixed(2)} TND
                             </p>
                           </div>
                         </div>
@@ -254,7 +254,7 @@ const AddPack = () => {
                         <div>
                           <p className="font-medium">{product.name}</p>
                           <p className="text-sm text-gray-500">
-                            ${(product.promoPrice || product.price).toFixed(2)}
+                            {(product.promoPrice || product.price).toFixed(2)} TND
                           </p>
                         </div>
                       </div>
@@ -273,7 +273,7 @@ const AddPack = () => {
                 </div>
                 <div className="mt-4">
                   <p className="text-right font-medium">
-                    Total Value: ${calculateTotalPrice().toFixed(2)}
+                    Total Value: {calculateTotalPrice().toFixed(2)} TND
                   </p>
                 </div>
               </div>

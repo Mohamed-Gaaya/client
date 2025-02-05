@@ -229,10 +229,10 @@ const ProductDetails = () => {
                   {product.hasPromo ? (
                     <>
                       <span className="text-2xl font-bold text-blue-600">
-                        ${product.promoPrice.toFixed(2)}
+                        {product.promoPrice.toFixed(2)} TND
                       </span>
                       <span className="line-through text-gray-500">
-                        ${product.originalPrice.toFixed(2)}
+                        {product.originalPrice.toFixed(2)} TND
                       </span>
                       <span className="bg-red-500 text-white px-2 py-1 rounded-md text-sm">
                         {Math.round(((product.originalPrice - product.promoPrice) / product.originalPrice) * 100)}% OFF
@@ -240,7 +240,7 @@ const ProductDetails = () => {
                     </>
                   ) : (
                     <span className="text-2xl font-bold text-blue-600">
-                      ${product.price.toFixed(2)}
+                      {product.price.toFixed(2)} TND
                     </span>
                   )}
                 </div>

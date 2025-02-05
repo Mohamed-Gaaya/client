@@ -1,107 +1,120 @@
 import React, { useState } from "react";
-import { StyledCardWrapper } from "./style";
 
-function ProductCard({ product }) {
+const ProductCard = ({ product, onAddToCart }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
-  const addToCart = (e) => {
+  // Calculate discount percentage if promo exists
+  const discountPercentage = product.promoPrice && product.originalPrice
+    ? Math.round(((product.originalPrice - product.promoPrice) / product.originalPrice) * 100)
+    : 0;
+
+  // Handle add to cart click
+  const handleAddToCart = (e) => {
     e.stopPropagation();
-    const cartItem = {
-      _id: product._id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      quantity: 1,
-      flavour: product.flavour || null,
-      size: product.size || null,
-      brand: product.brand || null
-    };
-    
-    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
-    
-    const existingItemIndex = existingCart.findIndex(item => 
-      item._id === cartItem._id && 
-      (item.flavour === cartItem.flavour || (item.flavour === null && cartItem.flavour === null)) && 
-      (item.size === cartItem.size || (item.size === null && cartItem.size === null))
-    );
-    
-    if (existingItemIndex >= 0) {
-      // Create a new array to trigger React state update
-      const updatedCart = [...existingCart];
-      updatedCart[existingItemIndex].quantity += 1;
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
-    } else {
-      // Create a new array with the new item
-      const updatedCart = [...existingCart, cartItem];
-      localStorage.setItem('cart', JSON.stringify(updatedCart));
+    if (onAddToCart) {
+      onAddToCart(product);
     }
-    
-    // Trigger cart update
-    window.dispatchEvent(new Event('cart-updated'));
   };
+
+  // Determine the display price
+  const displayPrice = product.promoPrice || product.price;
+
   return (
-    <StyledCardWrapper>
-      <div className="card" style={{height: '420px'}}>
-        <div 
-          className="img" 
-          style={{
-            height: '250px', 
-            position: 'relative',
-            backgroundColor: 'linear-gradient(#7980c5, #9198e5)',
-            backgroundImage: product.image && imageLoaded 
-              ? `url(${product.image})` 
-              : 'none',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}
-        >
-          {product.image && (
-            <img
-              src={product.image}
-              alt={product.name}
-              onLoad={handleImageLoad}
-              style={{ 
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                opacity: imageLoaded ? 1 : 0,
-                transition: 'opacity 0.3s ease'
-              }}
-            />
-          )}
-          <div className="save">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 683 683"
-              height={683}
-              width={683}
-              className="svg"
-            >
-              {/* SVG content remains the same */}
-            </svg>
+    <div 
+      className="group relative bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      {/* Image Container */}
+      <div className="relative aspect-square overflow-hidden bg-gray-100">
+        {product.image && (
+          <img
+            src={product.image}
+            alt={product.name}
+            onLoad={() => setImageLoaded(true)}
+            className={`w-full h-full object-cover transition-all duration-500 ${
+              imageLoaded ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
+            } ${isHovered ? 'scale-110' : 'scale-100'}`}
+          />
+        )}
+        
+        {/* Promo Badge */}
+        {product.promoPrice && discountPercentage > 0 && (
+          <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+            {discountPercentage}% OFF
           </div>
-        </div>
-        <div className="text">
-          <p className="h3">{product.name}</p>
-          <p className="p">${product.price.toFixed(2)}</p>
-          <button onClick={addToCart} className="relative inline-flex items-center justify-center px-8 py-2.5 overflow-hidden tracking-tighter text-white bg-customBlue rounded-md group">
-            <span className="absolute w-0 h-0 transition-all duration-200 ease-out bg-customPink rounded-full group-hover:w-56 group-hover:h-56"></span>
-            <span className="relative text-base font-semibold">
-              Add to Cart
-            </span>
-          </button>
-        </div>
+        )}
       </div>
-    </StyledCardWrapper>
+
+      {/* Content Container */}
+      <div className="p-5">
+        {/* Brand Badge */}
+        {product.brand && (
+          <div className="mb-2">
+            <span className="inline-block bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">
+              {product.brand}
+            </span>
+          </div>
+        )}
+
+        {/* Title */}
+        <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[3.5rem]">
+          {product.name}
+        </h3>
+
+        {/* Category & Servings */}
+        <div className="space-y-1 mb-4">
+          {product.category && (
+            <p className="text-sm text-gray-600">
+              {product.category}
+            </p>
+          )}
+          {product.servings && (
+            <p className="text-sm text-gray-600">
+              {product.servings} Servings
+            </p>
+          )}
+        </div>
+
+        {/* Price Section */}
+        <div className="flex flex-col gap-1 mb-4">
+          {product.promoPrice ? (
+            <div className="space-y-1">
+              <p className="text-2xl font-bold text-blue-600">
+                {product.promoPrice.toFixed(2)} TND
+              </p>
+              <p className="text-sm text-gray-500 line-through">
+                {product.originalPrice.toFixed(2)} TND
+              </p>
+              <p className="text-sm text-red-500 font-medium">
+                Save {discountPercentage}%
+              </p>
+            </div>
+          ) : (
+            <p className="text-2xl font-bold text-blue-600">
+              {displayPrice.toFixed(2)} TND
+            </p>
+          )}
+        </div>
+
+        {/* Add to Cart Button */}
+        <button 
+          onClick={handleAddToCart}
+          className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold 
+            transition-all duration-300 hover:bg-blue-700 transform 
+            hover:scale-[1.02] active:scale-[0.98]
+            focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+            flex items-center justify-center space-x-2"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+          </svg>
+          <span>Add to Cart</span>
+        </button>
+      </div>
+    </div>
   );
-}
+};
 
 export default ProductCard;

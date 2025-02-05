@@ -286,10 +286,10 @@ const Products = () => {
                   )}
 
                   {product.promoPrice ? (
-                    <p className="text-red-500 text-sm mb-2">Promo Price: ${product.promoPrice.toFixed(2)}</p>
+                    <p className="text-red-500 text-sm mb-2">Promo Price: {product.promoPrice.toFixed(2)} TND</p>
                   ) : (
                     product.price && (
-                      <p className="text-gray-700 text-sm mb-2">Price: ${product.price.toFixed(2)}</p>
+                      <p className="text-gray-700 text-sm mb-2">Price: {product.price.toFixed(2)} TND</p>
                     )
                   )}
 

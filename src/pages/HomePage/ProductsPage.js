@@ -12,6 +12,7 @@ const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showAddedNotification, setShowAddedNotification] = useState(false);
   
   // Function to parse search params into filters
   const getFiltersFromSearchParams = (params) => ({
@@ -122,6 +123,35 @@ const ProductsPage = () => {
     fetchProducts();
   }, [activeFilters]);
 
+
+  const handleAddToCart = (product) => {
+    const cartItem = {
+      _id: product._id,
+      name: product.name,
+      price: product.promoPrice || product.price,
+      image: product.image,
+      quantity: 1,
+    };
+
+    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const existingItemIndex = existingCart.findIndex(item => 
+      item._id === cartItem._id && 
+      !item.flavour && 
+      !item.size
+    );
+
+    if (existingItemIndex >= 0) {
+      existingCart[existingItemIndex].quantity += 1;
+    } else {
+      existingCart.push(cartItem);
+    }
+
+    localStorage.setItem('cart', JSON.stringify(existingCart));
+    window.dispatchEvent(new Event('cart-updated'));
+    setShowAddedNotification(true);
+    setTimeout(() => setShowAddedNotification(false), 2000);
+  };
+
   return (
     <div className="flex">
       <FilterSidebar 
@@ -153,14 +183,19 @@ const ProductsPage = () => {
                 className="cursor-pointer"
               >
                 <ProductCard
-                  product={{
-                    _id: product._id,
-                    name: product.name,
-                    price: product.price,
-                    image: `http://localhost:5000${product.images[0]}`,
-                    brand: product.brand,
-                  }}
-                />
+                    product={{
+                      _id: product._id,
+                      name: product.name,
+                      price: product.price,
+                      promoPrice: product.promoPrice,
+                      originalPrice: product.promoPrice ? product.price : null,
+                      image: `http://localhost:5000${product.images[0]}`,
+                      brand: product.brand,
+                      category: product.category,
+                      servings: product.servings
+                    }}
+                    onAddToCart={handleAddToCart}
+                  />
               </div>
             ))}
           </div>

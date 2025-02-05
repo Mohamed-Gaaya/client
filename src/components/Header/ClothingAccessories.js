@@ -8,8 +8,7 @@ const ClothingAccessories = ({ isOpen, onClose, isMobile }) => {
   const [accessoriesData, setAccessoriesData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeCategory, setActiveCategory] = useState(null);
-  const [showSubcategories, setShowSubcategories] = useState(false);
+  const [activeItem, setActiveItem] = useState(null);
 
   useEffect(() => {
     const fetchClothingAndAccessories = async () => {
@@ -36,29 +35,30 @@ const ClothingAccessories = ({ isOpen, onClose, isMobile }) => {
     fetchClothingAndAccessories();
   }, []);
 
-  const handleItemClick = (type, itemName) => {
-    const newParams = new URLSearchParams(searchParams);
-    newParams.delete("brand");
-    newParams.delete("sizes");
-    newParams.delete("flavors");
-    newParams.set("category", type.toLowerCase());
-    newParams.set("brand", itemName);
-
+  const handleItemClick = (type) => {
+    const newParams = new URLSearchParams();
+    
+    // Set category using the EXACT CASE from your products data
+    newParams.set("category", type); // Remove .toLowerCase()
+    
+    // Clear other params like FilterSidebar does
+    newParams.delete("page");
+    newParams.delete("sort");
+    newParams.delete("search");
+  
     navigate({
       pathname: "/products",
       search: newParams.toString(),
     });
-
+  
     if (onClose) onClose();
   };
 
   if (loading) {
     return (
-      <div className="categories-wrapper">
+      <div className="brand-header-wrapper">
         <div>
-          <span className="text-white transition font-bold">
-            CLOTHING & ACCESSORIES
-          </span>
+          <span className="text-white font-bold">CLOTHING & ACCESSORIES</span>
           <div className="loading-spinner"></div>
         </div>
       </div>
@@ -69,57 +69,53 @@ const ClothingAccessories = ({ isOpen, onClose, isMobile }) => {
     <>
       <div className="block md:hidden">
         {/* Mobile View */}
-        <div className="categories-wrapper">
+        <div className="brand-header-wrapper">
           <ul>
             <li>
               <details className="group">
                 <summary className="flex items-center justify-between cursor-pointer">
-                  <span className="text-gray-700 hover:text-blue-600 transition font-bold">
+                  <span className="text-white hover:text-white transition font-bold">
                     CLOTHING & ACCESSORIES
                   </span>
                 </summary>
-                <ul className="bg-white">
+                <ul>
                   <li>
-                    <details className="group">
-                      <summary className="flex items-center justify-between cursor-pointer px-6 py-3">
-                        <span className="text-gray-700 hover:text-blue-600 transition font-bold">
-                          Clothes
-                        </span>
-                      </summary>
-                      <ul className="bg-white">
-                        {clothesData.map((item) => (
-                          <li key={item._id}>
-                            <button
-                              className="block w-full px-8 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors text-left"
-                              onClick={() => handleItemClick("Clothes", item.name)}
+                    <div className="block px-6 py-3 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors cursor-pointer">
+                      <div className="brand-header-container">
+                        <div className="mb-4">
+                          <h3 className="text-white justify-center font-bold mb-2">Clothes</h3>
+                          {clothesData.map((item) => (
+                            <div
+                              key={item._id}
+                              className="p-1 rounded-md transition-colors duration-200 cursor-pointer hover:bg-gray-600 brand-header-item"
+                              onMouseEnter={() => setActiveItem(item._id)}
+                              onMouseLeave={() => setActiveItem(null)}
+                              onClick={() => handleItemClick("Clothes")} 
                             >
-                              {item.name}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </details>
-                  </li>
-                  <li>
-                    <details className="group">
-                      <summary className="flex items-center justify-between cursor-pointer px-6 py-3">
-                        <span className="text-gray-700 hover:text-blue-600 transition font-bold">
-                          Accessories
-                        </span>
-                      </summary>
-                      <ul className="bg-white">
-                        {accessoriesData.map((item) => (
-                          <li key={item._id}>
-                            <button
-                              className="block w-full px-8 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-colors text-left"
-                              onClick={() => handleItemClick("Accessories", item.name)}
+                              <div className="brand-header-info">
+                                <span className="brand-header-name">{item.name}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div>
+                          <h3 className="text-white font-bold mb-2">Accessories</h3>
+                          {accessoriesData.map((item) => (
+                            <div
+                              key={item._id}
+                              className="p-1 rounded-md transition-colors duration-200 cursor-pointer hover:bg-gray-600 brand-header-item"
+                              onMouseEnter={() => setActiveItem(item._id)}
+                              onMouseLeave={() => setActiveItem(null)}
+                              onClick={() => handleItemClick("Accessories")}
                             >
-                              {item.name}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </details>
+                              <div className="brand-header-info">
+                                <span className="brand-header-name">{item.name}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </li>
                 </ul>
               </details>
@@ -130,44 +126,50 @@ const ClothingAccessories = ({ isOpen, onClose, isMobile }) => {
 
       <div className="hidden md:block">
         {/* Desktop View */}
-        <div className="categories-wrapper">
+        <div className="brand-header-wrapper">
           <div className="dropdown dropdown-hover">
             <span className="text-white transition font-bold cursor-pointer">
               CLOTHING & ACCESSORIES
             </span>
             <ul>
               <li>
-                <div className="categories-dropdown">
-                  <div className="grid grid-cols-2 gap-2 p-2">
-                    <div className="p-1 rounded-md">
-                      <h3 className="category-title">Clothes</h3>
-                      <ul className="subcategories-list">
+                <div className="brand-header-dropdown">
+                  <div className="grid grid-cols-2 gap-4 p-2">
+                    <div>
+                      <h3 className="text-white font-bold mb-2">Clothes</h3>
+                      <div className="grid grid-cols-2 gap-2">
                         {clothesData.map((item) => (
-                          <li key={item._id} className="subcategory-item">
-                            <button
-                              className="subcategory-link"
-                              onClick={() => handleItemClick("Clothes", item.name)}
-                            >
-                              {item.name}
-                            </button>
-                          </li>
+                          <div
+                            key={item._id}
+                            className="p-1 rounded-md transition-colors duration-200 cursor-pointer hover:bg-gray-600 brand-header-item"
+                            onMouseEnter={() => setActiveItem(item._id)}
+                            onMouseLeave={() => setActiveItem(null)}
+                            onClick={() => handleItemClick("Clothes")} 
+                          >
+                            <div className="brand-header-info">
+                              <span className="brand-header-name">{item.name}</span>
+                            </div>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     </div>
-                    <div className="p-1 rounded-md">
-                      <h3 className="category-title">Accessories</h3>
-                      <ul className="subcategories-list">
+                    <div>
+                      <h3 className="text-white font-bold mb-2">Accessories</h3>
+                      <div className="grid grid-cols-2 gap-2">
                         {accessoriesData.map((item) => (
-                          <li key={item._id} className="subcategory-item">
-                            <button
-                              className="subcategory-link"
-                              onClick={() => handleItemClick("Accessories", item.name)}
-                            >
-                              {item.name}
-                            </button>
-                          </li>
+                          <div
+                            key={item._id}
+                            className="p-1 rounded-md transition-colors duration-200 cursor-pointer hover:bg-gray-600 brand-header-item"
+                            onMouseEnter={() => setActiveItem(item._id)}
+                            onMouseLeave={() => setActiveItem(null)}
+                            onClick={() => handleItemClick("Accessories")}
+                          >
+                            <div className="brand-header-info">
+                              <span className="brand-header-name">{item.name}</span>
+                            </div>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   </div>
                 </div>
