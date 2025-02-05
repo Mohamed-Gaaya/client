@@ -206,7 +206,7 @@ const ProductDetails = () => {
             <div className="flex-1 overflow-y-auto space-y-6 my-6 pr-2">
               {/* Short Description */}
               <div className="bg-gray-50 p-4 rounded-md">
-                <p className="text-gray-700">{product.shortDescription}</p>
+                <p className="text-gray-700 text-justify">{product.shortDescription}</p>
               </div>
 
               {/* Reviews */}
@@ -334,7 +334,7 @@ const ProductDetails = () => {
       {/* Rest of the component remains the same */}
       <div className="bg-white rounded-lg shadow-sm p-6 mb-12">
         <h2 className="text-xl font-bold mb-4">Detailed Description</h2>
-        <p className="text-gray-600">{product.longDescription}</p>
+        <p className="text-gray-600 text-justify">{product.longDescription}</p>
       </div>
 
       <ImageModal 

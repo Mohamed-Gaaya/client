@@ -131,21 +131,21 @@ const ProductsPage = () => {
       price: product.promoPrice || product.price,
       image: product.image,
       quantity: 1,
+      flavour: product.flavour // Add the selected flavour
     };
-
+  
     const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
     const existingItemIndex = existingCart.findIndex(item => 
       item._id === cartItem._id && 
-      !item.flavour && 
-      !item.size
+      item.flavour === cartItem.flavour // Check for matching flavour
     );
-
+  
     if (existingItemIndex >= 0) {
       existingCart[existingItemIndex].quantity += 1;
     } else {
       existingCart.push(cartItem);
     }
-
+  
     localStorage.setItem('cart', JSON.stringify(existingCart));
     window.dispatchEvent(new Event('cart-updated'));
     setShowAddedNotification(true);

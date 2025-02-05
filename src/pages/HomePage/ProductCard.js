@@ -1,23 +1,55 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const ProductCard = ({ product, onAddToCart }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [selectedFlavour, setSelectedFlavour] = useState(null);
+  const [flavours, setFlavours] = useState([]);
 
-  // Calculate discount percentage if promo exists
+  useEffect(() => {
+    const fetchProductDetails = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/products/${product._id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch product details');
+        }
+        const data = await response.json();
+        if (data.product.flavours?.length) {
+          setFlavours(data.product.flavours);
+          setSelectedFlavour(data.product.flavours[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching product details:', error);
+      }
+    };
+
+    if (product._id && (!product.flavours || !product.flavours.length)) {
+      fetchProductDetails();
+    } else if (product.flavours?.length) {
+      setFlavours(product.flavours);
+      setSelectedFlavour(product.flavours[0]);
+    }
+  }, [product]);
+
   const discountPercentage = product.promoPrice && product.originalPrice
     ? Math.round(((product.originalPrice - product.promoPrice) / product.originalPrice) * 100)
     : 0;
 
-  // Handle add to cart click
   const handleAddToCart = (e) => {
     e.stopPropagation();
     if (onAddToCart) {
-      onAddToCart(product);
+      onAddToCart({ 
+        ...product, 
+        flavour: selectedFlavour // Include selected flavour in cart item
+      });
     }
   };
 
-  // Determine the display price
+  const handleFlavourChange = (e) => {
+    e.stopPropagation();
+    setSelectedFlavour(e.target.value);
+  };
+
   const displayPrice = product.promoPrice || product.price;
 
   return (
@@ -26,7 +58,6 @@ const ProductCard = ({ product, onAddToCart }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Image Container */}
       <div className="relative aspect-square overflow-hidden bg-gray-100">
         {product.image && (
           <img
@@ -39,7 +70,6 @@ const ProductCard = ({ product, onAddToCart }) => {
           />
         )}
         
-        {/* Promo Badge */}
         {product.promoPrice && discountPercentage > 0 && (
           <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
             {discountPercentage}% OFF
@@ -47,9 +77,7 @@ const ProductCard = ({ product, onAddToCart }) => {
         )}
       </div>
 
-      {/* Content Container */}
       <div className="p-5">
-        {/* Brand Badge */}
         {product.brand && (
           <div className="mb-2">
             <span className="inline-block bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-1 rounded-full">
@@ -58,12 +86,10 @@ const ProductCard = ({ product, onAddToCart }) => {
           </div>
         )}
 
-        {/* Title */}
         <h3 className="text-lg font-semibold text-gray-800 mb-2 line-clamp-2 min-h-[3.5rem]">
           {product.name}
         </h3>
 
-        {/* Category & Servings */}
         <div className="space-y-1 mb-4">
           {product.category && (
             <p className="text-sm text-gray-600">
@@ -77,7 +103,28 @@ const ProductCard = ({ product, onAddToCart }) => {
           )}
         </div>
 
-        {/* Price Section */}
+        {flavours.length > 0 && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Select Flavour
+            </label>
+            <select
+              value={selectedFlavour || ''}
+              onChange={handleFlavourChange}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 
+                focus:border-blue-500 focus:ring-2 focus:ring-blue-200 
+                transition-all duration-200 bg-white"
+            >
+              {flavours.map((flavour) => (
+                <option key={flavour} value={flavour}>
+                  {flavour}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         <div className="flex flex-col gap-1 mb-4">
           {product.promoPrice ? (
             <div className="space-y-1">
@@ -98,7 +145,6 @@ const ProductCard = ({ product, onAddToCart }) => {
           )}
         </div>
 
-        {/* Add to Cart Button */}
         <button 
           onClick={handleAddToCart}
           className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold 
