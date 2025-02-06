@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Dashboard from "./Dashboard";
 import Users from "./components/Users";
 import Products from "./components/Products/Products";
-import Orders from "./components/Orders";
+import Orders from "./components/Orders/Orders";
 import AddProduct from "./components/Products/AddProduct";
 import ModifyProduct from "./components/Products/ModifyProduct";
 import Categories from "./components/Categories/Categories";

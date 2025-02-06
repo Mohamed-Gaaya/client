@@ -9,7 +9,7 @@ const CheckoutForm = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    phoneNumber: '216',
+    phoneNumber: '', // now only the local number (max 8 digits)
     email: '',
     address: '',
     postalCode: '',
@@ -95,12 +95,24 @@ const CheckoutForm = () => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
+  // Custom phone number formatting: only digits and maximum of 8 digits
+  const handlePhoneChange = (phone) => {
+    // Remove all non-digit characters
+    let cleaned = phone.replace(/\D/g, '');
+    // Limit to maximum of 8 digits
+    cleaned = cleaned.slice(0, 8);
+    
+    setFormData(prev => ({ ...prev, phoneNumber: cleaned }));
+  };
+
+  // Validate that the phone number contains exactly 8 digits
   const validatePhoneNumber = (phone) => {
-    return phone.length >= 8;
+    const digits = phone.replace(/\D/g, '');
+    return digits.length === 8;
   };
 
   const validatePostalCode = (code) => {
-    return /^\d{4}$/.test(code); // Tunisian postal codes are 4 digits
+    return /^\d{4}$/.test(code);
   };
 
   const handleSubmit = async (e) => {
@@ -122,7 +134,7 @@ const CheckoutForm = () => {
     }
 
     if (!validatePhoneNumber(formData.phoneNumber)) {
-      setError('Please enter a valid phone number');
+      setError('Please enter a valid 8-digit phone number');
       setIsSubmitting(false);
       return;
     }
@@ -140,6 +152,25 @@ const CheckoutForm = () => {
         status: 'pending'
       };
 
+      // Send the order data to your backend
+      const response = await fetch('http://localhost:5000/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderData)
+      });
+      
+
+      if (!response.ok) {
+        throw new Error('Order submission failed');
+      }
+
+      // In your backend, you would:
+      // 1. Save the order (e.g. notify the admin via your admin dashboard or an email).
+      // 2. Send a customized email to the client confirming their order.
+      //
+      // For example, using Nodemailer or SendGrid on the server side.
+      
+      // Clear local storage and navigate to the success page
       localStorage.removeItem('cart');
       localStorage.removeItem('pendingOrder');
       navigate('/order-success');
@@ -168,40 +199,48 @@ const CheckoutForm = () => {
           <h2 className="text-xl font-semibold mb-4">Customer Details</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-4">
-              <div>
-                <input
-                  type="text"
-                  name="firstName"
-                  placeholder="First Name"
-                  value={formData.firstName}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+              {/* First Name and Last Name Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <input
+                    type="text"
+                    name="firstName"
+                    placeholder="First Name"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    name="lastName"
+                    placeholder="Last Name"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
               </div>
-              <div>
-                <input
-                  type="text"
-                  name="lastName"
-                  placeholder="Last Name"
-                  value={formData.lastName}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
+              {/* Phone Number */}
+              <div className="w-full">
                 <PhoneInput
                   country={'tn'}
                   value={formData.phoneNumber}
-                  onChange={phone => setFormData(prev => ({ ...prev, phoneNumber: phone }))}
+                  autoFormat={false}
+                  onChange={handlePhoneChange}
                   inputClass="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  containerClass="w-full"
+                  inputStyle={{ width: '100%' }}
                   preferredCountries={['tn']}
                 />
               </div>
+              {/* Email Input */}
               <div>
                 <input
                   type="email"
                   name="email"
-                  placeholder="Email Address"
+                  placeholder="Email"
                   value={formData.email}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
