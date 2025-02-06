@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@vis.gl/react-google-maps": "^1.5.1",
     "axios": "^1.7.9",
     "cors": "^2.8.5",
     "google-map-react": "^2.2.1",

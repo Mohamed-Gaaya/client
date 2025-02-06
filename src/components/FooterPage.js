@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "../assets/images/YODA-LOGO-removebg-preview.png";
 import { Facebook, Instagram, Twitter } from "lucide-react";
+import GoogleMapReact from 'google-map-react';
+
 
 export function FooterPage() {
+  const defaultProps = {
+    center: {
+      lat: 10.99835602,
+      lng: 77.01502627,
+    },
+    zoom: 11,
+  };
+
   return (
     <footer className="bg-black text-gray-300 py-2">
       <div className="container mx-auto px-4">
@@ -129,20 +139,18 @@ export function FooterPage() {
             </h3>
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
-                <form class="flex flex-col">
-                  <input
-                    placeholder="Enter your email address"
-                    class="bg-gray-700 text-gray-200 border-0 rounded-md p-2 mb-4 focus:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500 transition ease-in-out duration-150"
-                    type="email"
-                  />
-
-                  <button
-                    class="bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold py-2 px-4 rounded-md mt-4 hover:bg-green-600 hover:to-blue-600 transition ease-in-out duration-150"
-                    type="submit"
+                <div className="mb-6">
+                  <div
+                    style={{ height: "400px", width: "100%" }}
+                    className="mb-6"
                   >
-                    Subscribe
-                  </button>
-                </form>
+                    <GoogleMapReact
+                      bootstrapURLKeys={{ key: "AIzaSyDwzSPcZdlTMDPyTqD0Gd2AEX68Lj287bY" }}
+                      defaultCenter={defaultProps.center}
+                      defaultZoom={defaultProps.zoom}
+                    ></GoogleMapReact>
+                  </div>
+                </div>
               </div>
               <div className="flex items-center space-x-3">
                 <span className="material-symbols-outlined text-blue-400">
