@@ -11,6 +11,7 @@ import ProductDetails from './pages/ProductDetails/ProductDetailsPage';
 import ProductsPage from './pages/HomePage/ProductsPage';
 import PacksPage from './pages/HomePage/Packs/PacksPage';
 import PacksDetailsPage from './pages/HomePage/Packs/PacksDetails/PacksDetailsPage';
+import CheckoutForm from './components/Header/CheckoutForm';
 
 
 // Conditional Header component that hides the header on /admin routes
@@ -40,6 +41,7 @@ function App() {
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/packs" element={<PacksPage />} />
         <Route path="/packs/:id" element={<PacksDetailsPage />} />
+        <Route path="/checkout" element={<CheckoutForm />} />
       </Routes>
       
       <AdminRoutes /> {/* Admin-specific routes */}
