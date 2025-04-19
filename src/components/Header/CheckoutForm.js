@@ -6,6 +6,7 @@ import 'react-phone-input-2/lib/style.css';
 const CheckoutForm = () => {
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(''); // New state for success message
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -64,6 +65,7 @@ const CheckoutForm = () => {
     }));
   };
 
+  // Function to update product quantity and synchronize with the cart
   const updateQuantity = (productId, flavour, size, change) => {
     setOrderDetails(prevOrder => {
       const updatedItems = prevOrder.items.map(item => {
@@ -78,15 +80,25 @@ const CheckoutForm = () => {
       const subtotal = updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
       const total = subtotal + prevOrder.deliveryFee;
 
-      // Update localStorage
-      const updatedOrder = {
-        ...prevOrder,
-        items: updatedItems,
-        subtotal,
-        total
-      };
+      const updatedOrder = { ...prevOrder, items: updatedItems, subtotal, total };
       localStorage.setItem('pendingOrder', JSON.stringify(updatedOrder));
+      localStorage.setItem('cart', JSON.stringify(updatedItems));
+      window.dispatchEvent(new Event('cart-updated'));
       
+      return updatedOrder;
+    });
+  };
+
+  // Function to remove an item from the order and synchronize with the cart
+  const removeProduct = (productId, flavour, size) => {
+    setOrderDetails(prevOrder => {
+      const updatedItems = prevOrder.items.filter(item => !(item._id === productId && item.flavour === flavour && item.size === size));
+      const subtotal = updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const total = subtotal + prevOrder.deliveryFee;
+      const updatedOrder = { ...prevOrder, items: updatedItems, subtotal, total };
+      localStorage.setItem('pendingOrder', JSON.stringify(updatedOrder));
+      localStorage.setItem('cart', JSON.stringify(updatedItems));
+      window.dispatchEvent(new Event('cart-updated'));
       return updatedOrder;
     });
   };
@@ -97,18 +109,15 @@ const CheckoutForm = () => {
 
   // Custom phone number formatting: only digits and maximum of 8 digits
   const handlePhoneChange = (phone) => {
-    // Remove all non-digit characters
     let cleaned = phone.replace(/\D/g, '');
-    // Limit to maximum of 8 digits
-    cleaned = cleaned.slice(0, 8);
-    
+    cleaned = cleaned.slice(0, 11);
     setFormData(prev => ({ ...prev, phoneNumber: cleaned }));
   };
 
   // Validate that the phone number contains exactly 8 digits
   const validatePhoneNumber = (phone) => {
     const digits = phone.replace(/\D/g, '');
-    return digits.length === 8;
+    return digits.length === 11;
   };
 
   const validatePostalCode = (code) => {
@@ -120,7 +129,6 @@ const CheckoutForm = () => {
     setIsSubmitting(true);
     setError('');
 
-    // Enhanced validation
     if (!Object.values(formData).every(value => value.trim())) {
       setError('Please fill in all fields');
       setIsSubmitting(false);
@@ -152,34 +160,43 @@ const CheckoutForm = () => {
         status: 'pending'
       };
 
-      // Send the order data to your backend
       const response = await fetch('http://localhost:5000/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)
       });
       
-
       if (!response.ok) {
         throw new Error('Order submission failed');
       }
-
-      // In your backend, you would:
-      // 1. Save the order (e.g. notify the admin via your admin dashboard or an email).
-      // 2. Send a customized email to the client confirming their order.
-      //
-      // For example, using Nodemailer or SendGrid on the server side.
       
-      // Clear local storage and navigate to the success page
+      // Clear local storage and update cart
       localStorage.removeItem('cart');
       localStorage.removeItem('pendingOrder');
-      navigate('/order-success');
+      window.dispatchEvent(new Event('cart-updated'));
+
+      // Set success message and redirect after 3 seconds
+      setSuccessMessage('Your order has been placed successfully! Redirecting to products page...');
+      setTimeout(() => {
+        navigate('/products'); // Adjust the route if your products page is elsewhere
+      }, 5000);
     } catch (err) {
       setError('Failed to process order. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  // When successMessage is set, show it instead of the form
+  if (successMessage) {
+    return (
+      <div className="max-w-4xl mx-auto p-4 space-y-6">
+        <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+          {successMessage}
+        </div>
+      </div>
+    );
+  }
 
   if (!orderDetails) return null;
 
@@ -199,7 +216,7 @@ const CheckoutForm = () => {
           <h2 className="text-xl font-semibold mb-4">Customer Details</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid gap-4">
-              {/* First Name and Last Name Row */}
+              {/* First Name and Last Name */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <input
@@ -301,17 +318,26 @@ const CheckoutForm = () => {
           <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
           <div className="space-y-4">
             {orderDetails.items.map((item, index) => (
-              <div key={index} className="flex justify-between items-start pb-4 border-b border-gray-200">
-                <div className="flex gap-4">
+              <div key={index} className="relative flex justify-between items-start pb-4 border-b border-gray-200">
+                <button 
+                  onClick={() => removeProduct(item._id, item.flavour, item.size)}
+                  className="absolute top-0 left-0 text-red-500"
+                  title="Remove product"
+                >
+                  <span className="material-symbols-outlined text-2xl">close</span>
+                </button>
+                <div className="flex gap-4 ml-10">
                   <Link to={`/product/${item._id}`}>
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-20 h-20 object-cover rounded cursor-pointer hover:opacity-80 transition-opacity"
+                      className="w-20 h-20 object-cover rounded cursor-pointer transition-transform duration-300 transform hover:scale-125 hover:opacity-80"
                     />
                   </Link>
                   <div>
-                    <p className="font-medium">{item.name}</p>
+                    <Link to={`/product/${item._id}`} className="font-medium text-blue-600 hover:underline">
+                      {item.name}
+                    </Link>
                     <p className="text-sm text-gray-500">
                       {item.flavour && `Flavor: ${item.flavour}`}
                       {item.size && ` • Size: ${item.size}`}
@@ -353,6 +379,7 @@ const CheckoutForm = () => {
             </div>
           </div>
         </div>
+
       </div>
 
       <div className="flex gap-4 justify-end">

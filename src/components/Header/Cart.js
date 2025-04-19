@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Cart = ({ isOpen, onClose }) => {
   const [cartItems, setCartItems] = useState([]);
@@ -7,6 +7,11 @@ const Cart = ({ isOpen, onClose }) => {
   const [cartCount, setCartCount] = useState(0);
   const deliveryFee = 7;
   const navigate = useNavigate();
+
+  // Helper to format price
+  const formatPrice = (price) => {
+    return price % 1 === 0 ? price.toString() : price.toFixed(2);
+  };
 
   useEffect(() => {
     const handleCartUpdate = () => {
@@ -83,7 +88,7 @@ const Cart = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-y-0 right-0 w-full max-w-md z-50">
+    <div className="fixed inset-y-0 right-0 w-full max-w-sm z-50">
       <div className="h-full bg-white shadow-lg flex flex-col">
         {/* Cart Header */}
         <div className="p-4 border-b flex justify-between items-center">
@@ -105,16 +110,25 @@ const Cart = ({ isOpen, onClose }) => {
           ) : (
             <div className="space-y-4">
               {cartItems.map((item, index) => (
-                <div key={`${item._id}-${item.flavour}-${item.size}-${index}`} className="bg-white rounded-lg shadow p-4">
+                <div
+                  key={`${item._id}-${item.flavour}-${item.size}-${index}`}
+                  className="bg-white rounded-lg shadow p-4"
+                >
                   <div className="flex gap-4">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-20 h-20 object-cover rounded"
-                    />
+                    {/* Clickable product image */}
+                    <Link to={`/product/${item._id}`}>
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-20 h-20 object-cover rounded cursor-pointer transition-transform duration-300 transform hover:scale-125 hover:opacity-80"
+                      />
+                    </Link>
                     <div className="flex-1">
                       <div className="flex justify-between">
-                        <h3 className="font-semibold">{item.name}</h3>
+                        {/* Clickable product name */}
+                        <Link to={`/product/${item._id}`} className="font-semibold text-blue-600 hover:underline">
+                          {item.name}
+                        </Link>
                         <button
                           onClick={() => removeItem(item._id, item.flavour, item.size)}
                           className="text-gray-400 hover:text-gray-600"
@@ -122,7 +136,7 @@ const Cart = ({ isOpen, onClose }) => {
                           <span className="material-symbols-outlined">close</span>
                         </button>
                       </div>
-                      <p className="text-gray-600">{item.price.toFixed(2)} TND</p>
+                      <p className="text-gray-600">{formatPrice(item.price)} TND</p>
                       {item.flavour && (
                         <p className="text-sm text-gray-500">Flavor: {item.flavour}</p>
                       )}
@@ -157,17 +171,17 @@ const Cart = ({ isOpen, onClose }) => {
           <div className="space-y-2">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span>{subtotal.toFixed(2)} TND</span>
+              <span>{formatPrice(subtotal)} TND</span>
             </div>
             {cartItems.length > 0 && (
               <div className="flex justify-between">
                 <span>Delivery Fee</span>
-                <span>{deliveryFee.toFixed(2)} TND</span>
+                <span>{formatPrice(deliveryFee)} TND</span>
               </div>
             )}
             <div className="flex justify-between font-bold">
               <span>Total</span>
-              <span>{total.toFixed(2)} TND</span>
+              <span>{formatPrice(total)} TND</span>
             </div>
           </div>
           <button
